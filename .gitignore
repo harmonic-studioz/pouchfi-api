@@ -1,0 +1,42 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# heviest objects in the universe
+node_modules/
+
+# dotenv environment variables file
+.env
+.env.*.local
+
+# deployment file
+app-*.yaml
+cron.yaml
+
+# VSCode workspace config
+.vscode
+
+# generated file when executing eslint with --cache flag
+.eslintcache
+
+# uploaded files will be stored here during local development
+uploads/
+
+private.key
+public.key
+
+*-sa.json
+
+# Ignore package lock that can cause conflicts and would cause
+# changes not being deployed successfull
+package-lock.json
+
+coverage/
+
+.idea/
+
+/sitemap
+
