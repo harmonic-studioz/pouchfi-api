@@ -8,6 +8,7 @@ const compression = require('compression')
 
 const { sq } = require('./db/models')
 const { Logger, redis } = require('./helpers')
+const loggerMiddleware = require('./middlewares/logger')
 
 // routes
 
@@ -48,6 +49,12 @@ function App (config) {
       }))
       .use(express.urlencoded({ extended: true }))
       .use(express.json())
+
+    /**
+     * Inject logger into request.
+     * Logger Middleware
+     */
+    app.use(loggerMiddleware)
 
     if (config.isDev) {
       app.use('/uploads', express.static('uploads'))

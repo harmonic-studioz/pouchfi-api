@@ -10,12 +10,11 @@ const config = require('@config')
 
 /**
  * Winston wrapper
- * @param {string} serviceName
  * @param {string} moduleName
  * @type {winston.Logger}
  */
-module.exports.Logger = (moduleName = '', opt = {}) => {
-  const serviceName = config.service.name
+module.exports.Logger = (moduleName = '', options = {}) => {
+  const { serviceName = config.service.name, ...opt } = options
 
   const metaInfo = {
     serviceContext: {

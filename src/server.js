@@ -8,7 +8,7 @@ const { Logger, redis } = require('./helpers')
 const logger = Logger('server')
 
 async function runServer () {
-  const app = await App(config)
+  const app = App(config)
   const port = config.service.port
 
   /**
