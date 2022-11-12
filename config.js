@@ -2,13 +2,13 @@
 
 const fs = require('fs')
 
-const { version } = require('./package.json')
+const { version, name } = require('./package.json')
 const NO_REPLY = 'noreply@braev.com'
 
 const {
   NODE_ENV = 'development',
 
-  PORT = '3004',
+  PORT = '3005',
 
   // BACKEND SERVICE
   APP_HOST = 'http://localhost:3004',
@@ -77,6 +77,7 @@ module.exports = {
   isStaging,
 
   service: {
+    name,
     host: APP_HOST,
     port: parseInt(PORT, 10)
   },

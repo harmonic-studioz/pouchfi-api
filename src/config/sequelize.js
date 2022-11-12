@@ -1,23 +1,32 @@
-{
-  "development": {
-    "username": "root",
-    "password": null,
-    "database": "database_development",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
+'use strict'
+
+const config = require('../../config')
+
+const baseConfig = {
+  url: config.postgres.url,
+  dialect: 'postgres',
+  seederStorage: 'sequelize',
+  pool: {
+    max: 5,
+    min: 0,
+    acquire: 30000,
+    idle: 10000
   },
-  "test": {
-    "username": "root",
-    "password": null,
-    "database": "database_test",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
-  },
-  "production": {
-    "username": "root",
-    "password": null,
-    "database": "database_production",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
-  }
+  logging: false
+}
+
+module.exports = {
+  development: baseConfig,
+  test: baseConfig,
+  production: Object.assign({
+    pool: {
+      max: 60,
+      min: 0,
+      acquire: 30000,
+      idle: 10000
+    },
+    dialectOptions: {
+      socketPath: config.postgres.host
+    }
+  }, baseConfig)
 }
