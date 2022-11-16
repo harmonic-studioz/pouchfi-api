@@ -3,11 +3,9 @@
 const fs = require('fs')
 const path = require('path')
 const cors = require('cors')
-const csrf = require('csurf')
 const passport = require('passport')
 const { Router } = require('express')
 const session = require('express-session')
-const cookieParser = require('cookie-parser')
 const connectRedis = require('connect-redis')
 
 const config = require('@config')
@@ -29,16 +27,6 @@ const cookieOpts = {
 }
 
 router
-  .use(cookieParser())
-  .use(csrf({ cookie: cookieOpts }))
-  .use((req, res, next) => {
-    res.cookie('XSRF-TOKEN', req.csrfToken(), {
-      ...cookieOpts,
-      httpOnly: false
-    })
-
-    next()
-  })
   .use(createSession({ maxAge: config.cookies.maxAge }))
   .use(initializer({ version: `admin-v${config.version}` }))
   .use(passport.initialize())
@@ -83,7 +71,7 @@ function createSession (options) {
     store: new Store({ client: redis }),
     name: config.cookies.name,
     secret: config.cookies.secret,
-    rollingg: true,
+    rolling: true,
     resave: false,
     saveUninitialized: false,
     genid: req => `${req.body.email}:${req.id}`,

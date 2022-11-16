@@ -6,6 +6,11 @@ module.exports = {
     COUNT: 0b10
   },
 
+  LOCALE: {
+    EN: 'en-us',
+    JA: 'ja-jp'
+  },
+
   ROLE: {
     SUPER_ADMIN: 'SUPER_ADMIN',
     CLIENT_ADMIN: 'CLIENT_ADMIN',

@@ -20,7 +20,7 @@ async function init () {
 
     if (dbName.search('_test') > -1) {
       await execute(
-        'npx sequelize db:seed --seed 20210308081351-add-default-roles-on-roles'
+        'npx sequelize db:seed --seed 20221116190443-add-default-roles-in-roles'
       )
     }
   } catch (err) {

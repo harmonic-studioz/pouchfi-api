@@ -43,6 +43,7 @@ const {
 
   // AUTHORIZATION
   AUTHORIZATION_JWT_SECRET,
+  AUTHORIZATION_JWT_EXPIRES = '30 days',
 
   // MAILCHIMP
   MANDRILL_API_KEY,
@@ -120,7 +121,8 @@ module.exports = {
   },
 
   authorization: {
-    secret: AUTHORIZATION_JWT_SECRET
+    secret: AUTHORIZATION_JWT_SECRET,
+    expiresIn: AUTHORIZATION_JWT_EXPIRES
   },
 
   mailchimp: {
