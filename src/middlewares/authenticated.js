@@ -1,10 +1,13 @@
 'use strict'
 
 const jwt = require('jsonwebtoken')
+const moment = require('moment-timezone')
 
 const config = require('@config')
-const { guest: Guest, user: User } = require('@models')
+const Cache = require('@/src/classes/cache')
 const errors = require('@/src/classes/errors')
+const { isPlainObject } = require('@/src/helpers')
+const { guest: Guest, user: User } = require('@models')
 
 const USER_TYPE_HEADER = 'User-Type'
 const USER_TOKEN_HEADER = 'User-Token'
@@ -13,11 +16,33 @@ const USER_IDENTITY_HEADER = 'User-Identity'
 /**
  * Checks if the incoming request is authenticated
  */
-exports.authenticated = function authenticated (req, res, next) {
-  if (!req.isAunthenticated()) {
+exports.authenticated = async function authenticated (req, res, next) {
+  if (req.isAunthenticated && !req.isAunthenticated()) {
     return next(errors.api.unauthorized('User is not authenticated'))
   }
 
+  const authToken = req.get('authorization')
+  const token = authToken && authToken.startsWith('Bearer') ? authToken.split(' ')[1] : null
+  if (!token) {
+    return next(errors.api.unauthorized('Not authorized, no token'))
+  }
+
+  const decoded = User.verifyToken(token)
+  if (!decoded) {
+    return next(errors.api.unauthorized('Token is invalid'))
+  }
+
+  const isTokenValid = await checkValidToken(decoded)
+  if (!isTokenValid) {
+    return next(errors.api.unauthorized('Token is invalid'))
+  }
+
+  const user = await User.findByPk(decoded.uid)
+  if (!user) {
+    return next(errors.api.unauthorized('Not authorizes, invalid user'))
+  }
+  req.user = user
+  req.token = token
   return next()
 }
 
@@ -129,3 +154,18 @@ async function _verifyAdminId (adminId) {
 
   return user.toJSON()
 }
+
+/**
+ * check if a token is valid
+ * @param {object} decoded jwt decoded object
+ * @returns {Promise<boolean>} true if valid else false
+ */
+async function checkValidToken (decoded) {
+  const isObject = isPlainObject(decoded)
+  if (!isObject) return false
+  if (decoded.exp < moment().unix()) return false
+  const jwtKey = `${decoded.uid}-${decoded.iat}`
+  const result = await Cache.get(jwtKey)
+  return !result
+}
+exports.checkValidToken = checkValidToken

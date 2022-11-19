@@ -45,6 +45,14 @@ const {
   AUTHORIZATION_JWT_SECRET,
   AUTHORIZATION_JWT_EXPIRES = '30 days',
 
+  // NODEMAILER
+  EMAIL,
+  EMAIL_HOST = 'noreply.breav.com',
+  EMAIL_PORT = 587,
+  EMAIL_PASSWORD,
+  EMAIL_SERVER,
+  EMAIL_SERVER_URL,
+
   // MAILCHIMP
   MANDRILL_API_KEY,
   MANDRILL_SUB_ACCOUNT,
@@ -125,6 +133,16 @@ module.exports = {
     expiresIn: AUTHORIZATION_JWT_EXPIRES
   },
 
+  nodemailer: {
+    email: EMAIL,
+    host: EMAIL_HOST,
+    port: EMAIL_PORT,
+    password: EMAIL_PASSWORD,
+    emailServer: EMAIL_SERVER,
+    emailServerUrl: EMAIL_SERVER_URL,
+    sender: MAIL_SENDER
+  },
+
   mailchimp: {
     apiKey: MANDRILL_API_KEY,
     account: MANDRILL_SUB_ACCOUNT,
@@ -176,7 +194,34 @@ module.exports = {
     private: fs.readFileSync('private.key')
   },
 
-  time: getTimeFromString
+  time: getTimeFromString,
+
+  sendMail: {
+    host: EMAIL_HOST,
+    port: EMAIL_PORT,
+    requireTLS: true,
+    tls: {
+      rejectUnauthorized: false
+    },
+    auth: {
+      user: EMAIL,
+      pass: EMAIL_PASSWORD
+    }
+  },
+
+  readMail: {
+    imap: {
+      user: EMAIL,
+      password: EMAIL_PASSWORD,
+      host: EMAIL_HOST,
+      port: EMAIL_PORT,
+      authTimeout: 10000,
+      tls: true,
+      tlsOptions: {
+        rejectUnauthorized: false
+      }
+    }
+  }
 }
 
 function _createPostgresConnectionURI (options) {
