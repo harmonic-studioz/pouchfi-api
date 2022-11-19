@@ -38,7 +38,7 @@ module.exports = (sequelize, DataTypes) => {
       unique: true
     },
     // user display name
-    displayName: DataTypes.STRING,
+    displayName: DataTypes.TEXT,
     // user first name
     firstName: {
       type: DataTypes.STRING,
@@ -114,15 +114,6 @@ module.exports = (sequelize, DataTypes) => {
       references: {
         model: 'roles',
         key: 'code'
-      }
-    },
-    // foreign key for `companies` table
-    companyId: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      references: {
-        model: 'companies',
-        key: 'id'
       }
     },
     // indicates where user registered from

@@ -50,6 +50,7 @@
     "moment-timezone": "^0.5.38",
     "passport": "^0.6.0",
     "pg": "^8.8.0",
+    "rate-limiter-flexible": "^2.4.1",
     "sequelize": "^6.25.5",
     "sequelize-cli": "^6.5.2",
     "winston": "^3.8.2"
@@ -75,7 +76,8 @@
     "@": "./",
     "@config": "./config.js",
     "@models": "./src/db/models/index.js",
-    "@routes": "./src/routes"
+    "@routes": "./src/routes",
+    "@Cache": "./src/classes/cache.js"
   },
   "jira-prepare-commit-msg": {
     "messagePattern": "$J $M",

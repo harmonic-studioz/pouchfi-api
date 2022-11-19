@@ -6,7 +6,8 @@
       "@config": ["./config.js"],
       "@models/*": ["./src/db/models/*"],
       "@routes/*": ["./src/routes/*"],
-      "@tests/*": ["./__tests__/*"]
+      "@tests/*": ["./__tests__/*"],
+      "@Cache": ["./src/classes/cache.js"]
     }
   }
 }
