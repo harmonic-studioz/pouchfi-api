@@ -5,6 +5,7 @@
       "@/*": ["./*"],
       "@config": ["./config.js"],
       "@models/*": ["./src/db/models/*"],
+      "@models": ["./src/db/models/index.js"],
       "@routes/*": ["./src/routes/*"],
       "@tests/*": ["./__tests__/*"],
       "@Cache": ["./src/classes/cache.js"]

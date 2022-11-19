@@ -38,7 +38,10 @@ module.exports = (sequelize, DataTypes) => {
       unique: true
     },
     // user display name
-    displayName: DataTypes.TEXT,
+    displayName: {
+      type: DataTypes.TEXT,
+      unique: true
+    },
     // user first name
     firstName: {
       type: DataTypes.STRING,
@@ -165,7 +168,7 @@ module.exports = (sequelize, DataTypes) => {
     user.uid = uid
   })
   User.addHook('beforeCreate', async user => {
-    const displayName = `${user.firstName} ${user.lastName}`
+    const displayName = `${user.firstName}${user.lastName}${Math.random().toString(36).slice(2, 4)}`
     user.setDataValue('displayName', displayName)
     user.displayName = displayName
   })
