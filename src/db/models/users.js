@@ -3,9 +3,11 @@
 const cuid = require('cuid')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const { QueryTypes } = require('sequelize')
 
 const config = require('@config')
 const { LOCALE } = require('@/src/constants')
+const { api } = require('@/src/classes/errors')
 
 const BCRYPT_SALT_ROUNDS = 13
 const ADMIN_HOST = config.admin.host
@@ -104,7 +106,7 @@ module.exports = (sequelize, DataTypes) => {
     // user phone number
     phone: DataTypes.STRING,
     // user self introduction
-    selfIntroduction: DataTypes.TEXT,
+    bio: DataTypes.TEXT,
     // user language
     language: {
       type: DataTypes.STRING,
@@ -375,6 +377,179 @@ module.exports = (sequelize, DataTypes) => {
     })
 
     return token
+  }
+
+  /**
+   * List users
+   * @param {object} options config object
+   * @param {number} options.limit number of results to return
+   * @param {number} options.page result page to return
+   * @param {string} options.sortBy column to order results by
+   * @param {string} options.search search string
+   * @param {string} options.role user role
+   * @param {boolean} isExport flag to indicate if exporting data
+   * @returns {object} user and count
+   */
+  User.list = async function list (options, isExport) {
+    const {
+      limit = 10,
+      page = 1
+    } = options
+    const transformUserListSort = (sortBy) => {
+      switch (sortBy) {
+        case 'uid':
+          return 'users.uid'
+        case 'id':
+          return 'users.id'
+        case 'lastLogin':
+          return 'users.lastLogin'
+        default:
+          return 'users."createdAt"'
+      }
+    }
+    const sortBy = transformUserListSort(options.sortBy)
+
+    const wheres = ['users."deletedAt" IS NULL']
+    const replacements = {}
+    if (options.search) {
+      wheres.push(`
+        (
+          LOWER(
+            concat_ws(
+              ' ',
+              users."displayName",
+              users."firstName",
+              users."lastName",
+              users.email,
+              users.id::varchar,
+              users.uid
+            )
+          ) LIKE ALL(ARRAY [:search])
+        )
+      `)
+      const searchReplacement = options.search
+        .split(' ')
+        .map(word => word.trim().length ? `%${word.replace(/(_|%|\\)/g, '\\$1').toLowerCase()}%` : '')
+      replacements.search = Array.isArray(searchReplacement) && searchReplacement.length ? searchReplacement : []
+    }
+    if (options.role) {
+      wheres.push('users."roleCode" = :roleCode')
+      replacements.roleCode = options.role
+    }
+
+    let listSQL = `
+      SELECT
+        users.id,
+        users.uid,
+        users."displayName",
+        users.email,
+        users.inactive,
+        users."roleCode",
+        roles.name AS "roleName",
+        users."invitedByuid",
+        users."createdAt",
+        users.history,
+        users."lastLogin"
+    `
+    let countSQL = 'SELECT COUNT(DISTINCT users.id)'
+    const fromNJoins = `
+      FROM
+        users
+      INNER JOIN
+        roles ON roles.code = users."roleCode"
+      LEFT JOIN
+        users AS self ON self.uid = users."invitedByuid"
+    `
+    listSQL += fromNJoins
+    countSQL += fromNJoins
+    const where = wheres.join(' AND ')
+    const whereClause = 'WHERE ' + where
+    listSQL += whereClause
+    countSQL += whereClause
+
+    const groupby = `
+      GROUP BY
+        users.id,
+        users.uid,
+        users."displayName",
+        users.email,
+        users.inactive,
+        users."roleCode",
+        users."invitedByUid",
+        users."createdAt",
+        users.history,
+        roles.name
+      ORDER BY
+        ${sortBy} ${options.order || 'DESC'}
+  `
+
+    listSQL += groupby
+
+    if (!isExport) {
+      listSQL += 'LIMIT :limit OFFSET :offset'
+      replacements.limit = limit
+      replacements.offset = limit * (page - 1)
+    }
+
+    const queryOptions = {
+      type: QueryTypes.SELECT,
+      replacements
+    }
+
+    const [rowForUsers, rowForCount] = await Promise.all([
+      sequelize.query(listSQL, queryOptions),
+      sequelize.query(countSQL, queryOptions)
+    ])
+
+    return {
+      users: rowForUsers,
+      count: parseInt(rowForCount[0].count)
+    }
+  }
+
+  /**
+   * return a user detail
+   * @param {string} uid user uid
+   * @returns {object} user
+   */
+  User.one = async function one (uid) {
+    const opts = {
+      type: QueryTypes.SELECT,
+      plain: true,
+      replacements: { uid }
+    }
+
+    const inst = await sequelize.query(`
+      SELECT
+        user.uid,
+        user."displayName",
+        user."firstName",
+        user."lastName",
+        user.email,
+        user."roleCode",
+        role.name AS "roleName",
+        user."profileImage",
+        user.phone,
+        user.bio,
+        user."createdAt",
+        user.language,
+        (SELECT "displayName" from users where "uid" = "user"."invitedByUid") AS "invitedBy
+      FROM
+        users AS user
+        INNER JOIN roles AS role ON role.code = user."roleCode"
+      WHERE
+        user."deletedAt" IS NULL
+        AND user.uid = :uid
+      GROUP BY
+        role.code,
+        uer.uid
+    `, opts)
+
+    if (inst === null) {
+      throw api.badRequest('User does not exist')
+    }
+
+    return inst
   }
 
   return User

@@ -7,8 +7,8 @@
 
 const db = require('@models')
 const config = require('@config')
-const { ROLE, EMAIL_TYPE } = require('@/src/constants')
 const base64 = require('@/src/helpers/base64')
+const { ROLE, EMAIL_TYPE } = require('@/src/constants')
 const { ApiError, api } = require('@/src/classes/errors')
 
 const { Sequelize } = db
@@ -146,4 +146,26 @@ exports.inviteUser = async function inviteUser (inviter, invitee) {
 
   await user.changed('history', true)
   await user.save()
+}
+
+exports.list = async function list (query, props, isExport = false) {
+  const { users, count } = await Users.list(query, isExport)
+
+  const outlets = { items: users, totalItems: count }
+  return {
+    meta: props.meta,
+    outlets
+  }
+}
+
+exports.one = async function one (uid, props) {
+  const outlets = { details: undefined }
+
+  const user = await Users.one(uid)
+  outlets.details = user
+
+  return {
+    meta: props.meta,
+    outlets
+  }
 }

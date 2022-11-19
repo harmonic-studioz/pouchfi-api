@@ -6,10 +6,10 @@ const {
   normalLimiter,
   secureLimiter,
   authenticated,
-  rolePermission
+  rolePermission,
+  metaHelper
 } = require('@/src/middlewares')
-const getRoutes = require('./get')
-const postRoutes = require('./post')
+const handlers = require('./handlers')
 const { ROLE } = require('@/src/constants')
 const { withErrorHandler } = require('@/src/helpers/routes')
 
@@ -33,8 +33,45 @@ module.exports = router => {
     caseSenstitive: true
   })
 
-  getRoutes([], userRouter)
-  postRoutes([secureLimiter, authenticated, rolePermission(roles), withErrorHandler], userRouter)
+  userRouter.post(
+    '/invite',
+    secureLimiter,
+    authenticated,
+    rolePermission(roles),
+    withErrorHandler(async (req, res) => {
+      const inviter = req.user
+      const invitee = req.body
+
+      await handlers.inviteUser(inviter, invitee)
+      res.json({ ok: true })
+    })
+  )
+
+  userRouter.get(
+    '/list',
+    normalLimiter,
+    authenticated,
+    rolePermission(canModify),
+    metaHelper(),
+    withErrorHandler(async (req, res, next) => {
+      const data = await handlers.list(req.query, res.locals.getProps())
+      res.locals.setData(data)
+      next()
+    })
+  )
+
+  userRouter.get(
+    '/one/:uid',
+    secureLimiter,
+    authenticated,
+    rolePermission(canView, (req) => req.params.uid === req.user.uid),
+    metaHelper(),
+    withErrorHandler(async (req, res, next) => {
+      const data = await handlers.one(req.params.uid, res.locals.getProps())
+      res.locals.setData(data)
+      next()
+    })
+  )
 
   router.use('/users', userRouter)
 }

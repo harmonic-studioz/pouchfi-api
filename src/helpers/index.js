@@ -1,4 +1,6 @@
 module.exports = {
-  ...require('./logger'),
-  ...require('./redis')
+  ...require('./redis'),
+  ...require('./routes'),
+  ...require('./common'),
+  ...require('./logger')
 }
