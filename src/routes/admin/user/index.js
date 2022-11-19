@@ -10,9 +10,7 @@ const {
 } = require('@/src/middlewares')
 const getRoutes = require('./get')
 const postRoutes = require('./post')
-const handlers = require('./handlers')
 const { ROLE } = require('@/src/constants')
-const { ApiError } = require('@/src/classes/errors')
 const { withErrorHandler } = require('@/src/helpers/routes')
 
 const roles = [
@@ -36,19 +34,7 @@ module.exports = router => {
   })
 
   getRoutes([], userRouter)
-  postRoutes([], userRouter)
-
-  router.post('/invite', secureLimiter, authenticated, rolePermission(roles), withErrorHandler(invite))
-  /**
-   * Handles inviting admin users
-   */
-  async function invite (req, res, next) {
-    const inviter = req.user
-    const invitee = req.body
-
-    await handlers.inviteUser(inviter, invitee)
-    res.json({ ok: true })
-  }
+  postRoutes([secureLimiter, authenticated, rolePermission(roles), withErrorHandler], userRouter)
 
   router.use('/users', userRouter)
 }
