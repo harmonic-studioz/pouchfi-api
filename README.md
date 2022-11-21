@@ -115,21 +115,22 @@ docker run -d --name breav-backend --network=host app/breav-backend:latest
 ```
 /
 ├─src
+│ ├── classes                 # Classes
+│ │   ├── cache.js            # cache class
+│ │   └── ...                 # Other classes
 │ ├── config                  # App configuration files
 │ │   ├── sequelize.js        # sequelize config
 │ │   └── ...                 # Other configurations
 │ ├── db                      # Data access stuff
 │ │   ├── migrations          # Migrations
 │ │   ├── models              # Models
-│ │   ├── seeds               # Seeds
-│ │   └── sequelize.js        # Sequelize (PostgresSQL/MySQL) instantiation
+│ │   └── seeds               # Seeds
 │ ├── helpers                 # Helpers (formats, validation, etc)
+│ ├── middlewares             # Middlewares (authorization, errorHandler, notFound etc)
 │ ├── routes
-│ │   ├── handlers            # Request managers
-│ │   ├── errors              # Error Helpers
-│ │   ├── middlewares         # Request middlewares
-│ │   └── admin               # Define routes and middlewares for admin
-│ │       ├── handlers        # Request managers for Admin
+│ │   ├── admin               # Defines routes and handlers for admin
+│ │   ├── client              # Defines routes and handlers for client
+│ │   └── internal            # Defines routes and handlers for internal processes (e.g. webhooks, cron job, cache handling)
 │ ├── services                # External services implementation
 │ │   ├── serviceOne
 │ │   └── serviceTwo
