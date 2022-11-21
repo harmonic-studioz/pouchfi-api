@@ -4,28 +4,23 @@
  * @typedef {import ("@models").dummyModel} Model
  *
  */
-
 const excel = require('node-excel-export')
 
+/**
+ * @type {Object.<string, Model>}
+ */
 const db = require('@models')
 const config = require('@config')
+const { Sequelize } = require('@models')
 const base64 = require('@/src/helpers/base64')
 const { formatDate } = require('@/src/helpers')
 const { ROLE, EMAIL_TYPE } = require('@/src/constants')
 const { ApiError, api } = require('@/src/classes/errors')
 
-const { Sequelize } = db
 const ADMIN_HOST = config.admin.host
 const invitationUrl = `${ADMIN_HOST}/register`
 
-/**
- * @constant
- * @type {Model}
- */
 const Users = db.users
-/**
- * @type {Model}
- */
 const Roles = db.roles
 
 /**

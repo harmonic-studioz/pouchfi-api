@@ -11,6 +11,9 @@ const { Logger, redis } = require('./helpers')
 const loggerMiddleware = require('./middlewares/logger')
 
 // routes
+const adminRoutes = require('./routes/admin')
+const clientRoutes = require('./routes/client')
+const internalRoutes = require('./routes/internal')
 
 const logger = Logger('app')
 
@@ -75,6 +78,13 @@ function App (config) {
 
       res.send()
     })
+
+    /**
+     * Parent routes
+     */
+    app.use('/admin', adminRoutes)
+    app.use('/__internal', internalRoutes)
+    app.use(clientRoutes)
 
     return app
   } catch (err) {

@@ -127,6 +127,7 @@ const errors = new Map([
   ['badRequest', 400],
   ['unauthorized', 401],
   ['forbidden', 403],
+  ['notFound', 404],
   ['unprocessableEntity', 422]
 ])
 
@@ -145,6 +146,7 @@ for (const [error, status] of errors) {
   })
 }
 exports.api = {
+  notFound: exports.notFound,
   forbidden: exports.forbidden,
   badRequest: exports.badRequest,
   unauthorized: exports.unauthorized,

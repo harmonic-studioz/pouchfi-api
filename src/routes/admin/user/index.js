@@ -9,7 +9,7 @@ const {
   authenticated,
   rolePermission
 } = require('@/src/middlewares')
-const handlers = require('./handlers')
+const handler = require('./handlers')
 const { ROLE } = require('@/src/constants')
 const { withErrorHandler } = require('@/src/helpers/routes')
 
@@ -42,7 +42,7 @@ module.exports = router => {
       const inviter = req.user
       const invitee = req.body
 
-      await handlers.inviteUser(inviter, invitee)
+      await handler.inviteUser(inviter, invitee)
       res.json({ ok: true })
     })
   )
@@ -54,7 +54,7 @@ module.exports = router => {
     rolePermission(canModify),
     metaHelper(),
     withErrorHandler(async (req, res, next) => {
-      const data = await handlers.list(req.query, res.locals.getProps())
+      const data = await handler.list(req.query, res.locals.getProps())
       res.locals.setData(data)
       next()
     })
@@ -67,7 +67,7 @@ module.exports = router => {
     rolePermission(canView, (req) => req.params.uid === req.user.uid),
     metaHelper(),
     withErrorHandler(async (req, res, next) => {
-      const data = await handlers.one(req.params.uid, res.locals.getProps())
+      const data = await handler.one(req.params.uid, res.locals.getProps())
       res.locals.setData(data)
       next()
     })
@@ -79,7 +79,7 @@ module.exports = router => {
     authenticated,
     rolePermission(canModify),
     withErrorHandler(async (req, res) => {
-      await handlers.deleteUser(req.body, req.user)
+      await handler.deleteUser(req.body, req.user)
       res.json({ ok: true })
     })
   )
@@ -90,7 +90,7 @@ module.exports = router => {
     authenticated,
     rolePermission(canModify, (req) => req.body.uid === req.user.uid),
     withErrorHandler(async (req, res) => {
-      await handlers.updateUser(req.body, req.user)
+      await handler.updateUser(req.body, req.user)
       res.json({ ok: true })
     })
   )
@@ -105,7 +105,7 @@ module.exports = router => {
       const {
         report,
         fileName
-      } = await handlers.xls(req.query, req.user.displayname, res.locals.getProps())
+      } = await handler.xls(req.query, req.user.displayname, res.locals.getProps())
       res.set({
         'Content-disposition': `attachment; filename=${fileName}`,
         'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
@@ -121,7 +121,7 @@ module.exports = router => {
     authenticated,
     rolePermission(canModify),
     withErrorHandler(async (req, res) => {
-      await handlers.resendInvitation(req.body, req.user, req)
+      await handler.resendInvitation(req.body, req.user, req)
       res.json({ ok: true })
     })
   )

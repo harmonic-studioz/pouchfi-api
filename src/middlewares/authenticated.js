@@ -46,8 +46,8 @@ exports.authenticated = async function authenticated (req, res, next) {
   return next()
 }
 
-exports.guest = authorizeFor('guest', _verifyGuestId)
-exports.admin = authorizeFor('admin', _verifyAdminId)
+exports.authorizeForGuest = authorizeFor('guest', _verifyGuestId)
+exports.authorizeForAdmin = authorizeFor('admin', _verifyAdminId)
 
 exports.rolePermission = function rolePermission (roleCode, orComparator = null) {
   return async (req, _res, next) => {
