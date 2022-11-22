@@ -48,6 +48,7 @@
     "jsonwebtoken": "^8.5.1",
     "module-alias": "^2.2.2",
     "moment-timezone": "^0.5.38",
+    "node-cron": "^3.0.2",
     "node-excel-export": "^1.4.4",
     "nodemailer": "^6.8.0",
     "passport": "^0.6.0",

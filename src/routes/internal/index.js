@@ -6,6 +6,8 @@ const { Router } = require('express')
 const { errorHandler } = require('@/src/middlewares')
 
 // routes
+const crons = require('./crons')
+const cache = require('./cache')
 const webhooks = require('./webhooks')
 
 const router = Router({
@@ -15,6 +17,8 @@ const router = Router({
 
 router.use(cors())
 
+crons(router)
+cache(router)
 webhooks(router)
 
 router.use(errorHandler)

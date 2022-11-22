@@ -16,7 +16,7 @@ const { withErrorHandler } = require('@/src/helpers/routes')
 const roles = [ROLE.SUPER_ADMIN, ROLE.BREAV_ADMIN]
 
 /**
- * Mount endpoints for `/admin/users`
+ * Mount endpoints for `/admin/homepage-content`
  *
  * @param {Router} router - Express Router
  */
@@ -53,5 +53,5 @@ module.exports = router => {
     })
   )
 
-  homeRouter.use('/homepage-contents', homeRouter)
+  router.use('/homepage-contents', homeRouter)
 }
