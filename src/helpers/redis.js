@@ -27,4 +27,5 @@ redis.on('connect', () => {
   logger.info('Redis Connection has been established successfully.')
 })
 
+module.exports = redis
 module.exports.redis = redis
