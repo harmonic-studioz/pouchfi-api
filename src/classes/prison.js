@@ -1,10 +1,10 @@
 'use strict'
 
 const { time } = require('@config')
-const redis = require('@/src/helpers/redis')
+const { redis } = require('@/src/helpers/redis')
 
 /**
- * @typedef {import ("@/src/helpers/redis")} Redis
+ * @typedef {import ("@/src/helpers/redis").redis} Redis
  *
  */
 
