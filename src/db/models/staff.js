@@ -26,7 +26,7 @@ const TOKEN_EXPIRES_IN = config.authorization.expiresIn
  * @returns
  */
 module.exports = (sequelize, DataTypes) => {
-  const User = sequelize.define('users', {
+  const Staff = sequelize.define('staffs', {
     // row id
     id: {
       type: DataTypes.INTEGER,
@@ -45,9 +45,15 @@ module.exports = (sequelize, DataTypes) => {
       unique: true
     },
     // user first name
-    firstName: DataTypes.STRING,
+    firstName: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
     // user last name
-    lastName: DataTypes.STRING,
+    lastName: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
     // user full name
     fullName: {
       type: DataTypes.VIRTUAL,
@@ -62,17 +68,18 @@ module.exports = (sequelize, DataTypes) => {
     email: {
       type: DataTypes.STRING,
       allowNull: true,
-      validate: {
-        isEmail: true
-      },
       set (val) {
         const lowered = val ? val.toLowerCase() : ''
         this.setDataValue('email', lowered)
+      },
+      validate: {
+        isEmail: true
       }
     },
     // active flag
     inactive: {
       type: DataTypes.BOOLEAN,
+      allowNull: true,
       defaultValue: false
     },
     // password hash
@@ -83,16 +90,16 @@ module.exports = (sequelize, DataTypes) => {
     // the password is stored plainly in the password field so it can be validated, but is never stored in the DB.
     password: {
       type: DataTypes.VIRTUAL,
-      set (password) {
+      set (val) {
         // remember to set the data value, otherwise it won't be validated
-        this.setDataValue('password', password)
-        const hash = bcrypt.hashSync(password, BCRYPT_SALT_ROUNDS)
+        this.setDataValue('password', val)
+        const hash = bcrypt.hashSync(val, BCRYPT_SALT_ROUNDS)
         this.setDataValue('passwordHash', hash)
       },
       validate: {
         isLongEnough (password) {
-          if (password.length < 6) {
-            throw new Error('Password too short, min 6 characters.')
+          if (password.length < 8) {
+            throw new Error('Password too short, min 8 characters.')
           }
         }
       }
@@ -108,38 +115,29 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       defaultValue: LOCALE.EN
     },
-    // user nationality
-    nationality: DataTypes.STRING,
-    // user gender
-    gender: {
-      type: DataTypes.ENUM('FEMALE', 'MALE', 'GENDERLESS'),
-      allowNull: false,
-      defaultValue: 'MALE'
+    // user role code
+    roleCode: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      references: {
+        model: 'roles',
+        key: 'code'
+      }
     },
-    // user birthday
-    birthday: DataTypes.DATEONLY,
     // indicates where user registered from
     registeredFrom: DataTypes.STRING,
     // user meta data
     metadata: {
       type: DataTypes.JSONB,
+      allowNull: true,
       defaultValue: {}
     },
-    // used for 3rd party auth such as omni, facebook, google
-    externalAuthId: DataTypes.STRING,
-    // response from external auth
-    oAuthResponse: {
-      type: DataTypes.JSONB,
-      defaultValue: {}
-    },
-    // if external auth ID the last login method
-    provider: DataTypes.STRING,
     // uid of user who invited the user
     invitedByUid: {
       type: DataTypes.STRING,
       allowNull: true,
       references: {
-        model: 'users',
+        model: 'staffs',
         key: 'uid'
       }
     },
@@ -147,17 +145,10 @@ module.exports = (sequelize, DataTypes) => {
     history: {
       type: DataTypes.JSONB,
       allowNull: true,
-      defaultValue: [{
-        type: 'CREATED',
-        createdAt: Date.now()
-      }]
+      defaultValue: []
     },
     // user last login time
-    lastLogin: DataTypes.DATE,
-    // user spending wallet account balance
-    balance: {
-      type: DataTypes.DECIMAL
-    }
+    lastLogin: DataTypes.DATE
   }, {
     schema: 'public',
     paranoid: true,
@@ -166,7 +157,6 @@ module.exports = (sequelize, DataTypes) => {
       attributes: {
         exclude: [
           'id',
-          'oAuthResponse',
           'invitedByUid',
           'passwordHash',
           'deletedAt',
@@ -177,12 +167,12 @@ module.exports = (sequelize, DataTypes) => {
   })
 
   // before create hooks
-  User.addHook('beforeCreate', 'generateUid', async user => {
+  Staff.addHook('beforeCreate', 'generateUid', async user => {
     const uid = `u${cuid()}`
     user.setDataValue('uid', uid)
     user.uid = uid
   })
-  User.addHook('beforeCreate', async staff => {
+  Staff.addHook('beforeCreate', async staff => {
     const isUsernameSet = staff.getDataValue('username')
     if (isUsernameSet) return
     const username = `${staff.firstName}${staff.lastName}${Math.random().toString(36).slice(2, 4)}`
@@ -191,17 +181,31 @@ module.exports = (sequelize, DataTypes) => {
   })
 
   // associations
-  User.associate = function associate (models) {
-    User.hasOne(models.users, {
+  Staff.associate = function associate (models) {
+    Staff.hasOne(models.staffs, {
       foreignKey: 'invitedByUid',
       as: 'invitedBy'
     })
 
-    User.belongsToMany(models.networks, {
-      through: 'guestNetworks',
-      onDelete: 'CASCADE',
-      as: 'networks',
-      foreignKey: 'userId'
+    Staff.belongsTo(models.roles, {
+      foreignKey: 'roleCode',
+      as: 'role'
+    })
+
+    Staff.addScope('list', {
+      include: [{
+        model: models.roles,
+        as: 'role',
+        attributes: ['name', 'code', 'type']
+      }]
+    })
+
+    Staff.addScope('role', {
+      include: [{
+        model: models.roles,
+        as: 'role',
+        attributes: ['name', 'code', 'type', 'level']
+      }]
     })
   }
 
@@ -211,7 +215,7 @@ module.exports = (sequelize, DataTypes) => {
    * @param {strin} issuer issuer string
    * @returns decoded token
    */
-  User.verifyToken = async (token, issuer = ADMIN_HOST) => {
+  Staff.verifyToken = async (token, issuer = ADMIN_HOST) => {
     const claims = jwt.verify(token, config.jwtKeys.public, {
       issuer,
       algorithms: 'RS256'
@@ -225,14 +229,14 @@ module.exports = (sequelize, DataTypes) => {
    * @param {string} token jwt token
    * @returns
    */
-  User.decodeToken = token => jwt.decode(token)
+  Staff.decodeToken = token => jwt.decode(token)
 
   /**
    * verify user password
    * @param {string} rawPassword user typed password
    * @return {boolean} true if correct password else false
    */
-  User.prototype.verifyPassword = async function (rawPassword) {
+  Staff.prototype.verifyPassword = async function (rawPassword) {
     /**
      * if the user has not set te password yet then
      * user hasn't accepted the invitation
@@ -249,7 +253,7 @@ module.exports = (sequelize, DataTypes) => {
    * @param {object} props extra keys you might want to add
    * @return {object}
    */
-  User.prototype.toClean = function (props) {
+  Staff.prototype.toClean = function (props) {
     const {
       passwordHash,
       password,
@@ -279,7 +283,7 @@ module.exports = (sequelize, DataTypes) => {
    * @param {string} expiresIn token expiration time
    * @return {string} jwt token
    */
-  User.prototype.signToken = function (level, isRefreshToken = false, issuer = ADMIN_HOST, expiresIn = TOKEN_EXPIRES_IN) {
+  Staff.prototype.signToken = function (level, isRefreshToken = false, issuer = ADMIN_HOST, expiresIn = TOKEN_EXPIRES_IN) {
     const {
       createdAt,
       updatedAt,
@@ -309,7 +313,7 @@ module.exports = (sequelize, DataTypes) => {
    * @param {string} attrs.resetId reset ID to be used as the token subject
    * @returns {string} reset token
    */
-  User.prototype.getPasswordResetToken = async function (attrs) {
+  Staff.prototype.getPasswordResetToken = async function (attrs) {
     if (this.registeredFrom !== 'email') {
       throw new Error(
         'getPasswordResetToken only support user created via email address.'
@@ -332,6 +336,55 @@ module.exports = (sequelize, DataTypes) => {
   }
 
   /**
+   * generate invitation token
+   * @param {object} attrs config params
+   * @param {string} attrs.expiration expiration time
+   * @param {string} attrs.timestamp timestamp of token
+   * @returns {string} invitation token
+   */
+  Staff.prototype.getInvitationToken = function (attrs) {
+    const expirationTime = attrs.expiration || config.admin.invitationTokenExpiration
+
+    const token = jwt.sign({
+      actionCode: 'INVITE',
+      uid: this.uid,
+      email: this.email
+    }, config.jwtKeys.private, {
+      expiresIn: expirationTime,
+      issuer: ADMIN_HOST,
+      audience: ADMIN_HOST,
+      subject: attrs.timestamp,
+      algorithm: 'RS256'
+    })
+
+    return token
+  }
+
+  /**
+   * get confirmation token
+   * @param {object} attrs config params
+   * @param {string} attrs.appCode config params
+   * @param {string} attrs.timestamp timestamp of token generation
+   * @returns {string} token
+   */
+  Staff.prototype.getConfirmationToken = function (attrs) {
+    const token = jwt.sign({
+      actionCode: 'CONFIRMATION',
+      appCode: attrs.appCode,
+      uid: this.uid,
+      email: this.email
+    }, config.jwtKeys.private, {
+      expiresIn: '7 days',
+      issuer: ADMIN_HOST,
+      audience: ADMIN_HOST,
+      subject: attrs.timestamp,
+      algorithm: 'RS256'
+    })
+
+    return token
+  }
+
+  /**
    * List users
    * @param {object} options config object
    * @param {number} options.limit number of results to return
@@ -342,7 +395,7 @@ module.exports = (sequelize, DataTypes) => {
    * @param {boolean} isExport flag to indicate if exporting data
    * @returns {object} user and count
    */
-  User.list = async function list (options, isExport) {
+  Staff.list = async function list (options, isExport) {
     const {
       limit = 10,
       page = 1
@@ -350,13 +403,13 @@ module.exports = (sequelize, DataTypes) => {
     const transformUserListSort = (sortBy) => {
       switch (sortBy) {
         case 'uid':
-          return 'users.uid'
+          return 'staffs.uid'
         case 'id':
-          return 'users.id'
+          return 'staffs.id'
         case 'lastLogin':
-          return 'users.lastLogin'
+          return 'staffs.lastLogin'
         default:
-          return 'users."createdAt"'
+          return 'staffs."createdAt"'
       }
     }
     const sortBy = transformUserListSort(options.sortBy)
@@ -369,12 +422,12 @@ module.exports = (sequelize, DataTypes) => {
           LOWER(
             concat_ws(
               ' ',
-              users.username,
-              users."firstName",
-              users."lastName",
-              users.email,
-              users.id::varchar,
-              users.uid
+              staffs.username,
+              staffs."firstName",
+              staffs."lastName",
+              staffs.email,
+              staffs.id::varchar,
+              staffs.uid
             )
           ) LIKE ALL(ARRAY [:search])
         )
@@ -385,32 +438,32 @@ module.exports = (sequelize, DataTypes) => {
       replacements.search = Array.isArray(searchReplacement) && searchReplacement.length ? searchReplacement : []
     }
     if (options.role) {
-      wheres.push('users."roleCode" = :roleCode')
+      wheres.push('staffs."roleCode" = :roleCode')
       replacements.roleCode = options.role
     }
 
     let listSQL = `
       SELECT
-        users.id,
-        users.uid,
-        users.username,
-        users.email,
-        users.inactive,
-        users."roleCode",
+        staffs.id,
+        staffs.uid,
+        staffs.username,
+        staffs.email,
+        staffs.inactive,
+        staffs."roleCode",
         roles.name AS "roleName",
-        users."invitedByuid",
-        users."createdAt",
-        users.history,
-        users."lastLogin"
+        staffs."invitedByuid",
+        staffs."createdAt",
+        staffs.history,
+        staffs."lastLogin"
     `
-    let countSQL = 'SELECT COUNT(DISTINCT users.id)'
+    let countSQL = 'SELECT COUNT(DISTINCT staffs.id)'
     const fromNJoins = `
       FROM
-        users
+        staffs
       INNER JOIN
-        roles ON roles.code = users."roleCode"
+        roles ON roles.code = staffs."roleCode"
       LEFT JOIN
-        users AS self ON self.uid = users."invitedByuid"
+        staffs AS self ON self.uid = staffs."invitedByuid"
     `
     listSQL += fromNJoins
     countSQL += fromNJoins
@@ -421,15 +474,15 @@ module.exports = (sequelize, DataTypes) => {
 
     const groupby = `
       GROUP BY
-        users.id,
-        users.uid,
-        users.username,
-        users.email,
-        users.inactive,
-        users."roleCode",
-        users."invitedByUid",
-        users."createdAt",
-        users.history,
+        staffs.id,
+        staffs.uid,
+        staffs.username,
+        staffs.email,
+        staffs.inactive,
+        staffs."roleCode",
+        staffs."invitedByUid",
+        staffs."createdAt",
+        staffs.history,
         roles.name
       ORDER BY
         ${sortBy} ${options.order || 'DESC'}
@@ -464,7 +517,7 @@ module.exports = (sequelize, DataTypes) => {
    * @param {string} uid user uid
    * @returns {object} user
    */
-  User.one = async function one (uid) {
+  Staff.one = async function one (uid) {
     const opts = {
       type: QueryTypes.SELECT,
       plain: true,
@@ -485,9 +538,9 @@ module.exports = (sequelize, DataTypes) => {
         user.bio,
         user."createdAt",
         user.language,
-        (SELECT username from users where "uid" = "user"."invitedByUid") AS "invitedBy
+        (SELECT username from staffs where "uid" = "user"."invitedByUid") AS "invitedBy
       FROM
-        users AS user
+        staffs AS user
         INNER JOIN roles AS role ON role.code = user."roleCode"
       WHERE
         user."deletedAt" IS NULL
@@ -504,5 +557,5 @@ module.exports = (sequelize, DataTypes) => {
     return inst
   }
 
-  return User
+  return Staff
 }

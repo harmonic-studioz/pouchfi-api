@@ -2,7 +2,7 @@
 
 module.exports = {
   up: async (queryInterface) => {
-    await queryInterface.bulkInsert('users', [{
+    await queryInterface.bulkInsert('staff', [{
       uid: 'url5Xy8pPbKj4VQDW',
       displayName: 'Super Admin',
       firstName: 'Super',

@@ -4,8 +4,8 @@ const pgtools = require('pgtools')
 const Sequelize = require('sequelize')
 const { exec } = require('child_process')
 
-const { postgres } = require('@config')
 const models = require('@models')
+const { postgres } = require('@config')
 
 const sequelize = new Sequelize(postgres.url, postgres.options)
 const dbName = postgres.database
@@ -14,7 +14,10 @@ init()
 
 async function init () {
   try {
-    await createSchemas([])
+    await createSchemas([
+      'networks',
+      'guests'
+    ])
     await models.init()
     await execute('npx sequelize db:migrate')
 
