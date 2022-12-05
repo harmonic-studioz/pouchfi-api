@@ -5,6 +5,7 @@ const path = require('path')
 const Sequelize = require('sequelize')
 
 const { postgres } = require('@config')
+const Tokens = require('./networks/tokens')
 /**
  * @typedef {import ("sequelize").Sequelize} Sequelize
  *
@@ -38,6 +39,7 @@ for (const file of files) {
   const model = Model(sequelize, Sequelize.DataTypes)
   db[model.name] = model
 }
+db.tokens = Tokens(sequelize, Sequelize.DataTypes)
 
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {
@@ -64,7 +66,10 @@ module.exports = db
 
 module.exports.init = async function init (retries = 0) {
   try {
-    await sequelize.sync()
+    await Promise.all([
+      sequelize.sync(),
+      db.tokens.sync()
+    ])
   } catch (err) {
     if (retries >= 3) {
       throw err

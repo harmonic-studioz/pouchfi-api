@@ -41,9 +41,25 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     // network test rpc
-    rpc_test: {
+    rpcTest: {
       type: DataTypes.STRING,
       unique: true,
+      allowNull: true,
+      validate: {
+        isUrl: true
+      }
+    },
+    // api
+    api: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      validate: {
+        isUrl: true
+      }
+    },
+    // block explorer
+    blockExplorer: {
+      type: DataTypes.STRING,
       allowNull: true,
       validate: {
         isUrl: true
@@ -53,7 +69,7 @@ module.exports = (sequelize, DataTypes) => {
     tableName: 'networks',
     defaultScope: {
       attributes: {
-        exclude: ['rpc_test', 'createdAt', 'updatedAt']
+        exclude: ['rpcTest', 'blockExplorer', 'api', 'createdAt', 'updatedAt']
       }
     }
   })
@@ -70,6 +86,14 @@ module.exports = (sequelize, DataTypes) => {
       onDelete: 'CASCADE',
       as: 'users',
       foreignKey: 'networkId'
+    })
+
+    Network.addScope('tokens', {
+      include: [{
+        model: models.tokens,
+        as: 'tokens',
+        attributes: ['id', 'name', 'symbol', 'address']
+      }]
     })
   }
 
