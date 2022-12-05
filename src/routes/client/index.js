@@ -54,6 +54,6 @@ routeFiles
     require(file)(router)
   })
 
-router.use(notFound('breav-client')).use(errorHandler)
+router.use(notFound('pouchfi-client')).use(errorHandler)
 
 module.exports = router

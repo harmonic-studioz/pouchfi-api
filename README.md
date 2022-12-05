@@ -1,4 +1,4 @@
-# Breav - Backend
+# Pouchfi - Backend
 
 ## Stacks
 
@@ -17,8 +17,8 @@
 ## Getting Started
 
 ```shell
-git clone repo
-cd breav
+git clone https://github.com/harmonic-studioz/pouchfi-api.git
+cd pouchfi-api
 
 # Create environment variables from example
 mv .env.example .env.development.local
@@ -62,7 +62,7 @@ npm run test:unit
 In order to run the integration tests, we need to setup the test database first. Suffix the database name with `_test` to make sure that we are using a test database.
 
 ```shell
-PG_DATABASE=breav_dev_test npm run db:init
+PG_DATABASE=pouchfi_dev_test npm run db:init
 
 npm run test:integration
 ```
@@ -101,13 +101,13 @@ ssh-keygen -t rsa -b 2048 -q -N '' -m PEM -f private.key \
     && openssl rsa -in private.key -pubout -outform PEM -out public.key
 
 # Build image
-docker build -t app/breav-backend:latest .
+docker build -t app/pouchfi-backend:latest .
 
 # Run on port 3004
-docker run -p 3004:3004 -d --name breav-backend app/breav-backend:latest
+docker run -p 3004:3004 -d --name pouchfi-backend app/pouchfi-backend:latest
 
 # Run on host network
-docker run -d --name breav-backend --network=host app/breav-backend:latest
+docker run -d --name pouchfi-backend --network=host app/pouchfi-backend:latest
 ```
 
 ## Structure

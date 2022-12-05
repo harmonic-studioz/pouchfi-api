@@ -13,7 +13,7 @@ const handler = require('./handlers')
 const { ROLE } = require('@/src/constants')
 const { withErrorHandler } = require('@/src/helpers/routes')
 
-const roles = [ROLE.SUPER_ADMIN, ROLE.BREAV_ADMIN]
+const roles = [ROLE.SUPER_ADMIN, ROLE.POUCHFI_ADMIN]
 
 /**
  * Mount endpoints for `/admin/homepage-content`

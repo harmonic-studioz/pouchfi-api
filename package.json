@@ -1,8 +1,8 @@
 {
-  "name": "breav-backend",
+  "name": "pouchfi-backend",
   "version": "1.0.0",
   "private": true,
-  "description": "Breav backend service",
+  "description": "Pouchfi backend service",
   "main": "src/server.js",
   "scripts": {
     "db:init": "node -r module-alias/register -r dotenv/config ./scripts/db/init.js",
@@ -27,7 +27,7 @@
     "node": ">=18.12.1"
   },
   "keywords": [
-    "breav"
+    "pouchfi"
   ],
   "author": "Chiwuzoh Daniel (https://chiwuzoh.com.ng/)",
   "license": "ISC",

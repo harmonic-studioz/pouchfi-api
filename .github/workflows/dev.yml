@@ -40,4 +40,4 @@ jobs:
         run: npm rebuild sharp
 
       - name: Restart server
-        run: pm2 restart breav
+        run: pm2 restart pouchfi

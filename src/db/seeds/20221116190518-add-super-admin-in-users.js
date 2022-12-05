@@ -10,7 +10,7 @@ module.exports = {
       email: 'chiwuzohdumebi@gmail.com', // change this later
       inactive: false,
       registeredFrom: 'email',
-      passwordHash: '$2b$13$QbURZ79D8fkEaThR1H8rcue6kEoyLHiXbdihO4v8o5vcT2ndUQSIK', // breavSuperPassword123
+      passwordHash: '$2b$13$WxWRgKyUCHSfxxLEjPe7uOaqylUyUYaoRZHjRuTk.YXmGUVSCgPJS', // PouchfiSuperPassword123
       roleCode: 'SUPER_ADMIN',
       createdAt: new Date(),
       updatedAt: new Date()

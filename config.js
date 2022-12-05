@@ -3,7 +3,7 @@
 const fs = require('fs')
 
 const { version, name } = require('./package.json')
-const NO_REPLY = 'noreply@braev.com'
+const NO_REPLY = 'noreply@pouchfi.com'
 
 const {
   NODE_ENV = 'development',
@@ -47,19 +47,14 @@ const {
 
   // NODEMAILER
   EMAIL,
-  EMAIL_HOST = 'noreply.breav.com',
+  EMAIL_HOST = 'noreply@pouchfi.com',
   EMAIL_PORT = 587,
   EMAIL_PASSWORD,
   EMAIL_SERVER,
   EMAIL_SERVER_URL,
 
-  // MAILCHIMP
-  MANDRILL_API_KEY,
-  MANDRILL_SUB_ACCOUNT,
-  MANDRILL_WEBHOOK_KEY,
-  MAIL_SENDER = NO_REPLY,
-
   // MAILS
+  MAIL_SENDER = NO_REPLY,
   MAIL_BIZ = NO_REPLY,
   MAIL_GUEST_FAQ = NO_REPLY,
   MAIL_BIZ_CS = NO_REPLY,
@@ -141,13 +136,6 @@ module.exports = {
     emailServer: EMAIL_SERVER,
     emailServerUrl: EMAIL_SERVER_URL,
     sender: MAIL_SENDER
-  },
-
-  mailchimp: {
-    apiKey: MANDRILL_API_KEY,
-    account: MANDRILL_SUB_ACCOUNT,
-    sender: MAIL_SENDER,
-    webhookKey: MANDRILL_WEBHOOK_KEY
   },
 
   emails: {

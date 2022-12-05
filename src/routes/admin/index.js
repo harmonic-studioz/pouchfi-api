@@ -62,7 +62,7 @@ routeFiles
     require(file)(router)
   })
 
-router.use(notFound('breav-admin')).use(okResponse).use(errorHandler)
+router.use(notFound('pouchfi-admin')).use(okResponse).use(errorHandler)
 
 function createSession (options) {
   const Store = connectRedis(session)

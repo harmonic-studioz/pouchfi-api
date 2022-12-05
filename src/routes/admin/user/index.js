@@ -15,11 +15,11 @@ const { withErrorHandler } = require('@/src/helpers/routes')
 
 const roles = [
   ROLE.SUPER_ADMIN,
-  ROLE.BREAV_ADMIN,
-  ROLE.BREAV_ACCOUNTING
+  ROLE.POUCHFI_ADMIN,
+  ROLE.POUCHFI_ACCOUNTING
 ]
-const canModify = [...roles, ROLE.BREAV_STAFF]
-const canView = [...canModify, ROLE.BREAV_CS]
+const canModify = [...roles, ROLE.POUCHFI_STAFF]
+const canView = [...canModify, ROLE.POUCHFI_CS]
 
 /**
  * Mount endpoints for `/admin/users`

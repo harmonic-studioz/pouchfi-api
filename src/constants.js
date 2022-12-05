@@ -15,10 +15,10 @@ module.exports = {
     SUPER_ADMIN: 'SUPER_ADMIN',
     CLIENT_ADMIN: 'CLIENT_ADMIN',
     CLIENT_STAFF: 'CLIENT_STAFF',
-    BREAV_ADMIN: 'BREAV_ADMIN',
-    BREAV_CS: 'BREAV_CS',
-    BREAV_ACCOUNTING: 'BREAV_ACCOUNTING',
-    BREAV_STAFF: 'BREAV_STAFF',
+    POUCHFI_ADMIN: 'POUCHFI_ADMIN',
+    POUCHFI_CS: 'POUCHFI_CS',
+    POUCHFI_ACCOUNTING: 'POUCHFI_ACCOUNTING',
+    POUCHFI_STAFF: 'POUCHFI_STAFF',
     SUPPLIER: 'SUPPLIER'
   },
 
@@ -28,7 +28,7 @@ module.exports = {
   },
 
   REGISTERED_FROM: {
-    BREAV: 'breav',
+    pouchfi: 'pouchfi',
     GOOGLE: 'google',
     FACEBOOK: 'facebook'
   },

@@ -31,29 +31,29 @@ function prepare () {
     level: 333
   },
   {
-    name: 'Breav Admin',
-    code: 'BREAV_ADMIN',
+    name: 'Pouchfi Admin',
+    code: 'POUCHFI_ADMIN',
     type: 'NATIVE',
     inactive: false,
     level: 777
   },
   {
-    name: 'Breav CS',
-    code: 'BREAV_CS',
+    name: 'Pouchfi CS',
+    code: 'POUCHFI_CS',
     type: 'NATIVE',
     inactive: false,
     level: 555
   },
   {
-    name: 'Breav Accounting',
-    code: 'BREAV_ACCOUNTING',
+    name: 'Pouchfi Accounting',
+    code: 'POUCHFI_ACCOUNTING',
     type: 'NATIVE',
     inactive: false,
     level: 444
   },
   {
-    name: 'Breav Staff',
-    code: 'BREAV_STAFF',
+    name: 'Pouchfi Staff',
+    code: 'POUCHFI_STAFF',
     type: 'NATIVE',
     inactive: false,
     level: 333
