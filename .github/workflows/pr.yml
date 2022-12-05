@@ -54,7 +54,7 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        run: npm install eslint@^8.27.0 eslint-config-standard@^17.0.0 eslint-plugin-import@^2.26.0 eslint-plugin-node@^11.1.0 eslint-plugin-promise@^6.1.1
+        run: npm install eslint@^8.29.0 eslint-config-standard@^17.0.0 eslint-plugin-import@^2.26.0 eslint-plugin-node@^11.1.0 eslint-plugin-promise@^6.1.1
 
       - name: Check Code Linting
         run: npm run lint

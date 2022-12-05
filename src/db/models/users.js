@@ -117,7 +117,12 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: 'MALE'
     },
     // user birthday
-    birthday: DataTypes.DATEONLY,
+    birthday: {
+      type: DataTypes.DATEONLY,
+      validate: {
+        isDate: true
+      }
+    },
     // indicates where user registered from
     registeredFrom: DataTypes.STRING,
     // user meta data
