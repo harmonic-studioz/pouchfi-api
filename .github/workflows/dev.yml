@@ -30,11 +30,12 @@ jobs:
           cache: "npm"
 
       - name: Create Keys
-        run: base64 -d <<< $PRIVATE_KEY > private.key
-      - run: base64 -d <<< $PUBLIC_KEY > public.key
+        run: apk add bash
+      - run: chmod 755 ./scripts/setup-ci.sh
+      - run: ./scripts/setup-ci.sh
 
       - name: Install dependencies
-        run: npm ci --ignore-scripts
+        run: npm i
 
       - name: Rebuild package
         run: npm rebuild sharp

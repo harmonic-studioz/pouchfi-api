@@ -61,7 +61,7 @@ const {
   MAIL_PAYOUT_MONITOR = NO_REPLY,
 
   // cache
-  CACHE_PREFIX = 'br_',
+  CACHE_PREFIX = 'pouch_',
   CACHE_DRIVER = 'redis',
 
   // slack channels hooks
