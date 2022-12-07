@@ -28,6 +28,10 @@ ssh-keygen -t rsa -b 2048 -q -N '' -m PEM -f private.key \
     && rm private.key.pub \
     && openssl rsa -in private.key -pubout -outform PEM -out public.key
 
+# encrypt key
+base64 -i private.key
+base64 -i public.key
+
 # Install all dependencies
 npm install
 
