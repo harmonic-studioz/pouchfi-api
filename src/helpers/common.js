@@ -2,6 +2,8 @@
 
 const { DateTime } = require('luxon')
 
+const { LOCALE, LANG } = require('@/src/constants')
+
 /**
  * escape backslash
  * @param {string} value string value
@@ -102,4 +104,24 @@ exports.randomDateMoment = function randomDateMoment (start, end) {
   return DateTime
     .fromJSDate(new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime())))
     .startOf('second')
+}
+
+/**
+ * Attempts to get the right locale by
+ * comparing with LANGUAGE and LOCALE constants.
+ *
+ * @param {String} [locale='']
+ *
+ * @returns {String}
+ */
+exports.getLocale = function getLocale (locale = '') {
+  if (!locale) {
+    return LOCALE.EN
+  }
+
+  const lang = locale.toLowerCase()
+
+  return lang === LOCALE.JA || lang === LANG.JA
+    ? LOCALE.JA
+    : LOCALE.EN
 }

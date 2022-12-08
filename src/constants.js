@@ -11,6 +11,13 @@ module.exports = {
     JA: 'ja-jp'
   },
 
+  LANG: {
+    EN: 'en',
+    JA: 'ja',
+    ZH: 'zh',
+    ZT: 'zt'
+  },
+
   ROLE: {
     SUPER_ADMIN: 'SUPER_ADMIN',
     CLIENT_ADMIN: 'CLIENT_ADMIN',

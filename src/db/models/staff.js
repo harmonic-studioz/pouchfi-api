@@ -414,7 +414,7 @@ module.exports = (sequelize, DataTypes) => {
     }
     const sortBy = transformUserListSort(options.sortBy)
 
-    const wheres = ['users."deletedAt" IS NULL']
+    const wheres = ['staffs."deletedAt" IS NULL']
     const replacements = {}
     if (options.search) {
       wheres.push(`
@@ -555,6 +555,36 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     return inst
+  }
+
+  Staff.suggest = async function suggest () {
+    return sequelize.query(`
+      SELECT DISTINCT
+        username,
+        email,
+        staffs."updatedAt",
+        staffs."roleCode"
+      FROM
+        staffs
+      WHERE
+        LOWER(
+          concat_ws(
+            ' ',
+            staffs.username,
+            staffs."firstName",
+            staffs."lastName",
+            staffs.email,
+            staffs.id::varchar,
+            staffs.uid
+          )
+        ) LIKE ALL(ARRAY [:search])
+        AND staffs."deletedAt" IS NULL
+      ORDER BY
+        staffs."updatedAt" DESC
+    `, {
+      type: QueryTypes.SELECT,
+      raw: true
+    })
   }
 
   return Staff

@@ -33,6 +33,10 @@
   "license": "ISC",
   "dependencies": {
     "@mailchimp/mailchimp_transactional": "^1.0.50",
+    "ajv": "^8.11.2",
+    "ajv-errors": "^3.0.0",
+    "ajv-formats": "^2.1.1",
+    "ajv-keywords": "^5.1.0",
     "axios": "^1.2.0",
     "bcrypt": "^5.1.0",
     "cache-manager": "^5.1.4",

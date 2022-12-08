@@ -1,6 +1,8 @@
 'use strict'
 
+const Ajv = require('ajv')
 const { Router } = require('express')
+const ajvFormats = require('ajv-formats')
 
 const {
   metaHelper,
@@ -11,6 +13,7 @@ const {
 } = require('@/src/middlewares')
 const handler = require('./handlers')
 const { ROLE } = require('@/src/constants')
+const errors = require('@/src/classes/errors')
 const { withErrorHandler } = require('@/src/helpers/routes')
 
 const roles = [
@@ -21,23 +24,27 @@ const roles = [
 const canModify = [...roles, ROLE.POUCHFI_STAFF]
 const canView = [...canModify, ROLE.POUCHFI_CS]
 
+const inviteAJV = new Ajv()
+ajvFormats(inviteAJV)
+
 /**
  * Mount endpoints for `/admin/users`
  *
  * @param {Router} router - Express Router
  */
 module.exports = router => {
-  const userRouter = Router({
+  const staffRouter = Router({
     strict: true,
     mergeParams: true,
     caseSenstitive: true
   })
 
-  userRouter.post(
+  staffRouter.post(
     '/invite',
     secureLimiter,
     authenticated,
     rolePermission(roles),
+    inviteValidator,
     withErrorHandler(async (req, res) => {
       const inviter = req.user
       const invitee = req.body
@@ -47,7 +54,7 @@ module.exports = router => {
     })
   )
 
-  userRouter.get(
+  staffRouter.get(
     '/list',
     normalLimiter,
     authenticated,
@@ -60,7 +67,7 @@ module.exports = router => {
     })
   )
 
-  userRouter.get(
+  staffRouter.get(
     '/one/:uid',
     secureLimiter,
     authenticated,
@@ -73,7 +80,7 @@ module.exports = router => {
     })
   )
 
-  userRouter.delete(
+  staffRouter.delete(
     '/one/:uid',
     secureLimiter,
     authenticated,
@@ -84,7 +91,7 @@ module.exports = router => {
     })
   )
 
-  userRouter.patch(
+  staffRouter.patch(
     '/one',
     secureLimiter,
     authenticated,
@@ -95,7 +102,7 @@ module.exports = router => {
     })
   )
 
-  userRouter.post(
+  staffRouter.post(
     '/xls',
     secureLimiter,
     authenticated,
@@ -115,7 +122,7 @@ module.exports = router => {
     })
   )
 
-  userRouter.post(
+  staffRouter.post(
     '/resend_invitation',
     secureLimiter,
     authenticated,
@@ -126,5 +133,56 @@ module.exports = router => {
     })
   )
 
-  router.use('/users', userRouter)
+  staffRouter.get(
+    '/autosuggest',
+    secureLimiter,
+    authenticated,
+    metaHelper(),
+    withErrorHandler(async (req, res, next) => {
+      const data = await handler.autosuggest(req.query, res.locals.getProps())
+      res.locals.setData(data)
+      next()
+    })
+  )
+
+  const inviteValidate = inviteAJV.compile({
+    type: 'object',
+    required: [
+      'firstName',
+      'lastName',
+      'email',
+      'roleCode',
+      'language'
+    ],
+    properties: {
+      firstName: { type: 'string' },
+      lastName: { type: 'string' },
+      email: { type: 'string', format: 'email' },
+      roleCode: { type: 'string' }, // add more validation later
+      language: { type: 'string', enum: ['en-US', 'ja-JP'] }
+    }
+  })
+
+  function inviteValidator (req, _res, next) {
+    const allowedRolesForNonSuperAdmin = [
+      ROLE.SUPPLIER,
+      ROLE.POUCHFI_ADMIN
+    ]
+    const isValid = inviteValidate(req.body)
+    if (!isValid) {
+      const error = inviteValidate.errors[0]
+      return next(errors.api.unprocessableEntity(error.message))
+    }
+
+    const inviterRoleCode = req.user.roleCode
+    if (inviterRoleCode !== ROLE.SUPER_ADMIN) {
+      if (!allowedRolesForNonSuperAdmin.includes(req.body.roleCode)) {
+        return next(errors.api.forbidden(`Cannot invite ${req.body.roleCode} if inviter is ${inviterRoleCode}`))
+      }
+    }
+
+    next()
+  }
+
+  router.use('/users', staffRouter)
 }
