@@ -1,7 +1,7 @@
 'use strict'
 
 const jwt = require('jsonwebtoken')
-const moment = require('moment-timezone')
+const { DateTime } = require('luxon')
 
 const config = require('@config')
 const Cache = require('@/src/classes/cache')
@@ -163,7 +163,8 @@ async function _verifyAdminId (adminId) {
 async function checkValidToken (decoded) {
   const isObject = isPlainObject(decoded)
   if (!isObject) return false
-  if (decoded.exp < moment().unix()) return false
+
+  if (decoded.exp < DateTime.now().toSeconds()) return false
   const jwtKey = `${decoded.uid}-${decoded.iat}`
   const result = await Cache.get(jwtKey)
   return !result

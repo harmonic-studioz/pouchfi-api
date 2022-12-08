@@ -2,19 +2,21 @@ const Message = require('..')
 const constants = require('@constants')
 const { getTemplate } = require('@/src/helpers/email')
 
-class AdminInvitationMessage extends Message {
+class EmailErrorToAdminMessage extends Message {
   /**
    * @inheritdoc
    */
   getSubject () {
-    return 'Admin Invitation'
+    const { emailRecepient } = this.data
+
+    return `【internal】Email delivery error for ${emailRecepient}`
   }
 
   /**
    * @inheritdoc
    */
   getTag () {
-    return [constants.EMAIL_TYPE.USER_INVITATION]
+    return [constants.EMAIL_TYPE.EMAIL_ERROR_TO_ADMIN]
   }
 
   /**
@@ -34,7 +36,7 @@ class AdminInvitationMessage extends Message {
    */
   async getTemplate () {
     const template = await getTemplate(
-      constants.EMAIL_TYPE.USER_INVITATION,
+      constants.EMAIL_TYPE.EMAIL_ERROR_TO_ADMIN,
       this.language,
       this.data
     )
@@ -43,4 +45,4 @@ class AdminInvitationMessage extends Message {
   }
 }
 
-module.exports = AdminInvitationMessage
+module.exports = EmailErrorToAdminMessage

@@ -1,6 +1,6 @@
 'use strict'
 
-const moment = require('moment-timezone')
+const { Duration, DateTime } = require('luxon')
 const { RateLimiterRedis, RateLimiterMemory } = require('rate-limiter-flexible')
 
 const Cache = require('@Cache')
@@ -40,7 +40,7 @@ const limiter = (points, duration) => (req, res, next) => {
       res.setHeader('X-RateLimit-Remaining', rateLimiterRes.remainingPoints)
       res.setHeader(
         'X-RateLimit-Reset',
-        moment.unix(moment().unix() + rateLimiterRes.msBeforeNext / 1000).fromNow()
+        Duration.fromMillis(DateTime.now().toMillis() + rateLimiterRes.msBeforeNext).toHuman()
       )
       next()
     }).catch((rateLimiterRes) => {
@@ -49,7 +49,7 @@ const limiter = (points, duration) => (req, res, next) => {
       res.setHeader('X-RateLimit-Remaining', rateLimiterRes.remainingPoints)
       res.setHeader(
         'X-RateLimit-Reset',
-        moment.unix(moment().unix() + rateLimiterRes.msBeforeNext / 1000).fromNow()
+        Duration.fromMillis(DateTime.now().toMillis() + rateLimiterRes.msBeforeNext).toHuman()
       )
       res.status(429).send({
         error: {

@@ -2,6 +2,8 @@
 
 const { Router } = require('express')
 
+const mail = require('./mail')
+
 /**
  * Mount endpoints for `/webhooks`
  *
@@ -12,6 +14,8 @@ module.exports = router => {
     strict: true,
     caseSensitive: true
   })
+
+  mail(webhooks)
 
   router.use('/webhooks', webhooks)
 }
