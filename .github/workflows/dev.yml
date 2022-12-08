@@ -31,7 +31,7 @@ jobs:
 
       - name: Create Keys
         run: apk add bash
-      - run: chmod x ./scripts/setup-ci.sh
+      - run: chmod +x ./scripts/setup-ci.sh
       - run: ./scripts/setup-ci.sh
 
       - name: Install dependencies

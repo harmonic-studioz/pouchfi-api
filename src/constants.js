@@ -38,5 +38,12 @@ module.exports = {
   SLACK_NOTIFICATION: {
     INFO: 'info',
     ADMIN: 'admin'
+  },
+
+  USER_HISTORY: {
+    EMAIL: 'email',
+    PASSWORD: 'password',
+    PASSWORD_RESET: 'passwordReset',
+    UPDATED: 'updated'
   }
 }
