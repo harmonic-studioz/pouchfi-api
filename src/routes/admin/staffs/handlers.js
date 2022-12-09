@@ -16,7 +16,7 @@ const base64 = require('@/src/helpers/base64')
 const { formatDate, getLocale } = require('@/src/helpers')
 const { ROLE, EMAIL_TYPE } = require('@/src/constants')
 const { ApiError, api } = require('@/src/classes/errors')
-const SendMail = require("@/src/services/email/SendMail")
+const SendMail = require('@/src/services/email/SendMail')
 
 const ADMIN_HOST = config.admin.host
 const invitationUrl = `${ADMIN_HOST}/register`

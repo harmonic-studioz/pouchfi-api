@@ -112,7 +112,7 @@ module.exports = router => {
       const {
         report,
         fileName
-      } = await handler.xls(req.query, req.user.displayname, res.locals.getProps())
+      } = await handler.xls(req.query, req.user.username, res.locals.getProps())
       res.set({
         'Content-disposition': `attachment; filename=${fileName}`,
         'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'

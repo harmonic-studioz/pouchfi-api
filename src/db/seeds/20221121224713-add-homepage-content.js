@@ -13,7 +13,7 @@ module.exports = {
    */
   async up (queryInterface, Sequelize) {
     await queryInterface.bulkInsert(
-      'homepageContent',
+      'homepageContents',
       [
         {
           id: 1,
@@ -125,7 +125,6 @@ module.exports = {
   },
 
   /**
-   * @typedef {import ("sequelize").Sequelize} Sequelize
    * @typedef {import ("sequelize").QueryInterface} QueryInterface
    */
 
