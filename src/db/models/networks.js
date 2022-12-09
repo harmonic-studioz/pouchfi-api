@@ -67,6 +67,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     tableName: 'networks',
+    schema: 'public',
     defaultScope: {
       attributes: {
         exclude: ['rpcTest', 'blockExplorer', 'api', 'createdAt', 'updatedAt']
@@ -81,8 +82,8 @@ module.exports = (sequelize, DataTypes) => {
       as: 'tokens'
     })
 
-    Network.belongsToMany(models.guests, {
-      through: 'guestNetworks',
+    Network.belongsToMany(models.users, {
+      through: 'userNetworks',
       onDelete: 'CASCADE',
       as: 'users',
       foreignKey: 'networkId'

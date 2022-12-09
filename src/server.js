@@ -14,7 +14,7 @@ async function runServer () {
   /**
    * Start App
    */
-  app.listen(port, async () => {
+  const server = app.listen(port, async () => {
     logger.info(`server is listening port ${port}`)
 
     if (config.isDev && process.env.TUNNEL) {
@@ -44,7 +44,7 @@ async function runServer () {
   process.on('SIGTERM', () => {
     logger.info('SIGTERM signal received: closing HTTP server')
 
-    app.close(() => {
+    server.close(() => {
       logger.info('HTTP server closed')
     })
   })

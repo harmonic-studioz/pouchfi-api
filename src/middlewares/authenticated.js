@@ -1,17 +1,27 @@
 'use strict'
 
+/**
+ * @typedef {import ("@models").dummyModel} Model
+ *
+ */
+
 const jwt = require('jsonwebtoken')
 const { DateTime } = require('luxon')
 
+/**
+ * @type {Object.<string, Model>}
+ */
+const db = require('@models')
 const config = require('@config')
 const Cache = require('@/src/classes/cache')
 const errors = require('@/src/classes/errors')
 const { isPlainObject } = require('@/src/helpers')
-const { guest: Guest, user: User } = require('@models')
+
+const Users = db.users
+const Staffs = db.staffs
 
 const USER_TYPE_HEADER = 'User-Type'
-const USER_TOKEN_HEADER = 'User-Token'
-const USER_IDENTITY_HEADER = 'User-Identity'
+const USER_TOKEN_HEADER = 'authorization'
 
 /**
  * Checks if the incoming request is authenticated
@@ -27,7 +37,7 @@ exports.authenticated = async function authenticated (req, res, next) {
     return next(errors.api.unauthorized('Not authorized, no token'))
   }
 
-  const decoded = User.verifyToken(token)
+  const decoded = Users.verifyToken(token)
   if (!decoded) {
     return next(errors.api.unauthorized('Token is invalid'))
   }
@@ -37,7 +47,7 @@ exports.authenticated = async function authenticated (req, res, next) {
     return next(errors.api.unauthorized('Token is invalid'))
   }
 
-  const user = await User.findByPk(decoded.uid)
+  const user = await Users.findByPk(decoded.uid)
   if (!user) {
     return next(errors.api.unauthorized('Not authorizes, invalid user'))
   }
@@ -46,7 +56,7 @@ exports.authenticated = async function authenticated (req, res, next) {
   return next()
 }
 
-exports.authorizeForGuest = authorizeFor('guest', _verifyGuestId)
+exports.authorizeForGuest = authorizeFor('guest', _verifyUserId)
 exports.authorizeForAdmin = authorizeFor('admin', _verifyAdminId)
 
 exports.rolePermission = function rolePermission (roleCode, orComparator = null) {
@@ -97,14 +107,19 @@ function authorizeFor (role, withUser) {
     if (!token) {
       return next(errors.api.unauthorized('token'))
     }
+    req.token = token
 
+    let claims
     try {
-      jwt.verify(token, config.authorization.secret)
+      claims = jwt.verify(token, config.jwtKeys.public, {
+        issuer: config.admin.host,
+        algorithms: 'RS256'
+      })
     } catch (err) {
       return next(err)
     }
 
-    const uid = req.get(USER_IDENTITY_HEADER)
+    const uid = claims.uid
     if (uid) {
       try {
         req.user = await withUser(uid)
@@ -123,12 +138,12 @@ function authorizeFor (role, withUser) {
  * @param {string} guestId - Guest ID
  * @returns {Promise<Object>} Guest details
  */
-async function _verifyGuestId (guestId) {
-  const guest = await Guest.findById(guestId)
+async function _verifyUserId (guestId) {
+  const guest = await Users.findByPk(guestId)
 
   if (!guest) {
     throw new errors.domain.EntityNotFound(guestId, {
-      model: Guest,
+      model: Users,
       property: 'uid'
     })
   }
@@ -143,11 +158,11 @@ async function _verifyGuestId (guestId) {
  * @returns {Promise<Object>} Guest details
  */
 async function _verifyAdminId (adminId) {
-  const user = await User.findById(adminId)
+  const user = await Staffs.findByPk(adminId)
 
   if (!user) {
     throw new errors.domain.EntityNotFound(adminId, {
-      model: User,
+      model: Staffs,
       property: 'uid'
     })
   }

@@ -7,8 +7,8 @@ const { exec } = require('child_process')
 const models = require('@models')
 const { postgres } = require('@config')
 
-const sequelize = new Sequelize(postgres.url, postgres.options)
 const dbName = postgres.database
+const sequelize = new Sequelize(postgres.url, postgres.options)
 
 init()
 

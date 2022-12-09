@@ -1,5 +1,5 @@
 const Message = require('..')
-const constants = require('@constants')
+const constants = require('@/src/constants')
 const { getTemplate } = require('@/src/helpers/email')
 
 class AdminInvitationMessage extends Message {

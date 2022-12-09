@@ -64,6 +64,14 @@ const {
   // slack channels hooks
   DEVELOPMENT_INFO,
 
+  // google app details
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET,
+
+  // facebook app details
+  FACEBOOK_CLIENT_ID,
+  FACEBOOK_CLIENT_SECRET,
+
   IS_STAGING
 } = process.env
 
@@ -174,6 +182,18 @@ module.exports = {
   jwtKeys: {
     public: fs.readFileSync('public.key'),
     private: fs.readFileSync('private.key')
+  },
+
+  google: {
+    clientID: GOOGLE_CLIENT_ID,
+    clientSecret: GOOGLE_CLIENT_SECRET,
+    strategyName: 'google'
+  },
+
+  facebook: {
+    clientID: FACEBOOK_CLIENT_ID,
+    clientSecret: FACEBOOK_CLIENT_SECRET,
+    strategyName: 'facebook'
   },
 
   time: getTimeFromString

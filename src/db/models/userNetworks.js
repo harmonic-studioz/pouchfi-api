@@ -13,7 +13,7 @@
  * @returns
  */
 module.exports = (sequelize, DataTypes) => {
-  const guestNetworks = sequelize.define('userNetworks', {
+  const userNetworks = sequelize.define('userNetworks', {
     id: {
       primaryKey: true,
       type: DataTypes.INTEGER,
@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
       references: {
-        model: 'guests',
+        model: 'users',
         key: 'uid'
       }
     },
@@ -37,10 +37,17 @@ module.exports = (sequelize, DataTypes) => {
         model: 'networks',
         key: 'id'
       }
-    }
+    },
+    // flag to determine if it is the current network user is on
+    current: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true
+    },
+    // user address for the network
+    address: DataTypes.STRING(1000)
   }, {
-    tableName: 'guestNetworks'
+    tableName: 'userNetworks'
   })
 
-  return guestNetworks
+  return userNetworks
 }

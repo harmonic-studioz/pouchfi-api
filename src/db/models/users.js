@@ -7,7 +7,7 @@ const { QueryTypes } = require('sequelize')
 
 const config = require('@config')
 const { LOCALE } = require('@/src/constants')
-const { api } = require('@/src/classes/errors')
+const { api, domain } = require('@/src/classes/errors')
 
 const BCRYPT_SALT_ROUNDS = 13
 const ADMIN_HOST = config.admin.host
@@ -203,7 +203,7 @@ module.exports = (sequelize, DataTypes) => {
     })
 
     User.belongsToMany(models.networks, {
-      through: 'guestNetworks',
+      through: 'userNetworks',
       onDelete: 'CASCADE',
       as: 'networks',
       foreignKey: 'userId'
@@ -507,6 +507,27 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     return inst
+  }
+
+  User.find = async function find (property, value) {
+    const user = await User.findOne({
+      where: {
+        [property]: value
+      }
+    })
+
+    if (!user) {
+      throw new domain.EntityNotFound(value, {
+        model: 'User',
+        property
+      })
+    }
+
+    if (user.inactive) {
+      throw api.forbidden('Access has been disabled for this Guest: ' + value)
+    }
+
+    return user
   }
 
   return User

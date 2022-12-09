@@ -65,18 +65,16 @@ db.dummyModel = dummyModel
 module.exports = db
 
 module.exports.init = async function init (retries = 0) {
-  try {
-    await Promise.all([
-      sequelize.sync(),
-      db.tokens.sync()
-    ])
-  } catch (err) {
-    if (retries >= 3) {
-      throw err
-    }
+  // try {
+  await sequelize.sync()
+  await db.tokens.sync()
+  // } catch (err) {
+  //   if (retries >= 3) {
+  //     throw err
+  //   }
 
-    ++retries
+  //   ++retries
 
-    return init(retries)
-  }
+  //   return init(retries)
+  // }
 }

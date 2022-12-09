@@ -17,7 +17,7 @@ const prison = require('@/src/classes/prison')
 const { ApiError } = require('@/src/classes/errors')
 const { sq, Sequelize: { QueryTypes } } = require('@models')
 
-const Users = db.users
+const Staffs = db.staffs
 
 exports = module.exports = {
   local: passport.authenticate('local')
@@ -78,14 +78,14 @@ exports._toHumanDuration = _toHumanDuration
  * @param {Function} done - Callback function
  */
 async function _verifyForLocalStrategy (email, password, done) {
-  const user = await Users.scope('role').findOne({
+  const staff = await Staffs.scope('role').findOne({
     where: {
       email,
       registeredFrom: 'email'
     }
   })
 
-  if (!user) {
+  if (!staff) {
     return done(new ApiError(
       404,
       'authentication_error',
@@ -94,7 +94,7 @@ async function _verifyForLocalStrategy (email, password, done) {
     ))
   }
 
-  const isPasswordMatched = await user.verifyPassword(password)
+  const isPasswordMatched = await staff.verifyPassword(password)
 
   const lock = await prison.cell(email)
 
@@ -129,7 +129,7 @@ async function _verifyForLocalStrategy (email, password, done) {
 
   await lock.free()
 
-  if (user.inactive) {
+  if (staff.inactive) {
     return done(new ApiError(
       401,
       'authentication_error',
@@ -140,21 +140,21 @@ async function _verifyForLocalStrategy (email, password, done) {
 
   // update last login
   await sq.query(`
-    UPDATE public.users SET "lastLogin" = now() WHERE uid = '${user.uid}'
+    UPDATE public.staffs SET "lastLogin" = now() WHERE uid = '${staff.uid}'
   `, {
     type: QueryTypes.UPDATE
   })
 
-  done(null, user.toClean())
+  done(null, staff.toClean())
 }
 exports._verifyForLocalStrategy = _verifyForLocalStrategy
 
-function serializer (user, done) {
-  done(null, user.uid)
+function serializer (staff, done) {
+  done(null, staff.uid)
 }
 
 async function deserializer (id, done) {
-  const user = await Users.scope('role').findByPk(id)
+  const staff = await Staffs.scope('role').findByPk(id)
 
-  done(null, user.toClean())
+  done(null, staff.toClean())
 }
