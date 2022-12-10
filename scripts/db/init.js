@@ -20,6 +20,7 @@ async function init () {
     ])
     await models.init()
     await execute('npx sequelize db:migrate')
+    await execute('npx sequelize db:seed:all')
 
     if (dbName.search('_test') > -1) {
       await execute(
