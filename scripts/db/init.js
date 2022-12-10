@@ -19,6 +19,10 @@ async function init () {
       'guests'
     ])
     await models.init()
+    // can these guys run in just the master pod?
+    /**
+     * @todo update this to run on just master pod
+     */
     await execute('npx sequelize db:migrate')
     await execute('npx sequelize db:seed:all')
 
