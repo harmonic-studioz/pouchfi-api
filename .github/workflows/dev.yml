@@ -40,5 +40,5 @@ jobs:
       - name: Rebuild package
         run: npm rebuild sharp
 
-      - name: Restart server
-        run: pm2 restart pouchfi
+      - name: start clusters
+        run: kubectl apply -f deployment.yaml
