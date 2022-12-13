@@ -1,0 +1,66 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+spec:
+  selector:
+    app: pouchfi
+  ports:
+    - protocol: 'TCP'
+      port: 80
+      targetPort: 3005
+    - protocol: 'TCP'
+      port: 443
+      targetPort: 443
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pouchfi-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pouchfi
+      tier: backend
+  template:
+    metadata:
+      labels:
+        app: pouchfi
+        tier: backend
+    spec:
+      containers:
+        - name: pouchfi-node
+          image: thedumebi/pouchfi:latest
+          imagePullPolicy: Always
+          resources:
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /healthcheck
+              port: 3005
+            periodSeconds: 10
+            initialDelaySeconds: 5
+          env:
+            - name: NODE_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: pouchfi-env
+                  key: env
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: pouchfi-env
+                  key: port
+          volumeMounts:
+            - mountPath: /app/uploads
+              name: pouchfi-uploads
+        # - name: ...
+        #   image: ...
+      volumes:
+        - name: pouchfi-uploads
+          persistentVolumnClaim:
+            claimName: pouchfi-pvc

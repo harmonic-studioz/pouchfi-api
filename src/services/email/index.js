@@ -1,55 +1,47 @@
-const { LOCALE } = require('@/src/constants')
-const { sendEmail } = require('@/src/helpers/email')
+'use strict'
 
-const AdminInvitation = require('./messages/staff/adminInvitation')
+// const fetch = require('node-fetch')
+const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args))
+const fetchResponseHandler = require('../helpers')
 
-module.exports = class SendMail {
-  /**
-   * Send email when a user has been invited to Pouchfi
-   * @param {object} data template data
-   * @param {object} user user data
-   * @param {string} locale template locale
-   * @returns {Promise<object>}
-   */
-  static async sendAdminInvitation (data, user, locale = LOCALE.EN) {
-    const recipient = {
-      name: user.username,
-      address: user.email
-    }
-
-    const meta = {
-      uid: user.uid,
-      invitedBy: data.inviter.uid
-    }
-
-    const inst = new AdminInvitation(locale, data, recipient, meta)
-    const message = await inst.buildMessage()
-    try {
-      return {
-        res: await sendEmail(message)
-      }
-    } catch (error) {
-      return {
-        message,
-        error
-      }
-    }
+class MandrillService {
+  constructor () {
+    this.basEndpoint = 'https://mandrillapp.com/api/1.0'
   }
 
   /**
-   * Bulk sends mail
-   * @param {Object[]} mails - Set of mails to sent
-   * @param {string} mails[].method - Mail method to use when sending
-   * @param {Any[]} mails[].args - Method arguments
-   * @returns {Promise<Object|void>} - Mails sent
+   * https://mandrillapp.com/api/docs/messages.JSON.html#method=info
+   * @param {number} id id
+   * @param {string} apiKey api key
    */
-  static async sendBulk (mails) {
-    const promises = []
-
-    for (const { method, args } of mails) {
-      promises.push(SendMail[method].apply(null, args))
-    }
-
-    return Promise.all(promises)
+  async messageInfo (id, apiKey) {
+    const moduleName = 'mandrill_messageinfo'
+    const path = '/messages/info.json'
+    const time = process.hrtime()
+    let diff
+    let elapse
+    const res = await fetch(`${this.basEndpoint}${path}`, {
+      method: 'POST',
+      body: JSON.stringify({
+        id,
+        key: apiKey
+      })
+    })
+    return new Promise((resolve, reject) => {
+      fetchResponseHandler(res, moduleName)
+        .then(async _resJson => {
+          diff = process.hrtime(time)
+          elapse = `${diff[0]}sec ${diff[1] * 1e-6}ms`
+          resolve(_resJson)
+        })
+        .catch(err => {
+          diff = process.hrtime(time)
+          elapse = `${diff[0]}sec ${diff[1] * 1e-6}ms`
+          console.log(moduleName, path, elapse, err)
+          reject(err)
+        })
+    })
   }
 }
+
+module.exports = MandrillService

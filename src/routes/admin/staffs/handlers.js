@@ -13,14 +13,15 @@ const db = require('@models')
 const config = require('@config')
 const { Sequelize } = require('@models')
 const base64 = require('@/src/helpers/base64')
-const { formatDate } = require('@/src/helpers')
+const { formatDate, getLocale } = require('@/src/helpers')
 const { ROLE, EMAIL_TYPE } = require('@/src/constants')
 const { ApiError, api } = require('@/src/classes/errors')
+const SendMail = require('@/src/services/email/SendMail')
 
 const ADMIN_HOST = config.admin.host
 const invitationUrl = `${ADMIN_HOST}/register`
 
-const Users = db.users
+const Staffs = db.staffs
 const Roles = db.roles
 
 /**
@@ -30,11 +31,11 @@ const Roles = db.roles
  * @param {object} req request object
  */
 exports.inviteUser = async function inviteUser (inviter, invitee) {
-  let user = await Users.findOne({
+  let staff = await Staffs.findOne({
     where: { email: invitee.email.toLowerCase() }
   })
 
-  if (user) {
+  if (staff) {
     throw new ApiError(400, 'invalid_request_error', 'email_exist', 'Invalid param "email", email already taken.')
   }
 
@@ -57,7 +58,7 @@ exports.inviteUser = async function inviteUser (inviter, invitee) {
     throw api.badRequest('This e-mail is invalid.')
   }
 
-  user = await Users.create({
+  staff = await Staffs.create({
     email: invitee.email,
     uid: '',
     firstName: invitee.firstName,
@@ -74,41 +75,31 @@ exports.inviteUser = async function inviteUser (inviter, invitee) {
   })
 
   // token and email creation
-  const tokenTimestamp = Date.now().toString()
-  const token = user.getInvitationToken({
-    expiration: user.roleCode === ROLE.SUPPLIER && '14 days',
-    timestamp: tokenTimestamp
+  const tokenTimestamp = Date.now()
+  const token = staff.getInvitationToken({
+    expiration: staff.roleCode === ROLE.SUPPLIER && '14 days',
+    timestamp: tokenTimestamp.toString()
   })
 
-  const history = user.history
+  const history = staff.history
   const link = new URL(invitationUrl)
   link.searchParams.set('actionToken', token)
   link.searchParams.set('action', 'INVITE')
-  link.searchParams.set('email', user.email)
-  link.searchParams.set('firstName', user.firstName)
-  link.searchParams.set('lastName', user.lastName)
+  link.searchParams.set('email', staff.email)
+  link.searchParams.set('firstName', staff.firstName)
+  link.searchParams.set('lastName', staff.lastName)
 
   const callbackUrl = new URL(config.service.host)
   callbackUrl.pathname = '/__internal/emails/users/update'
   callbackUrl.searchParams.set('emailId', base64.encode(tokenTimestamp))
-  callbackUrl.searchParams.set('userId', base64.encode(user.uid))
+  callbackUrl.searchParams.set('userId', base64.encode(staff.uid))
 
-  const data = {
-    username: `${user.firstName} ${user.lastName}`,
-    '<%= link %>': link.href.trim(),
-    inviter,
-    '<%= emailLink %>': callbackUrl.href.trim()
-  }
-  console.log(data)
-
-  const sent = {
-    error: true,
-    message: { html: '...' }
-  }
-
-  /**
-   * @todo set up email sending (MAKE USE OF DATA TO PASS TO TEMPLATE)
-   */
+  const sent = await SendMail.sendAdminInvitation(
+    staff,
+    link,
+    req,
+    getLocale(staff.language && staff.language.toLowerCase())
+  )
 
   let historyOpts = {}
   if (sent.error) {
@@ -142,8 +133,8 @@ exports.inviteUser = async function inviteUser (inviter, invitee) {
     read: false
   })
 
-  await user.changed('history', true)
-  await user.save()
+  staff.changed('history', true)
+  await staff.save()
 }
 
 /**
@@ -154,7 +145,7 @@ exports.inviteUser = async function inviteUser (inviter, invitee) {
  * @returns {Promise<boolean>}
  */
 exports.list = async function list (query, props, isExport = false) {
-  const { users, count } = await Users.list(query, isExport)
+  const { users, count } = await Staffs.list(query, isExport)
 
   const outlets = { items: users, totalItems: count }
   return {
@@ -172,7 +163,7 @@ exports.list = async function list (query, props, isExport = false) {
 exports.one = async function one (uid, props) {
   const outlets = { details: undefined }
 
-  const user = await Users.one(uid)
+  const user = await Staffs.one(uid)
   outlets.details = user
 
   return {
@@ -188,7 +179,7 @@ exports.one = async function one (uid, props) {
  */
 exports.deleteUser = async function deleteUser (body, editor) {
   const { uid, password, ...rest } = body
-  const user = await Users.scope(null).findByPk(uid)
+  const user = await Staffs.scope(null).findByPk(uid)
   if (!user) {
     throw api.badRequest('User does not exist.')
   }
@@ -205,7 +196,7 @@ exports.deleteUser = async function deleteUser (body, editor) {
   user.changed('history', true)
   await user.update({ ...data, history })
 
-  const userInst = await Users.scope('role').findOne({
+  const userInst = await Staffs.scope('role').findOne({
     where: { uid: editor.uid, registeredFrom: 'email' }
   })
   const isPasswordmatched = await userInst.validPassword(password)
@@ -222,7 +213,7 @@ exports.deleteUser = async function deleteUser (body, editor) {
  */
 exports.updateUser = async function updateUser (body, editor) {
   const { uid, password, ...rest } = body
-  const user = await Users.scope(null).findByPk(uid)
+  const user = await Staffs.scope(null).findByPk(uid)
   if (!user) {
     throw api.badRequest('User does not exist.')
   }
@@ -240,21 +231,65 @@ exports.updateUser = async function updateUser (body, editor) {
   await user.update({ ...data, history })
 }
 
-exports.resendInvitation = async function resendInvitation (body, invitedBy, req) {
+/**
+ * Handler function to resend invite to user
+ * @param {object} body invitee data
+ * @param {object} inviter inviter data
+ * @param {object} req request object
+ */
+exports.resendInvitation = async function resendInvitation (body, inviter, req) {
   if (!body.email) {
     throw api.badRequest('Invalid payload email.')
   }
 
-  const user = await Users.findOne({
+  const staff = await Staffs.findOne({
     where: { email: body.email.toLowerCase() }
   })
-  if (!user) {
+  if (!staff) {
     throw api.badRequest('Email is not registered.')
   }
 
-  /**
-   * @todo send the email
-   */
+  const sent = await SendMail.sendAdminInvitation(
+    staff,
+    link,
+    req,
+    getLocale(staff.language && staff.language.toLowerCase())
+  )
+
+  let historyOpts = {}
+  if (sent.error) {
+    sent.message.html = '...'
+    historyOpts = {
+      event: {
+        status: 'fail',
+        type: EMAIL_TYPE.USER_INVITATION
+      },
+      req: sent.message,
+      res: sent.error
+    }
+  } else {
+    historyOpts = {
+      event: {
+        status: 'in-progress',
+        type: EMAIL_TYPE.USER_INVITATION
+      },
+      res: sent.res
+    }
+  }
+
+  history.push({
+    ...historyOpts,
+    createdAt: tokenTimestamp,
+    type: 'INVITATON_ISSUED',
+    byUid: inviter.uid,
+    by: inviter.email,
+    usedAt: null,
+    openedAt: null,
+    read: false
+  })
+
+  staff.changed('history', true)
+  await staff.save()
 }
 
 exports.xls = async function xls (query, generatedBy, props) {
@@ -340,5 +375,22 @@ exports.xls = async function xls (query, generatedBy, props) {
   return {
     report,
     fileName: `${fileNamePrefix}_users_report.xlsx`
+  }
+}
+
+/**
+ * Suggest user
+ * @param {object} query request query
+ * @param {object} props meta props
+ * @returns {Promise<object>}
+ */
+exports.autosuggest = async function autosuggest (query, props) {
+  const outlets = { items: [] }
+  const inst = await Staffs.suggest()
+  outlets.items = inst
+
+  return {
+    outlets,
+    meta: { ...props.meta }
   }
 }

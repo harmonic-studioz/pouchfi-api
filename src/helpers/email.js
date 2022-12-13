@@ -1,12 +1,19 @@
 'use strict'
 
-const Nodemailer = require('nodemailer')
+/**
+ * @typedef {import ("@models").dummyModel} Model
+ *
+ */
 
+const Mailchimp = require('@mailchimp/mailchimp_transactional')
+
+/**
+ * @type {Object.<string, Model>}
+ */
 const db = require('@models')
 const config = require('@config')
 
-const nodemailer = Nodemailer.createTransport(config.sendMail)
-exports.nodemailer = nodemailer
+const mailchimp = Mailchimp(config.mailchimp.apiKey)
 
 /**
  * Replace Placeholder on the email template
@@ -82,5 +89,5 @@ exports.getTemplate = async function getTemplate (templateName, language, data =
 }
 
 exports.sendEmail = async function sendEmail (msg) {
-  return nodemailer.sendMail(msg)
+  return mailchimp.messages.send(msg)
 }

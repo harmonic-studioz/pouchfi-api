@@ -18,7 +18,7 @@ module.exports = router => {
 
   cacheRouter.get('/', handler.index)
   cacheRouter.delete('/', withErrorHandler(handler.flush))
-  cacheRouter.delete('/:key', withErrorHandler(handler.find))
+  cacheRouter.get('/:key', withErrorHandler(handler.find))
   cacheRouter.delete('/:key', withErrorHandler(handler.delete))
 
   router.use('/cache', cacheRouter)

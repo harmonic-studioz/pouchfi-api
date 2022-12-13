@@ -31,7 +31,7 @@ jobs:
 
       - name: Create Keys
         run: apk add bash
-      - run: chmod 755 ./scripts/setup-ci.sh
+      - run: chmod +x ./scripts/setup-ci.sh
       - run: ./scripts/setup-ci.sh
 
       - name: Install dependencies
@@ -40,5 +40,11 @@ jobs:
       - name: Rebuild package
         run: npm rebuild sharp
 
-      - name: Restart server
-        run: pm2 restart pouchfi
+      - name: Add Config Map
+        run: kubectl apply -f k8s/env.yaml
+
+      - name: Add persistent volumes
+        run: kubectl apply -f k8s/pv.yaml
+
+      - name: start clusters
+        run: kubectl apply -f k8s/deployment.yaml

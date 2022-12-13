@@ -1,6 +1,6 @@
 'use strict'
 
-const Logger = require('../helpers/logger')
+const { Logger } = require('../helpers/logger')
 
 module.exports = (req, res, next) => {
   req.log = Logger(req.path, { serviceName: 'INTERNAL' })
@@ -15,7 +15,7 @@ module.exports = (req, res, next) => {
     status: undefined,
     requestUrl: req.url,
     requestMethod: req.method,
-    remoteIp: req.onnection.remoteAddress,
+    remoteIp: req.connection.remoteAddress,
     usrAgent: req.headers['user-agent'],
     responseSize: 0,
     latency: {}

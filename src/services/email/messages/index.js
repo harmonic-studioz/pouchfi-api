@@ -22,7 +22,7 @@ class Message {
    * @returns {String}
    */
   getFromEmail () {
-    return config.nodemailer.sender
+    return config.mailchimp.sender
   }
 
   /**
@@ -30,7 +30,7 @@ class Message {
    * @returns {String}
    */
   getFromName () {
-    return 'Swirge'
+    return 'Pouchfi'
   }
 
   /**
@@ -79,13 +79,18 @@ class Message {
    */
   async buildMessage () {
     return {
-      from: {
-        name: this.getFromName(),
-        address: this.getFromEmail()
-      },
-      ...this.getRecipient(),
+      track_clicks: false,
+      track_opens: false,
+      inline_css: true,
+      from_email: this.getFromEmail(),
+      from_name: this.getFromName(),
+      metadata: this.getMetaData(),
+      tags: this.getTag(),
+      to: this.getRecipient(),
+      html: await this.getTemplate(),
+      subaccount: config.mailchimp.account,
       subject: this.getSubject(),
-      html: await this.getTemplate()
+      preserve_recipients: true
     }
   }
 }

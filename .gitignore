@@ -41,3 +41,4 @@ coverage/
 /sitemap
 
 *.lock
+.DS_Store

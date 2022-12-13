@@ -3,7 +3,7 @@
 const Redis = require('ioredis')
 
 const config = require('@config')
-const Logger = require('./logger')
+const { Logger } = require('./logger')
 
 const logger = Logger('Redis')
 

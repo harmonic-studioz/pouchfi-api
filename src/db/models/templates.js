@@ -13,7 +13,7 @@
  * @returns
  */
 module.exports = (sequelize, DataTypes) => {
-  const Config = sequelize.define('configs', {
+  const Templates = sequelize.define('templates', {
     id: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
@@ -37,11 +37,11 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: 'email'
     }
   }, {
-    tableName: 'configs',
+    tableName: 'templates',
     paranoid: true
   })
 
-  Config.prototype.addHistory = async function (eventType, eventName, payload, transaction = null) {
+  Templates.prototype.addHistory = async function (eventType, eventName, payload, transaction = null) {
     const history = this.getDataValue('history') || []
     const eventLog = createEventLog(eventType, eventName, payload, this.getDataValue('value'))
     history.push(eventLog)
@@ -50,7 +50,7 @@ module.exports = (sequelize, DataTypes) => {
     await this.save({ hooks: false, transaction })
   }
 
-  return Config
+  return Templates
 }
 
 /**

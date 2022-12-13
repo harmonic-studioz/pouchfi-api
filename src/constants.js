@@ -11,6 +11,13 @@ module.exports = {
     JA: 'ja-jp'
   },
 
+  LANG: {
+    EN: 'en',
+    JA: 'ja',
+    ZH: 'zh',
+    ZT: 'zt'
+  },
+
   ROLE: {
     SUPER_ADMIN: 'SUPER_ADMIN',
     CLIENT_ADMIN: 'CLIENT_ADMIN',
@@ -38,5 +45,12 @@ module.exports = {
   SLACK_NOTIFICATION: {
     INFO: 'info',
     ADMIN: 'admin'
+  },
+
+  USER_HISTORY: {
+    EMAIL: 'email',
+    PASSWORD: 'password',
+    PASSWORD_RESET: 'passwordReset',
+    UPDATED: 'updated'
   }
 }

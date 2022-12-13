@@ -7,8 +7,8 @@ const { exec } = require('child_process')
 const models = require('@models')
 const { postgres } = require('@config')
 
-const sequelize = new Sequelize(postgres.url, postgres.options)
 const dbName = postgres.database
+const sequelize = new Sequelize(postgres.url, postgres.options)
 
 init()
 
@@ -19,7 +19,12 @@ async function init () {
       'guests'
     ])
     await models.init()
+    // can these guys run in just the master pod?
+    /**
+     * @todo update this to run on just master pod
+     */
     await execute('npx sequelize db:migrate')
+    await execute('npx sequelize db:seed:all')
 
     if (dbName.search('_test') > -1) {
       await execute(

@@ -2,9 +2,10 @@
 
 module.exports = {
   up: async (queryInterface) => {
-    await queryInterface.bulkInsert('staff', [{
+    await queryInterface.bulkInsert('staffs', [{
+      id: 1,
       uid: 'url5Xy8pPbKj4VQDW',
-      displayName: 'Super Admin',
+      username: 'Super Admin',
       firstName: 'Super',
       lastName: 'Admin',
       email: 'chiwuzohdumebi@gmail.com', // change this later
@@ -18,6 +19,6 @@ module.exports = {
   },
 
   down: async (queryInterface) => {
-    await queryInterface.bulkDelete('users')
+    await queryInterface.bulkDelete('staffs')
   }
 }
