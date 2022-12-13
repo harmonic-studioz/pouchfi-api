@@ -40,5 +40,11 @@ jobs:
       - name: Rebuild package
         run: npm rebuild sharp
 
+      - name: Add Config Map
+        run: kubectl apply -f k8s/env.yaml
+
+      - name: Add persistent volumes
+        run: kubectl apply -f k8s/pv.yaml
+
       - name: start clusters
-        run: kubectl apply -f deployment.yaml
+        run: kubectl apply -f k8s/deployment.yaml
