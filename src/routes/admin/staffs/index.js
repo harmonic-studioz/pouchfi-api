@@ -49,7 +49,7 @@ module.exports = router => {
       const inviter = req.user
       const invitee = req.body
 
-      await handler.inviteUser(inviter, invitee)
+      await handler.inviteUser(inviter, invitee, req)
       res.json({ ok: true })
     })
   )

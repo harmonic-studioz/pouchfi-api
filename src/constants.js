@@ -31,7 +31,8 @@ module.exports = {
 
   EMAIL_TYPE: {
     USER_INVITATION: 'user_invitation',
-    CRON_JOB_ERROR: 'cron_job_error'
+    CRON_JOB_ERROR: 'cron_job_error',
+    PARTNER_WITH_US: 'partner_with_us'
   },
 
   REGISTERED_FROM: {
