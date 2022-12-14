@@ -88,9 +88,9 @@ class Message {
       tags: this.getTag(),
       to: this.getRecipient(),
       html: await this.getTemplate(),
-      subaccount: config.mailchimp.account,
       subject: this.getSubject(),
-      preserve_recipients: true
+      preserve_recipients: true,
+      ...(config.mailchimp.account ? { subaccount: config.mailchimp.account } : {})
     }
   }
 }

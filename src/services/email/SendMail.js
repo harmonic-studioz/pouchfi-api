@@ -2,10 +2,41 @@ const config = require('@config')
 const { LOCALE } = require('@/src/constants')
 const { sendEmail } = require('@/src/helpers/email')
 
+const PartnerWithUs = require('./messages/PartnerWithUs')
 const AdminInvitation = require('./messages/staff/adminInvitation')
 const EmailErrorToAdminMessage = require('./messages/staff/emailErrorToAdmin')
 
 module.exports = class SendMail {
+  /**
+   * Send email when a guest requests partnership
+   * @param {object} sender sender data
+   * @param {string} sender.email sender email
+   * @param {string} sender.name sender name
+   * @param {string} html message to be send
+   * @param {Array<object>} attachments file attachments
+   * @param {string} locale template locale
+   * @returns {Promise<object>}
+   */
+  static async sendPartnershipEmail (html, attachments, locale = LOCALE.EN) {
+    const recipient = {
+      email: config.emails.partnership,
+      name: 'Partnerships'
+    }
+
+    const inst = new PartnerWithUs(locale, {}, recipient, {}, attachments, html)
+    const message = await inst.buildMessage()
+    try {
+      return {
+        res: await sendEmail({ message })
+      }
+    } catch (error) {
+      return {
+        message,
+        error
+      }
+    }
+  }
+
   /**
    * Send email when a user has been invited to Pouchfi
    * @param {object} invitedUser invited user data
