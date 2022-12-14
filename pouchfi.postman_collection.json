@@ -1,0 +1,286 @@
+{
+	"info": {
+		"_postman_id": "defe0d6b-c683-47f4-af87-be87cebe98f1",
+		"name": "Pouchfi",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Guest",
+			"item": [
+				{
+					"name": "Home Page",
+					"item": [
+						{
+							"name": "Get homepage content",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}homepage-contents/?language=en&locale=en-US&guestUid=uc63f0431859108edfec6d2e",
+									"host": [
+										"{{base_url}}homepage-contents"
+									],
+									"path": [
+										""
+									],
+									"query": [
+										{
+											"key": "language",
+											"value": "en"
+										},
+										{
+											"key": "locale",
+											"value": "en-US"
+										},
+										{
+											"key": "guestUid",
+											"value": "uc63f0431859108edfec6d2e"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Partners",
+					"item": [
+						{
+							"name": "Send New Partner Email",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "Daniel Chiwuzoh",
+											"type": "default"
+										},
+										{
+											"key": "email",
+											"value": "chiwuzohdaniel@gmail.com",
+											"type": "default"
+										},
+										{
+											"key": "files",
+											"type": "file",
+											"src": [],
+											"disabled": true
+										},
+										{
+											"key": "message",
+											"value": "Hi, I am testing the partnership email route. Attached to this mail is a document for you to look at.",
+											"type": "default"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}partner/email",
+									"host": [
+										"{{base_url}}partner"
+									],
+									"path": [
+										"email"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.request.headers.add({ key: \"User-Type\", value: 'guest' })"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Cache",
+			"item": [
+				{
+					"name": "Get key",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}__internal/cache/predictionary",
+							"host": [
+								"{{base_url}}__internal"
+							],
+							"path": [
+								"cache",
+								"predictionary"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Cache key",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}__internal/cache/rte_predictionary",
+							"host": [
+								"{{base_url}}__internal"
+							],
+							"path": [
+								"cache",
+								"rte_predictionary"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Flush",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}__internal/cache?pattern=*key_informations_client_list*",
+							"host": [
+								"{{base_url}}__internal"
+							],
+							"path": [
+								"cache"
+							],
+							"query": [
+								{
+									"key": "pattern",
+									"value": "*key_informations_client_list*"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Internal",
+			"item": [
+				{
+					"name": "Webhooks",
+					"item": [
+						{
+							"name": "Check Email Status",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "mailId",
+											"value": "086a4cf97d3a4e9c93fcbcf641406d2a",
+											"type": "default"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}__internal/webhooks/mail/status",
+									"host": [
+										"{{base_url}}__internal"
+									],
+									"path": [
+										"webhooks",
+										"mail",
+										"status"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Cache",
+					"item": []
+				},
+				{
+					"name": "Get Postman Collection",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "User-Type",
+								"value": "pouchDev",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}__internal/postman/",
+							"host": [
+								"{{base_url}}__internal"
+							],
+							"path": [
+								"postman",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"pm.environment.set(\"xsrf-token\", decodeURIComponent(pm.cookies.get(\"XSRF-TOKEN\")))",
+					"// local",
+					"pm.request.headers.add({",
+					"    key: \"User-Token\",",
+					"    value: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJob3N0IjoiaHR0cDovL2xvY2FsaG9zdDozMDA0IiwiaWF0IjoxNjUxNjYzODMwfQ.J15W0tsZuN8N27TBF6wxJu3PoLoBJqRQoysDx14Iy8I'",
+					"})",
+					"// stg",
+					"// pm.request.headers.add({",
+					"//     key: \"User-Token\",",
+					"//     value: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJob3N0IjoiaHR0cHM6Ly9zdGctYXBpLXZveWFnaW4ucmFrdXRlbnRyYXZlbHhjaGFuZ2UuY29tIiwiaWF0IjoxNjU5Mzg5NzA1fQ.-PPXHDwkhkuM4fdXmBtDNXQy89dXLBMjnLPXP2WnlGE'",
+					"// })"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3005/",
+			"type": "default"
+		}
+	]
+}
