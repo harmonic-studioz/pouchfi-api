@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "defe0d6b-c683-47f4-af87-be87cebe98f1",
-		"name": "Pouchfi",
+		"_postman_id": "ee7adca7-7c10-46b8-9bec-df0585b23f0a",
+		"name": "pouchfi",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -63,17 +63,23 @@
 										{
 											"key": "email",
 											"value": "chiwuzohdaniel@gmail.com",
+											"description": "the persons email",
 											"type": "default"
 										},
 										{
 											"key": "files",
+											"description": "files to be attached. Maximum of three(3)",
 											"type": "file",
-											"src": [],
-											"disabled": true
+											"src": [
+												"/Users/danielchiwuzoh/Downloads/Customer Data Update Form - Copy.pdf",
+												"/Users/danielchiwuzoh/Downloads/LATEST SAVINGS MANDATE FORM.PDF",
+												"/Users/danielchiwuzoh/Downloads/Transaction Alert Form new.pdf"
+											]
 										},
 										{
 											"key": "message",
 											"value": "Hi, I am testing the partnership email route. Attached to this mail is a document for you to look at.",
+											"description": "The message to be sent",
 											"type": "default"
 										}
 									]
@@ -85,6 +91,46 @@
 									],
 									"path": [
 										"email"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Users",
+					"item": [
+						{
+							"name": "Waitlist User",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "email",
+											"value": "daniel.chiwuzoh@stu.cu.edu.ng",
+											"description": "user email",
+											"type": "default"
+										},
+										{
+											"key": "username",
+											"value": "dm",
+											"description": "username to be reserved for user",
+											"type": "default",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}users/waitlist",
+									"host": [
+										"{{base_url}}users"
+									],
+									"path": [
+										"waitlist"
 									]
 								}
 							},
@@ -194,7 +240,7 @@
 									"urlencoded": [
 										{
 											"key": "mailId",
-											"value": "086a4cf97d3a4e9c93fcbcf641406d2a",
+											"value": "0b3eb44372064885ac0e8d488c828064",
 											"type": "default"
 										}
 									]

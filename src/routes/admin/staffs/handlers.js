@@ -52,8 +52,7 @@ exports.inviteUser = async function inviteUser (inviter, invitee, req) {
     throw new ApiError(403, 'authentication_error', 'unauthorized', 'No permissions to set this role')
   }
 
-  const emailRegex =
-      /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
+  const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
   if (emailRegex.test(invitee.email) === false) {
     throw api.badRequest('This e-mail is invalid.')
   }

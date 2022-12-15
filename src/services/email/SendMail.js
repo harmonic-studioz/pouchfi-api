@@ -4,14 +4,12 @@ const { sendEmail } = require('@/src/helpers/email')
 
 const PartnerWithUs = require('./messages/PartnerWithUs')
 const AdminInvitation = require('./messages/staff/adminInvitation')
+const WaitlistNotification = require('./messages/users/waitlistNotification')
 const EmailErrorToAdminMessage = require('./messages/staff/emailErrorToAdmin')
 
 module.exports = class SendMail {
   /**
    * Send email when a guest requests partnership
-   * @param {object} sender sender data
-   * @param {string} sender.email sender email
-   * @param {string} sender.name sender name
    * @param {string} html message to be send
    * @param {Array<object>} attachments file attachments
    * @param {string} locale template locale
@@ -67,6 +65,36 @@ module.exports = class SendMail {
     }
 
     const inst = new AdminInvitation(locale, data, recipient, meta)
+    const message = await inst.buildMessage()
+    try {
+      return {
+        res: await sendEmail({ message })
+      }
+    } catch (error) {
+      return {
+        message,
+        error
+      }
+    }
+  }
+
+  /**
+   * Send email when a user has applied to Pouchfi waitlist
+   * @param {object} waitlistUser invited user data
+   * @param {string} locale template locale
+   * @returns {Promise<object>}
+   */
+  static async sendWaitlistEmail (waitlistUser, locale = LOCALE.EN) {
+    const data = {
+      email: waitlistUser.email,
+      siteURL: config.guest.host
+    }
+
+    const recipient = {
+      email: waitlistUser.email
+    }
+
+    const inst = new WaitlistNotification(locale, data, recipient, {})
     const message = await inst.buildMessage()
     try {
       return {
