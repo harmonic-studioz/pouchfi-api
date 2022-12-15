@@ -42,5 +42,11 @@ module.exports = [
     language: 'en-us',
     type: 'email',
     fileTemplate: loadHTMLTemplate(`${constants.EMAIL_TYPE.USER_INVITATION}_en-us`)
+  },
+  {
+    name: constants.EMAIL_TYPE.WAITLIST_NOTIFICATION,
+    language: 'en-us',
+    type: 'email',
+    fileTemplate: loadHTMLTemplate(`${constants.EMAIL_TYPE.WAITLIST_NOTIFICATION}_en-us`)
   }
 ]

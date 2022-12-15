@@ -21,7 +21,7 @@
     "test:unit": "npm run test tests/unit",
     "test:integration": "npm run test tests/integration",
     "test:coverage": "npm run test -- --coverage",
-    "seed:template": "npx sequelize-cli db:seed:undo --seed 20210317091140-add-templates.js && npx sequelize-cli db:seed --seed 20210317091140-add-templates.js"
+    "seed:template": "npx sequelize-cli db:seed:undo --seed 20221215154923-add-templates.js && npx sequelize-cli db:seed --seed 20221215154923-add-templates.js"
   },
   "engines": {
     "node": ">=18.12.1"

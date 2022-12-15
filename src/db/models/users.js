@@ -42,7 +42,13 @@ module.exports = (sequelize, DataTypes) => {
     // user username
     username: {
       type: DataTypes.TEXT,
-      unique: true
+      unique: true,
+      validate: {
+        len: {
+          args: [3, 32],
+          msg: 'Username must be within three(3) and thirty-two(32)'
+        }
+      }
     },
     // user first name
     firstName: DataTypes.STRING,
@@ -162,6 +168,11 @@ module.exports = (sequelize, DataTypes) => {
     // user spending wallet account balance
     balance: {
       type: DataTypes.DECIMAL
+    },
+    // waitlist flag to see if user was waitlisted
+    waitlist: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
     }
   }, {
     schema: 'public',
@@ -175,7 +186,8 @@ module.exports = (sequelize, DataTypes) => {
           'invitedByUid',
           'passwordHash',
           'deletedAt',
-          'lastLogin'
+          'lastLogin',
+          'waitlist'
         ]
       }
     }
@@ -187,12 +199,19 @@ module.exports = (sequelize, DataTypes) => {
     user.setDataValue('uid', uid)
     user.uid = uid
   })
-  User.addHook('beforeCreate', async staff => {
-    const isUsernameSet = staff.getDataValue('username')
+  User.addHook('beforeCreate', async user => {
+    const isUsernameSet = user.getDataValue('username')
     if (isUsernameSet) return
-    const username = `${staff.firstName}${staff.lastName}${Math.random().toString(36).slice(2, 4)}`
-    staff.setDataValue('username', username)
-    staff.username = username
+    if (!user.firstName && !user.lastName) return
+    const username = user.firstName
+      ? user.lastName
+        ? `${user.firstName}${user.lastName}${Math.random().toString(36).slice(2, 4)}`
+        : `${user.firstName}${Math.random().toString(36).slice(2, 4)}`
+      : `${user.lastName}${Math.random().toString(36).slice(2, 4)}`
+    if (username) {
+      user.setDataValue('username', username)
+      user.username = username
+    }
   })
 
   // associations
