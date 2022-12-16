@@ -1,31 +1,24 @@
 'use strict'
 
-const Ajv = require('ajv')
 const { Router } = require('express')
-const ajvFormats = require('ajv-formats')
 
 const {
-  metaHelper,
-  normalLimiter,
+  secureLimiter,
   authenticated,
   rolePermission
 } = require('@/src/middlewares')
-const handlers = require('./handers')
+const handlers = require('./handlers')
 const { ROLE } = require('@/src/constants')
 const { withErrorHandler } = require('@/src/helpers/routes')
 
 const roles = [
   ROLE.SUPER_ADMIN,
-  ROLE.POUCHFI_ADMIN,
-  ROLE.POUCHFI_ACCOUNTING
+  ROLE.POUCHFI_ADMIN
 ]
 const canModify = [...roles, ROLE.POUCHFI_STAFF]
 
-const inviteAJV = new Ajv()
-ajvFormats(inviteAJV)
-
 /**
- * Mount endpoints for `/admin/users`
+ * Mount endpoints for `/admin/networks`
  *
  * @param {Router} _router - Express Router
  */
@@ -36,18 +29,16 @@ module.exports = _router => {
     caseSenstitive: true
   })
 
-  router.get(
-    '/list',
-    normalLimiter,
+  router.post(
+    '/custom',
+    secureLimiter,
     authenticated,
     rolePermission(canModify),
-    metaHelper(),
-    withErrorHandler(async (req, res, next) => {
-      const data = await handlers.list(req.query)
-      res.locals.setData(data)
-      next()
+    withErrorHandler(async (req, res) => {
+      const result = await handlers.sendUsersMail(req.body)
+      res.json(result)
     })
   )
 
-  _router.use('/users', router)
+  _router.use('/networks', router)
 }
