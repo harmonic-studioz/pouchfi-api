@@ -56,6 +56,7 @@ npm run dev
 As this repo is using `husky` + `lint-staged`, on every commit the `pre-commit` hook will trigger and process all the staged files through ESLint. The purpose of this, is to maintain code consistency across developers that will be working with this repo. If you want bypass this, one can add the `--no-verify` flag to the `git commit` command, but **please** avoid doing this (unless necessary) as this will defeat the purpose on why we're using these tools.
 
 ### Tests
+
 #### Run Unit Tests
 
 ```shell
@@ -63,6 +64,7 @@ npm run test:unit
 ```
 
 #### Run Integration Tests
+
 In order to run the integration tests, we need to setup the test database first. Suffix the database name with `_test` to make sure that we are using a test database.
 
 ```shell
@@ -72,14 +74,17 @@ npm run test:integration
 ```
 
 #### Run All Tests
+
 ```shell
 npm run test
 ```
 
 #### Run All Tests with Coverage Report
+
 ```shell
 npm run test:coverage
 ```
+
 ### VS Code
 
 #### EditorConfig
@@ -158,60 +163,75 @@ The example snippet shown below will check if the column exists before trying to
 
 ```js
 // Instead of
-await queryInterface.addColumn('orders', 'addOns', {
+await queryInterface.addColumn("orders", "addOns", {
   type: DataTypes.JSONB,
   allowNull: true,
-  defaultValue: {}
-})
+  defaultValue: {},
+});
 
 // write like this
 await queryInterface.sequelize.query(`
   ALTER TABLE IF EXISTS "public"."orders"
     ADD COLUMN IF NOT EXISTS "addOns" JSONB
     DEFAULT '{}';
-`)
+`);
 ```
 
 ## Environment Variables
 
-| Name | Default | Description |
-| --- | --- | --- |
-| `NODE_ENV` | `development ` | Current Node environment |
-| `APP_HOST` | `http://localhost:3004` | The host of the **Backend Service** |
-| `ADMIN_HOST` | `http://localhost:8080` | The host of the **Admin Frontend** |
-| `ADMIN_INVITATION_TOKEN_EXPIRATION` | `7 days` | The expiration for the invitation token |
-| `COOKIE_NAME` | `session` | The name for the session cookie |
-| `COOKIE_SECRET` | - | A value that will be used for signing cookies |
-| `COOKIE_MAX_AGE` | `15 minutes` | The `Max-Age` for the cookie |
-| `PG_HOST` | `localhost` | Host for Postgres instance |
-| `PG_PORT` | `5432` | Port of the Postgres instance |
-| `PG_USERNAME` | - | Username for Postgres instance |
-| `PG_PASSWORD` | - | Password for Postgres instance |
-| `PG_DATABASE` | - | Database name for Postgres instance |
-| `AUTHORIZATION_JWT_SECRET` | - | JWT secret used for verifying the token coming from the **Frontend** |
-
+| Name                                | Default                 | Description                                                          |
+| ----------------------------------- | ----------------------- | -------------------------------------------------------------------- |
+| `NODE_ENV`                          | `development `          | Current Node environment                                             |
+| `APP_HOST`                          | `http://localhost:3004` | The host of the **Backend Service**                                  |
+| `ADMIN_HOST`                        | `http://localhost:8080` | The host of the **Admin Frontend**                                   |
+| `ADMIN_INVITATION_TOKEN_EXPIRATION` | `7 days`                | The expiration for the invitation token                              |
+| `COOKIE_NAME`                       | `session`               | The name for the session cookie                                      |
+| `COOKIE_SECRET`                     | -                       | A value that will be used for signing cookies                        |
+| `COOKIE_MAX_AGE`                    | `15 minutes`            | The `Max-Age` for the cookie                                         |
+| `PG_HOST`                           | `localhost`             | Host for Postgres instance                                           |
+| `PG_PORT`                           | `5432`                  | Port of the Postgres instance                                        |
+| `PG_USERNAME`                       | -                       | Username for Postgres instance                                       |
+| `PG_PASSWORD`                       | -                       | Password for Postgres instance                                       |
+| `PG_DATABASE`                       | -                       | Database name for Postgres instance                                  |
+| `AUTHORIZATION_JWT_SECRET`          | -                       | JWT secret used for verifying the token coming from the **Frontend** |
 
 # Changelogs Templates:
+
 ## [`version_number`]
+
 ### Bug Fixing
+
 Defined the list of bug fixes:
+
 - [`ticket_number_if_exists`] - `title`
-`description`
+  `description`
 - etc...
+
 ### Major Updates
+
 Defined the major updates:
+
 - [`ticket_number_if_exists`] - `title`
-`description`
+  `description`
 - etc...
+
 ### Added dependencies
+
 Put added dependencies here:
+
 - `"express-rate-limit": "^3.3.2"`
 - etc...
+
 ### Updated dependencies
+
 Put updated dependencies here:
+
 - `"express-rate-limit": "^3.3.2"` -> `"^3.5.0"`
 - etc...
+
 ### Deleted dependencies
+
 Put deleted dependencies here:
+
 - `"express-rate-limit"`
 - etc...
