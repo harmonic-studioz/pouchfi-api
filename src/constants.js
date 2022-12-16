@@ -33,7 +33,8 @@ module.exports = {
     USER_INVITATION: 'user_invitation',
     CRON_JOB_ERROR: 'cron_job_error',
     PARTNER_WITH_US: 'partner_with_us',
-    WAITLIST_NOTIFICATION: 'waitlist_notification'
+    WAITLIST_NOTIFICATION: 'waitlist_notification',
+    ADMIN_CUSTOM_EMAIL: 'admin_custom_email'
   },
 
   REGISTERED_FROM: {

@@ -48,5 +48,11 @@ module.exports = [
     language: 'en-us',
     type: 'email',
     fileTemplate: loadHTMLTemplate(`${constants.EMAIL_TYPE.WAITLIST_NOTIFICATION}_en-us`)
+  },
+  {
+    name: constants.EMAIL_TYPE.ADMIN_CUSTOM_EMAIL,
+    language: 'en-us',
+    type: 'email',
+    fileTemplate: loadHTMLTemplate(`${constants.EMAIL_TYPE.ADMIN_CUSTOM_EMAIL}_en-us`)
   }
 ]

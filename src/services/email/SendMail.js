@@ -3,6 +3,7 @@ const { LOCALE } = require('@/src/constants')
 const { sendEmail } = require('@/src/helpers/email')
 
 const PartnerWithUs = require('./messages/PartnerWithUs')
+const CustomEmailMessage = require('./messages/staff/customEmail')
 const AdminInvitation = require('./messages/staff/adminInvitation')
 const WaitlistNotification = require('./messages/users/waitlistNotification')
 const EmailErrorToAdminMessage = require('./messages/staff/emailErrorToAdmin')
@@ -22,6 +23,34 @@ module.exports = class SendMail {
     }
 
     const inst = new PartnerWithUs(locale, {}, recipient, {}, attachments, html)
+    const message = await inst.buildMessage()
+    try {
+      return {
+        res: await sendEmail({ message })
+      }
+    } catch (error) {
+      return {
+        message,
+        error
+      }
+    }
+  }
+
+  /**
+   * Send email when a guest requests partnership
+   * @param {string} html message to be send
+   * @param {string} subject Email subject
+   * @param {string} receiverEmail receivers email
+   * @param {string} locale template locale
+   * @returns {Promise<object>}
+   */
+  static async sendCustomizedMail (subject, receiverEmail, replacements, locale = LOCALE.EN) {
+    const recipient = {
+      email: receiverEmail,
+      name: 'Partnerships'
+    }
+
+    const inst = new CustomEmailMessage(locale, replacements, recipient, {}, subject)
     const message = await inst.buildMessage()
     try {
       return {
