@@ -184,5 +184,5 @@ module.exports = router => {
     next()
   }
 
-  router.use('/users', staffRouter)
+  router.use('/staffs', staffRouter)
 }
