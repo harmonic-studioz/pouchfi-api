@@ -2,7 +2,7 @@
 
 ## Stacks
 
-- **Framework**: Express
+- **Framework**: Express Server
 - **Authentication**: JWT with public key file
 - **Database**: PostgreSQL (Sequelize)
 - **Code**: ESLint
