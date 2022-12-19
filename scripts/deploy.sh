@@ -1,5 +1,5 @@
 #!/bin/bash
-env="staging"
+env="development"
 project="pouchfi"
 if [ ! $@ ]
 then
@@ -11,9 +11,10 @@ fi
 env="$@"
 echo "deploying to $env..."
 
-kubectl create -f k8s/redis.yaml
+kubectl create -f k8s/staging/pv.yaml
+kubectl create -f k8s/staging/redis.yaml -f k8s/staging/postgres.yaml
 
-pod_name=$(kubectl get po -l app=redis | grep pouchfi-backend | awk '{print $1}')
+pod_name=$(kubectl get po -l app=pouchfi-redis | grep pouchfi-backend | awk '{print $1}')
 
 # check whether redis server is ready or not
 while true; do
@@ -27,9 +28,9 @@ done
 if [[ $env === 'staging']]; then
     kubectl create -f k8s/staging/deployment.yaml
 elif [[ $env == "production" ]]; then
-    kubectl create -f k8s/staging/deployment.yaml
+    kubectl create -f k8s/production/deployment.yaml
 else
-    kubectl create -f k8s/staging/deployment.yaml
+    kubectl create -f k8s/local/deployment.yaml
 fi
 
 echo "done"

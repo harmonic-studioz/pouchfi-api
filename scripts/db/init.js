@@ -90,14 +90,14 @@ async function createDB (database) {
 
 function execute (command) {
   return new Promise((resolve, reject) => {
-    exec(command, (err, stdout) => {
-      if (err) {
-        console.error(err)
+    exec(command, (error, _stdout) => {
+      if (error) {
+        console.error(error)
 
-        return reject(new Error(err.message))
+        return reject(new Error(error.message))
       }
 
-      console.log(stdout)
+      console.log(_stdout)
 
       resolve()
     })
