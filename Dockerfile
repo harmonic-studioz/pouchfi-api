@@ -8,9 +8,11 @@ COPY package.json .
 
 RUN npm install --ignore-scripts
 
+RUN npm rebuild bcrypt
+
 # add application files
 COPY . .
 
 EXPOSE 3005
 
-ENTRYPOINT npm run start
+ENTRYPOINT npm run dev

@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: backend
+  name: pouchfi-backend
 spec:
   selector:
-    app: pouchfi
+    app: pouchfi-backend
   ports:
     - protocol: 'TCP'
       port: 3005
@@ -14,46 +14,44 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: pouchfi-deployment
+  name: pouchfi-backend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: pouchfi
-      tier: backend
+      app: pouchfi-backend
   template:
     metadata:
       labels:
-        app: pouchfi
-        tier: backend
+        app: pouchfi-backend
     spec:
       containers:
-        - name: pouchfi-node
+        - name: pouchfi-backend
           image: thedumebi/pouchfi:latest
           imagePullPolicy: Always
           resources:
             limits:
               memory: "1Gi"
               cpu: "500m"
-          livenessProbe:
-            httpGet:
-              path: /healthcheck
-              port: 3005
-            periodSeconds: 10
-            initialDelaySeconds: 5
+          # livenessProbe:
+          #   httpGet:
+          #     path: /healthcheck
+          #     port: 3005
+          #   periodSeconds: 10
+          #   initialDelaySeconds: 10
           envFrom:
             - configMapRef:
                 name: pouchfi-env
           volumeMounts:
-            - mountPath: /app/uploads
-              name: pouchfi-uploads
-            - name: auth-keys
-              mountPath: /
+            - name: keys
               readOnly: true
+              mountPath: /app/keys
+            - name: pouchfi-uploads
+              mountPath: /app/uploads
       volumes:
         - name: pouchfi-uploads
           persistentVolumeClaim:
             claimName: postgres-pvc
-        - name: auth-keys
-          configMap:
-            name: auth-keys
+        - name: keys
+          secret:
+            secretName: pouchfi-keys

@@ -54,4 +54,4 @@ spec:
             claimName: pouchfi-pvc
         - name: keys
           secret:
-            secretName: auth-keys
+            secretName: pouchfi-keys
