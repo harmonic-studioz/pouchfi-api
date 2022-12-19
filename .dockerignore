@@ -4,3 +4,7 @@ Dockerfile
 k8s
 *.lock
 .github
+.env
+private.key
+public.key
+.env.*

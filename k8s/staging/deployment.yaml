@@ -7,11 +7,8 @@ spec:
     app: pouchfi
   ports:
     - protocol: 'TCP'
-      port: 80
+      port: 3005
       targetPort: 3005
-    - protocol: 'TCP'
-      port: 443
-      targetPort: 443
   type: LoadBalancer
 ---
 apiVersion: apps/v1
@@ -44,23 +41,19 @@ spec:
               port: 3005
             periodSeconds: 10
             initialDelaySeconds: 5
-          env:
-            - name: NODE_ENV
-              valueFrom:
-                configMapKeyRef:
-                  name: pouchfi-env
-                  key: env
-            - name: PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: pouchfi-env
-                  key: port
+          envFrom:
+            - configMapRef:
+                name: pouchfi-env
           volumeMounts:
             - mountPath: /app/uploads
               name: pouchfi-uploads
-        # - name: ...
-        #   image: ...
+            - name: auth-keys
+              mountPath: /
+              readOnly: true
       volumes:
         - name: pouchfi-uploads
-          persistentVolumnClaim:
-            claimName: pouchfi-pvc
+          persistentVolumeClaim:
+            claimName: postgres-pvc
+        - name: auth-keys
+          configMap:
+            name: auth-keys

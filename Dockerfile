@@ -7,9 +7,9 @@ WORKDIR /app
 # add our package.json and install *before* adding our application files
 COPY package.json .
 
-COPY .env .env
+RUN npm i --ignore-scripts
 
-RUN npm i
+RUN npm rebuild bcrypt
 
 # add application files
 COPY . .
