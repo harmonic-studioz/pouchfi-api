@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pouchfi-postgres
+spec:
+  type: LoadBalancer
+  selector:
+    db: pouchfi-postgres
+  ports:
+    - port: 5432
+      targetPort: 5432
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pouchfi-postgres
+  labels:
+    db: pouchfi-postgres
+spec:
+  containers:
+  - name: pouchfi-postgres
+    image: postgres:13.9
+    imagePullPolicy: IfNotPresent
+    resources:
+      requests:
+        cpu: 500m
+        memory: 400Mi
+      limits:
+        memory: "1Gi"
+        cpu: "500m"
+    ports:
+      - containerPort: 5432
+    envFrom:
+      - configMapRef:
+          name: pouchfi-env
+    volumeMounts:
+      - mountPath: /var/lib/postgresql/data
+        name: postgresdb
+        subPath: postgres
+  volumes:
+    - name: postgresdb
+      persistentVolumeClaim:
+        claimName: postgres-pvc

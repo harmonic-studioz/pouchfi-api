@@ -10,7 +10,7 @@ const { postgres } = require('@config')
 const dbName = postgres.database
 const sequelize = new Sequelize(postgres.url, postgres.options)
 
-init()
+init().then(() => process.exit(0))
 
 async function init () {
   try {
@@ -96,6 +96,8 @@ function execute (command) {
 
         return reject(new Error(error.message))
       }
+
+      console.log(_stdout)
 
       resolve()
     })

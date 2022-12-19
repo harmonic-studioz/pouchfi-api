@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pouchfi-redis
+data:
+  redis-config: |
+    maxmemory 1Gb
+    maxmemory-policy allkeys-lru
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pouchfi-redis
+spec:
+  type: ClusterIP
+  selector:
+    app: pouchfi-redis
+  ports:
+    - port: 6379
+      targetPort: 6379
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pouchfi-redis
+  labels:
+    app: pouchfi-redis
+spec:
+  containers:
+  - name: pouchfi-redis
+    image: redis:7.0.7
+    command:
+      - redis-server
+      - "/redis-master/redis.conf"
+    ports:
+    - containerPort: 6379
+    resources:
+      limits:
+        memory: 1Gi
+        cpu: "0.1"
+    volumeMounts:
+    - mountPath: /redis-master
+      name: config
+    - mountPath: /data
+      name: data
+      readOnly: false
+  volumes:
+    - name: data
+      persistentVolumeClaim:
+        claimName: postgres-pvc
+    - name: config
+      configMap:
+        name: pouchfi-redis
+        items:
+        - key: redis-config
+          path: redis.conf
