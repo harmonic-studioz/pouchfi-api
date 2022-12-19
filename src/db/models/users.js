@@ -8,6 +8,7 @@ const { QueryTypes } = require('sequelize')
 const config = require('@config')
 const { LOCALE } = require('@/src/constants')
 const { api, domain } = require('@/src/classes/errors')
+const { transformedLimit, transformedPage, pagiParser } = require('@/src/helpers')
 
 const BCRYPT_SALT_ROUNDS = 13
 const ADMIN_HOST = config.admin.host
@@ -42,7 +43,13 @@ module.exports = (sequelize, DataTypes) => {
     // user username
     username: {
       type: DataTypes.TEXT,
-      unique: true
+      unique: true,
+      validate: {
+        len: {
+          args: [3, 32],
+          msg: 'Username must be within three(3) and thirty-two(32)'
+        }
+      }
     },
     // user first name
     firstName: DataTypes.STRING,
@@ -162,6 +169,11 @@ module.exports = (sequelize, DataTypes) => {
     // user spending wallet account balance
     balance: {
       type: DataTypes.DECIMAL
+    },
+    // waitlist flag to see if user was waitlisted
+    waitlist: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
     }
   }, {
     schema: 'public',
@@ -175,7 +187,8 @@ module.exports = (sequelize, DataTypes) => {
           'invitedByUid',
           'passwordHash',
           'deletedAt',
-          'lastLogin'
+          'lastLogin',
+          'waitlist'
         ]
       }
     }
@@ -187,12 +200,19 @@ module.exports = (sequelize, DataTypes) => {
     user.setDataValue('uid', uid)
     user.uid = uid
   })
-  User.addHook('beforeCreate', async staff => {
-    const isUsernameSet = staff.getDataValue('username')
+  User.addHook('beforeCreate', async user => {
+    const isUsernameSet = user.getDataValue('username')
     if (isUsernameSet) return
-    const username = `${staff.firstName}${staff.lastName}${Math.random().toString(36).slice(2, 4)}`
-    staff.setDataValue('username', username)
-    staff.username = username
+    if (!user.firstName && !user.lastName) return
+    const username = user.firstName
+      ? user.lastName
+        ? `${user.firstName}${user.lastName}${Math.random().toString(36).slice(2, 4)}`
+        : `${user.firstName}${Math.random().toString(36).slice(2, 4)}`
+      : `${user.lastName}${Math.random().toString(36).slice(2, 4)}`
+    if (username) {
+      user.setDataValue('username', username)
+      user.username = username
+    }
   })
 
   // associations
@@ -347,11 +367,14 @@ module.exports = (sequelize, DataTypes) => {
    * @param {boolean} isExport flag to indicate if exporting data
    * @returns {object} user and count
    */
-  User.list = async function list (options, isExport) {
-    const {
-      limit = 10,
-      page = 1
+  User.List = async function list (options, isExport = false) {
+    let {
+      limit,
+      page,
+      order = 'DESC'
     } = options
+    page = transformedPage(page)
+    limit = transformedLimit(limit)
     const transformUserListSort = (sortBy) => {
       switch (sortBy) {
         case 'uid':
@@ -360,6 +383,8 @@ module.exports = (sequelize, DataTypes) => {
           return 'users.id'
         case 'lastLogin':
           return 'users.lastLogin'
+        case 'name':
+          return `users."lastName" collate "C" ${order}, users."firstName" collate "C" ${order}`
         default:
           return 'users."createdAt"'
       }
@@ -389,9 +414,32 @@ module.exports = (sequelize, DataTypes) => {
         .map(word => word.trim().length ? `%${word.replace(/(_|%|\\)/g, '\\$1').toLowerCase()}%` : '')
       replacements.search = Array.isArray(searchReplacement) && searchReplacement.length ? searchReplacement : []
     }
-    if (options.role) {
-      wheres.push('users."roleCode" = :roleCode')
-      replacements.roleCode = options.role
+    if (options.language && options.language.length > 0) {
+      wheres.push('users.language = :language')
+      replacements.language = options.language
+    }
+    if (options.id) {
+      const isNumeric = !isNaN(options.id) && !isNaN(parseFloat(options.id))
+      if (isNumeric) {
+        wheres.push('CAST(users.id AS TEXT) LIKE :id')
+      } else {
+        wheres.push('users.uid LIKE :id')
+      }
+      replacements.id = `%${options.id}%`
+    }
+    if (options.searchDateBy?.length > 0 && options.searchDateRange?.length > 0) {
+      wheres.push(`
+        users."${options.searchDateBy}" >= :from
+        AND
+        users."${options.searchDateBy}" <= :to
+      `)
+      replacements.from = options.searchDateRange[0]
+      replacements.to = options.searchDateRange[1]
+    }
+    if (options.status && options.statusResult) {
+      const statusValue = typeof options.statusResult === 'boolean' ? options.statusResult : options.statusResult === 'true'
+      wheres.push(`users."${options.status}" = :status`)
+      replacements.status = statusValue
     }
 
     let listSQL = `
@@ -408,14 +456,10 @@ module.exports = (sequelize, DataTypes) => {
         users.history,
         users."lastLogin"
     `
-    let countSQL = 'SELECT COUNT(DISTINCT users.id)'
+    let countSQL = 'SELECT COUNT(DISTINCT users.id)::INTEGER as count'
     const fromNJoins = `
       FROM
         users
-      INNER JOIN
-        roles ON roles.code = users."roleCode"
-      LEFT JOIN
-        users AS self ON self.uid = users."invitedByuid"
     `
     listSQL += fromNJoins
     countSQL += fromNJoins
@@ -434,10 +478,9 @@ module.exports = (sequelize, DataTypes) => {
         users."roleCode",
         users."invitedByUid",
         users."createdAt",
-        users.history,
-        roles.name
+        users.history
       ORDER BY
-        ${sortBy} ${options.order || 'DESC'}
+        ${sortBy} ${options.sortBy === 'name' ? '' : order}
   `
 
     listSQL += groupby
@@ -455,12 +498,16 @@ module.exports = (sequelize, DataTypes) => {
 
     const [rowForUsers, rowForCount] = await Promise.all([
       sequelize.query(listSQL, queryOptions),
-      sequelize.query(countSQL, queryOptions)
+      sequelize.query(countSQL, { plain: true, ...queryOptions })
     ])
 
+    const total = rowForCount?.count || 0
     return {
-      users: rowForUsers,
-      count: parseInt(rowForCount[0].count)
+      rows: rowForUsers,
+      summary: {
+        showing: pagiParser(page, limit, total),
+        total
+      }
     }
   }
 
@@ -469,7 +516,7 @@ module.exports = (sequelize, DataTypes) => {
    * @param {string} uid user uid
    * @returns {object} user
    */
-  User.one = async function one (uid) {
+  User.One = async function one (uid) {
     const opts = {
       type: QueryTypes.SELECT,
       plain: true,
@@ -509,7 +556,7 @@ module.exports = (sequelize, DataTypes) => {
     return inst
   }
 
-  User.find = async function find (property, value) {
+  User.Find = async function find (property, value) {
     const user = await User.findOne({
       where: {
         [property]: value

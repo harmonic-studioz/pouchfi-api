@@ -63,4 +63,13 @@ module.exports = router => {
       next(err)
     }
   })
+
+  router.post('/mail/status', async (req, res, next) => {
+    try {
+      const data = await handlers.checkMailStatus({ mailId: req.body.mailId }, {})
+      res.json(data)
+    } catch (err) {
+      next(err)
+    }
+  })
 }

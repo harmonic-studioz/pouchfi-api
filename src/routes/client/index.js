@@ -9,8 +9,8 @@ const config = require('@config')
 const {
   notFound,
   errorHandler,
-  normalLimiter,
-  authorizeForGuest
+  normalLimiter
+  // authorizeForGuest
 } = require('@/src/middlewares')
 
 const router = Router({
@@ -18,7 +18,7 @@ const router = Router({
   caseSensitive: true
 })
 
-router.use(authorizeForGuest)
+// router.use(authorizeForGuest)
 
 if (!config.isDev) {
   router.use(normalLimiter)

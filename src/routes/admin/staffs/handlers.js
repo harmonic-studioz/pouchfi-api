@@ -30,7 +30,7 @@ const Roles = db.roles
  * @param {object} invitee invitee data
  * @param {object} req request object
  */
-exports.inviteUser = async function inviteUser (inviter, invitee) {
+exports.inviteUser = async function inviteUser (inviter, invitee, req) {
   let staff = await Staffs.findOne({
     where: { email: invitee.email.toLowerCase() }
   })
@@ -52,8 +52,7 @@ exports.inviteUser = async function inviteUser (inviter, invitee) {
     throw new ApiError(403, 'authentication_error', 'unauthorized', 'No permissions to set this role')
   }
 
-  const emailRegex =
-      /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
+  const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
   if (emailRegex.test(invitee.email) === false) {
     throw api.badRequest('This e-mail is invalid.')
   }
@@ -249,6 +248,20 @@ exports.resendInvitation = async function resendInvitation (body, inviter, req) 
     throw api.badRequest('Email is not registered.')
   }
 
+  // token and email creation
+  const tokenTimestamp = Date.now()
+  const token = staff.getInvitationToken({
+    expiration: staff.roleCode === ROLE.SUPPLIER && '14 days',
+    timestamp: tokenTimestamp.toString()
+  })
+
+  const link = new URL(invitationUrl)
+  link.searchParams.set('actionToken', token)
+  link.searchParams.set('action', 'INVITE')
+  link.searchParams.set('email', staff.email)
+  link.searchParams.set('firstName', staff.firstName)
+  link.searchParams.set('lastName', staff.lastName)
+
   const sent = await SendMail.sendAdminInvitation(
     staff,
     link,
@@ -276,6 +289,8 @@ exports.resendInvitation = async function resendInvitation (body, inviter, req) 
       res: sent.res
     }
   }
+
+  const history = staff.history
 
   history.push({
     ...historyOpts,

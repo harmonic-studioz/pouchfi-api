@@ -102,6 +102,10 @@ function authorizeFor (role, withUser) {
       return next(errors.api.unauthorized('role'))
     }
 
+    if (userType === 'pouchDev') {
+      return next()
+    }
+
     const token = req.get(USER_TOKEN_HEADER)
 
     if (!token) {
@@ -131,6 +135,7 @@ function authorizeFor (role, withUser) {
     next()
   }
 }
+exports.authorizeFor = authorizeFor
 
 /**
  * Verifies the given `guestId` if it exists

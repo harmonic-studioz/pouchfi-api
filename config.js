@@ -56,6 +56,7 @@ const {
   MAIL_GUEST_FAQ = NO_REPLY,
   MAIL_BIZ_CS = NO_REPLY,
   MAIL_PAYOUT_MONITOR = NO_REPLY,
+  MAIL_PARTNERSHIP,
 
   // cache
   CACHE_PREFIX = 'pouch_',
@@ -144,7 +145,8 @@ module.exports = {
     biz: MAIL_BIZ,
     guestFaq: MAIL_GUEST_FAQ,
     cs: MAIL_BIZ_CS,
-    payoutMonitor: MAIL_PAYOUT_MONITOR
+    payoutMonitor: MAIL_PAYOUT_MONITOR,
+    partnership: MAIL_PARTNERSHIP
   },
 
   cors: {
