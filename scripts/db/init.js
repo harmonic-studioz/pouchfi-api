@@ -10,7 +10,7 @@ const { postgres } = require('@config')
 const dbName = postgres.database
 const sequelize = new Sequelize(postgres.url, postgres.options)
 
-init()
+init().then(() => process.exit(0))
 
 async function init () {
   try {

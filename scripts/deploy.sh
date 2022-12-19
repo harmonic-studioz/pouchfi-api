@@ -11,7 +11,11 @@ fi
 env="$@"
 echo "deploying to $env..."
 
+# run this once
+kubectl create configmap pouchfi-env --from-env-file=./.env.staging
+kubectl apply -f k8s/secret.yaml
 kubectl create -f k8s/staging/pv.yaml
+
 kubectl create -f k8s/staging/redis.yaml -f k8s/staging/postgres.yaml
 
 pod_name=$(kubectl get po -l app=pouchfi-redis | grep pouchfi-backend | awk '{print $1}')
@@ -25,12 +29,10 @@ while true; do
     fi
 done
 
-if [[ $env === 'staging']]; then
-    kubectl create -f k8s/staging/deployment.yaml
-elif [[ $env == "production" ]]; then
+if [[ $env === 'production']]; then
     kubectl create -f k8s/production/deployment.yaml
 else
-    kubectl create -f k8s/local/deployment.yaml
+    kubectl create -f k8s/staging/deployment.yaml
 fi
 
 echo "done"

@@ -15,4 +15,4 @@ COPY . .
 
 EXPOSE 3005
 
-ENTRYPOINT npm run dev
+ENTRYPOINT npm run start

@@ -17,7 +17,7 @@ const baseConfig = {
 
 module.exports = {
   development: baseConfig,
-  test: baseConfig,
+  staging: baseConfig,
   production: Object.assign({
     pool: {
       max: 60,
