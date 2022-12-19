@@ -6,7 +6,7 @@
 *
 */
 
-const Cache = require('@/src/classes/Cache')
+const Cache = require('@Cache')
 
 const OK = 200
 const NOT_MODIFIED = 304

@@ -1,15 +1,12 @@
 FROM node:18-alpine
 
 # set the work directory
-RUN mkdir -p /app
 WORKDIR /app
 
 # add our package.json and install *before* adding our application files
 COPY package.json .
 
-RUN npm i --ignore-scripts
-
-RUN npm rebuild bcrypt
+RUN npm install --ignore-scripts
 
 # add application files
 COPY . .

@@ -180,8 +180,8 @@ module.exports = {
   },
 
   jwtKeys: {
-    public: fs.readFileSync('public.key'),
-    private: fs.readFileSync('private.key')
+    public: fs.readFileSync('./keys/public.key'),
+    private: fs.readFileSync('./keys/private.key')
   },
 
   google: {
