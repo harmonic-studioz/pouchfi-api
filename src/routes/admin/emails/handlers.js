@@ -41,12 +41,12 @@ exports.sendUsersMail = async function sendUsersMail (body) {
   }
 
   if (newsletter) {
-    users = await Users.findAll({
+    users = (await Users.findAll({
       where: {
         newsletters: true
       },
       attributes: ['email']
-    })
+    })).map(user => user.email)
   }
 
   /**
@@ -57,7 +57,7 @@ exports.sendUsersMail = async function sendUsersMail (body) {
     const user = users[i]
     mails.push({
       method: 'sendCustomizedMail',
-      args: [subject, user, { email: user, html }]
+      args: [subject, user, { email: user, '<%= html %>': html }]
     })
   }
 
