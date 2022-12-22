@@ -65,6 +65,8 @@ function App (config) {
 
     app.set('trust proxy', 1)
 
+    app.get('/', (req, res) => res.send('Welcome to the begginning of nothingness.'))
+
     app.get('/healthcheck', (req, res) => res.send())
 
     app.get('/_ah/stop', async (_req, res, _next) => {

@@ -10,13 +10,10 @@ on:
 jobs:
   build:
     runs-on: self-hosted
-    env:
-      PRIVATE_KEY: ${{ secrets.S_PRI_KEY }}
-      PUBLIC_KEY: ${{ secrets.S_PUB_KEY }}
 
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [18.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -31,20 +28,5 @@ jobs:
 
       - name: Create Keys
         run: apk add bash
-      - run: chmod +x ./scripts/setup-ci.sh
-      - run: ./scripts/setup-ci.sh
-
-      - name: Install dependencies
-        run: npm i
-
-      - name: Rebuild package
-        run: npm rebuild sharp
-
-      - name: Add Config Map
-        run: kubectl apply -f k8s/env.yaml
-
-      - name: Add persistent volumes
-        run: kubectl apply -f k8s/pv.yaml
-
-      - name: start clusters
-        run: kubectl apply -f k8s/deployment.yaml
+      - run: chmod +x ./scripts/deploy.sh
+      - run: ./scripts/deploy.sh

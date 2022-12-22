@@ -6,6 +6,7 @@
   "main": "src/server.js",
   "scripts": {
     "db:init": "node -r module-alias/register -r dotenv/config ./scripts/db/init.js",
+    "prestart": "npm run db:init",
     "start": "node -r module-alias/register -r dotenv/config ./src/server.js",
     "predev": "npm run db:init",
     "dev": "nodemon -r module-alias/register -r dotenv/config ./src/server.js",
