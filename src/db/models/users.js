@@ -59,7 +59,13 @@ module.exports = (sequelize, DataTypes) => {
     fullName: {
       type: DataTypes.VIRTUAL,
       get () {
-        return `${this.firstName} ${this.lastName}`
+        return this.firstName && this.lastName
+          ? `${this.firstName} ${this.lastName}`
+          : this.firstName && !this.lastName
+            ? this.firstName
+            : this.lastName
+              ? this.lastName
+              : ''
       },
       set (value) {
         throw new Error('Do not try to set the `fullName` value!')
@@ -174,6 +180,11 @@ module.exports = (sequelize, DataTypes) => {
     waitlist: {
       type: DataTypes.BOOLEAN,
       defaultValue: false
+    },
+    // this flag indicates if the user would receive newsletter emails
+    newsletters: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true
     }
   }, {
     schema: 'public',
@@ -188,7 +199,8 @@ module.exports = (sequelize, DataTypes) => {
           'passwordHash',
           'deletedAt',
           'lastLogin',
-          'waitlist'
+          'waitlist',
+          'newsletters'
         ]
       }
     }

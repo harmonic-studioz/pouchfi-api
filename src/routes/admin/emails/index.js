@@ -40,5 +40,5 @@ module.exports = _router => {
     })
   )
 
-  _router.use('/networks', router)
+  _router.use('/emails', router)
 }
