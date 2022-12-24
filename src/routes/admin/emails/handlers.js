@@ -9,6 +9,7 @@
  * @type {Object.<string, Model>}
  */
 const db = require('@models')
+const { toType } = require('@/src/helpers')
 const { api } = require('@/src/classes/errors')
 const SendMail = require('@/src/services/email/SendMail')
 
@@ -45,8 +46,8 @@ exports.sendUsersMail = async function sendUsersMail (body) {
       where: {
         newsletters: true
       },
-      attributes: ['email']
-    })).map(user => user.email)
+      attributes: ['email', 'username']
+    })).map(user => ({ email: user.email, username: user.username }))
   }
 
   /**
@@ -55,9 +56,16 @@ exports.sendUsersMail = async function sendUsersMail (body) {
   const mails = []
   for (let i = 0; i < users.length; i++) {
     const user = users[i]
+    const dataType = toType(user)
+    const replacements = {
+      email: dataType === 'object' ? user.email : user,
+      '<%= html %>': html,
+      username: dataType === 'object' ? user.username || user.email : user
+    }
+    const email = dataType === 'object' ? user.email : user
     mails.push({
       method: 'sendCustomizedMail',
-      args: [subject, user, { email: user, '<%= html %>': html }]
+      args: [subject, email, replacements]
     })
   }
 

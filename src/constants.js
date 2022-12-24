@@ -34,7 +34,9 @@ module.exports = {
     CRON_JOB_ERROR: 'cron_job_error',
     PARTNER_WITH_US: 'partner_with_us',
     WAITLIST_NOTIFICATION: 'waitlist_notification',
-    ADMIN_CUSTOM_EMAIL: 'admin_custom_email'
+    ADMIN_CUSTOM_EMAIL: 'admin_custom_email',
+    TEMPLATE: 'template',
+    UNSUBSCRIBE: 'unsubscribe'
   },
 
   REGISTERED_FROM: {

@@ -125,3 +125,7 @@ exports.getLocale = function getLocale (locale = '') {
     ? LOCALE.JA
     : LOCALE.EN
 }
+
+exports.toType = function toType (obj) {
+  return Object.prototype.toString.call(obj).slice(8, -1).toLowerCase()
+}

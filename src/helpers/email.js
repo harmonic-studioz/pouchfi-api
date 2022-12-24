@@ -26,8 +26,9 @@ exports.replacePlaceholders = function replacePlaceholders (template, mapObj) {
 
   mapObj = Object.assign({
     currentYear: new Date().getFullYear(),
-    siteName: 'Pouchfi',
-    serverUrl: config.service.host
+    siteName: 'PouchFi',
+    serverUrl: config.service.host,
+    siteUrl: config.guest.host
   }, mapObj)
 
   // push object keys to array string with additional brackets for regex

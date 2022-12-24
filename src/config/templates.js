@@ -54,5 +54,17 @@ module.exports = [
     language: 'en-us',
     type: 'email',
     fileTemplate: loadHTMLTemplate(`${constants.EMAIL_TYPE.ADMIN_CUSTOM_EMAIL}_en-us`)
+  },
+  {
+    name: constants.EMAIL_TYPE.TEMPLATE,
+    language: 'en-us',
+    type: 'email',
+    fileTemplate: loadHTMLTemplate(`${constants.EMAIL_TYPE.TEMPLATE}`)
+  },
+  {
+    name: constants.EMAIL_TYPE.UNSUBSCRIBE,
+    language: 'en-us',
+    type: 'view',
+    fileTemplate: loadHTMLTemplate(`${constants.EMAIL_TYPE.UNSUBSCRIBE}`)
   }
 ]

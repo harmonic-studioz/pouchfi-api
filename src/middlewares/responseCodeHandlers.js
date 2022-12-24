@@ -7,7 +7,7 @@ exports.notFound = (provider) => (req, res, next) => {
   try {
     // if not match
     if (!req.route) {
-      res.locals.meta.reqId = req.id
+      if (res.locals && res.locals.meta) res.locals.meta.reqId = req.id
       throw new ApiError(
         404,
         'generic_error',

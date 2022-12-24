@@ -80,7 +80,8 @@ module.exports = class SendMail {
       displayName,
       '<%= link %>': invitationLink,
       inviteDisplayName: user.username,
-      inviteUserEmail: user.email
+      inviteUserEmail: user.email,
+      email: invitedUser.email
     }
 
     const recipient = {
@@ -115,8 +116,9 @@ module.exports = class SendMail {
    */
   static async sendWaitlistEmail (waitlistUser, locale = LOCALE.EN) {
     const data = {
-      email: waitlistUser.email,
-      siteURL: config.guest.host
+      username: waitlistUser.username || waitlistUser.email,
+      siteURL: config.guest.host,
+      email: waitlistUser.email
     }
 
     const recipient = {

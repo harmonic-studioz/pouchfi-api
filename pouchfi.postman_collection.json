@@ -111,7 +111,7 @@
 									"urlencoded": [
 										{
 											"key": "email",
-											"value": "daniel.chiwuzoh@stu.cu.edu.ng",
+											"value": "chiwuzohdaniel@gmail.com",
 											"description": "user email",
 											"type": "default"
 										},
@@ -134,7 +134,145 @@
 									]
 								}
 							},
-							"response": []
+							"response": [
+								{
+									"name": "Waitlist User",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "urlencoded",
+											"urlencoded": [
+												{
+													"key": "email",
+													"value": "chiwuzohdaniel@gmail.com",
+													"description": "user email",
+													"type": "default"
+												},
+												{
+													"key": "username",
+													"value": "dm",
+													"description": "username to be reserved for user",
+													"type": "default",
+													"disabled": true
+												}
+											]
+										},
+										"url": {
+											"raw": "{{base_url}}users/waitlist",
+											"host": [
+												"{{base_url}}users"
+											],
+											"path": [
+												"waitlist"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Security-Policy",
+											"value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+										},
+										{
+											"key": "Cross-Origin-Embedder-Policy",
+											"value": "require-corp"
+										},
+										{
+											"key": "Cross-Origin-Opener-Policy",
+											"value": "same-origin"
+										},
+										{
+											"key": "Cross-Origin-Resource-Policy",
+											"value": "same-origin"
+										},
+										{
+											"key": "X-DNS-Prefetch-Control",
+											"value": "off"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=15552000; includeSubDomains"
+										},
+										{
+											"key": "X-Download-Options",
+											"value": "noopen"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "Origin-Agent-Cluster",
+											"value": "?1"
+										},
+										{
+											"key": "X-Permitted-Cross-Domain-Policies",
+											"value": "none"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Retry-After",
+											"value": "870.636"
+										},
+										{
+											"key": "X-RateLimit-Limit",
+											"value": "30"
+										},
+										{
+											"key": "X-RateLimit-Remaining",
+											"value": "27"
+										},
+										{
+											"key": "X-RateLimit-Reset",
+											"value": "1671739830456 milliseconds"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "940"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"3ac-Ps8Nhbt+YX4cIOq40OpGuJnoWh0\""
+										},
+										{
+											"key": "Vary",
+											"value": "Accept-Encoding"
+										},
+										{
+											"key": "Date",
+											"value": "Thu, 22 Dec 2022 19:56:01 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"fullName\": \"\",\n    \"inactive\": false,\n    \"language\": \"en-us\",\n    \"gender\": \"MALE\",\n    \"metadata\": {},\n    \"oAuthResponse\": {},\n    \"newsletters\": true,\n    \"email\": \"chiwuzohdaniel@gmail.com\",\n    \"waitlist\": true,\n    \"uid\": \"uclbzi7owi0005s7mx4fmvhst7\",\n    \"registeredFrom\": \"email\",\n    \"history\": [\n        {\n            \"type\": \"CREATED\",\n            \"createdAt\": 1671738959826,\n            \"waitlistedAt\": 1671738959826\n        },\n        {\n            \"event\": {\n                \"status\": \"in-progress\",\n                \"type\": \"waitlist_notification\"\n            },\n            \"res\": [\n                {\n                    \"email\": \"chiwuzohdaniel@gmail.com\",\n                    \"status\": \"sent\",\n                    \"_id\": \"b8cfe59f51e449a0a4af6aa3d4c1095f\",\n                    \"reject_reason\": null,\n                    \"queued_reason\": null\n                }\n            ],\n            \"createdAt\": 1671738961294,\n            \"type\": \"WAITLIST_ISSUED\",\n            \"openedAt\": null,\n            \"read\": false\n        }\n    ],\n    \"updatedAt\": \"2022-12-22T19:56:01.294Z\",\n    \"createdAt\": \"2022-12-22T19:55:59.826Z\",\n    \"id\": 3,\n    \"username\": null,\n    \"firstName\": null,\n    \"lastName\": null,\n    \"passwordHash\": null,\n    \"avatar\": null,\n    \"phone\": null,\n    \"bio\": null,\n    \"nationality\": null,\n    \"birthday\": null,\n    \"externalAuthId\": null,\n    \"provider\": null,\n    \"invitedByUid\": null,\n    \"lastLogin\": null,\n    \"balance\": null,\n    \"deletedAt\": null\n}"
+								}
+							]
 						}
 					]
 				}
@@ -169,13 +307,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}__internal/cache/predictionary",
+							"raw": "{{base_url}}__internal/cache/homepage_find_pk_1",
 							"host": [
 								"{{base_url}}__internal"
 							],
 							"path": [
 								"cache",
-								"predictionary"
+								"homepage_find_pk_1"
 							]
 						}
 					},
@@ -262,10 +400,6 @@
 					]
 				},
 				{
-					"name": "Cache",
-					"item": []
-				},
-				{
 					"name": "Get Postman Collection",
 					"request": {
 						"method": "GET",
@@ -288,6 +422,306 @@
 						}
 					},
 					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "Send Custom Email to users",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"html\": \"<p>Hello, this is a custom email</p>\",\n    \"subject\": \"This is a custom email.\",\n    \"users\": [\n        \"chiwuzohdumebi@gmail.com\",\n        \"chiwuzohdaniel@gmail.com\"\n    ],\n    \"newsletter\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}admin/emails/custom",
+							"host": [
+								"{{base_url}}admin"
+							],
+							"path": [
+								"emails",
+								"custom"
+							]
+						},
+						"description": "Request Details\n- **html** - the html to be sent to the user\n- **subject** - the subject of the email\n- **users** - a list of emails to be sent the message (not required)\n- **newsletter** -  a boolean flag. If true it sends the email to everyone that is subscribed.\n\n**html and subject are required**\n**one of users array or newsletter boolean is required**\n\n*See attached examples*"
+					},
+					"response": [
+						{
+							"name": "Send Custom Email to users",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"html\": \"<p>Hello, this is a custom email</p>\",\n    \"subject\": \"This is a custom email.\",\n    \"users\": [\n        \"chiwuzohdumebi@gmail.com\",\n        \"chiwuzohdaniel@gmail.com\"\n    ],\n    \"newsletter\": false\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}admin/emails/custom",
+									"host": [
+										"{{base_url}}admin"
+									],
+									"path": [
+										"emails",
+										"custom"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+								},
+								{
+									"key": "Cross-Origin-Embedder-Policy",
+									"value": "require-corp"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Resource-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "X-DNS-Prefetch-Control",
+									"value": "off"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=15552000; includeSubDomains"
+								},
+								{
+									"key": "X-Download-Options",
+									"value": "noopen"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Origin-Agent-Cluster",
+									"value": "?1"
+								},
+								{
+									"key": "X-Permitted-Cross-Domain-Policies",
+									"value": "none"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "no-referrer"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin, Accept-Encoding"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Retry-After",
+									"value": "900"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "30"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "29"
+								},
+								{
+									"key": "X-RateLimit-Reset",
+									"value": "1671739585256 milliseconds"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "293"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"125-ZKJUdzEsADkYnRqEVKw1y9B+s/4\""
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 22 Dec 2022 19:51:26 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"res\": [\n            {\n                \"email\": \"chiwuzohdumebi@gmail.com\",\n                \"status\": \"sent\",\n                \"_id\": \"d472d97463d24f0dbd5586346efe7db6\",\n                \"reject_reason\": null,\n                \"queued_reason\": null\n            }\n        ]\n    },\n    {\n        \"res\": [\n            {\n                \"email\": \"chiwuzohdaniel@gmail.com\",\n                \"status\": \"sent\",\n                \"_id\": \"f23e14c3e37e46be98cd5cebe0f01f75\",\n                \"reject_reason\": null,\n                \"queued_reason\": null\n            }\n        ]\n    }\n]"
+						},
+						{
+							"name": "Send Custom Email to all users who are subscribed for emails",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"html\": \"<p>Hello, this is a custom email</p>\",\n    \"subject\": \"This is a custom email.\",\n    \"newsletter\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}admin/emails/custom",
+									"host": [
+										"{{base_url}}admin"
+									],
+									"path": [
+										"emails",
+										"custom"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+								},
+								{
+									"key": "Cross-Origin-Embedder-Policy",
+									"value": "require-corp"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Resource-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "X-DNS-Prefetch-Control",
+									"value": "off"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=15552000; includeSubDomains"
+								},
+								{
+									"key": "X-Download-Options",
+									"value": "noopen"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Origin-Agent-Cluster",
+									"value": "?1"
+								},
+								{
+									"key": "X-Permitted-Cross-Domain-Policies",
+									"value": "none"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "no-referrer"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin, Accept-Encoding"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Retry-After",
+									"value": "900"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "30"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "29"
+								},
+								{
+									"key": "X-RateLimit-Reset",
+									"value": "1671740082282 milliseconds"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "444"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"1bc-x2TK+Z+U1Gi36CtJ7eiSHtrzSOw\""
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 22 Dec 2022 19:59:43 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"res\": [\n            {\n                \"email\": \"daniel.chiwuzoh@stu.cu.edu.ng\",\n                \"status\": \"sent\",\n                \"_id\": \"f4e7f167173e41f5bc12284447a567f0\",\n                \"reject_reason\": null,\n                \"queued_reason\": null\n            }\n        ]\n    },\n    {\n        \"res\": [\n            {\n                \"email\": \"chiwuzohdumebi@gmail.com\",\n                \"status\": \"sent\",\n                \"_id\": \"948fac8944474407b63d6ad2dfd5fdbb\",\n                \"reject_reason\": null,\n                \"queued_reason\": null\n            }\n        ]\n    },\n    {\n        \"res\": [\n            {\n                \"email\": \"chiwuzohdaniel@gmail.com\",\n                \"status\": \"sent\",\n                \"_id\": \"6886d834491d4fcda5815af9cb73d09a\",\n                \"reject_reason\": null,\n                \"queued_reason\": null\n            }\n        ]\n    }\n]"
+						}
+					]
 				}
 			]
 		}

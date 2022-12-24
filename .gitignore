@@ -42,3 +42,5 @@ coverage/
 
 *.lock
 .DS_Store
+
+invitation.html

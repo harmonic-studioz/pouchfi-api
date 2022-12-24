@@ -16,6 +16,7 @@ const crons = require('./crons')
 const cache = require('./cache')
 const postman = require('./postman')
 const webhooks = require('./webhooks')
+const templates = require('./templates')
 const publicRouter = require('./public')
 
 const router = Router({
@@ -31,6 +32,7 @@ crons(router)
 cache(router)
 postman(router)
 webhooks(router)
+templates(router)
 publicRouter(router)
 
 router
