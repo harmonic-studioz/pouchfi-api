@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     // emoji or svg associated with tag
-    text: DataTypes.TEXT,
+    content: DataTypes.TEXT,
     // last time a blog used it
     link: {
       type: DataTypes.STRING,
