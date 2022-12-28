@@ -25,7 +25,7 @@
     "seed:template": "npx sequelize-cli db:seed:undo --seed 20221215154923-add-templates.js && npx sequelize-cli db:seed --seed 20221215154923-add-templates.js"
   },
   "engines": {
-    "node": ">=18.12.1"
+    "node": "18.12.1"
   },
   "keywords": [
     "pouchfi"

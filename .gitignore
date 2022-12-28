@@ -32,7 +32,7 @@ public.key
 
 # Ignore package lock that can cause conflicts and would cause
 # changes not being deployed successfull
-package-lock.json
+# package-lock.json
 
 coverage/
 
