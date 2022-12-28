@@ -7,6 +7,7 @@ cluster_name="k8s-pouchfi"
 package_version="latest"
 echo "github-version: $GITHUB_SHA"
 echo $GITHUB_SHA | head -c7
+echo "removing later"
 
 if [ ! $@ ]
 then
