@@ -23,7 +23,10 @@ echo "Pushing image to docker hub"
 docker push $image_tag
 
 echo "Updating deployment file"
-sed -i 's|thedumebi/pouchfi:latest|'$image_tag'|gi' ./k8s/staging/deployment.yaml
+sed -i 's|thedumebi/pouchfi:latest|'$image_tag'|gi' ./k8s/$staging/deployment.yaml
+cat ./k8s/$staging/deployment.yaml
+
+kubectl get pods
 
 # # run this once
 # kubectl create configmap pouchfi-env --from-env-file=./.env.staging
@@ -49,5 +52,5 @@ sed -i 's|thedumebi/pouchfi:latest|'$image_tag'|gi' ./k8s/staging/deployment.yam
 #     kubectl create -f k8s/staging/deployment.yaml
 # fi
 
-# echo "done"
-# echo "exit 0"
+echo "done"
+echo "exit 0"
