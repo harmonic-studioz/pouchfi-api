@@ -44,3 +44,7 @@ coverage/
 .DS_Store
 
 invitation.html
+
+k8s/secret.yaml
+k8s/staging/pv.yaml
+*.env.*
