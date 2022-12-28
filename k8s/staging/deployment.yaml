@@ -51,7 +51,7 @@ spec:
       volumes:
         - name: pouchfi-uploads
           persistentVolumeClaim:
-            claimName: postgres-pvc
+            claimName: backend-pvc
         - name: keys
           secret:
             secretName: pouchfi-keys

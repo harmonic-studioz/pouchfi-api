@@ -33,18 +33,9 @@ pod_name=$(kubectl get pods -l app=pouchfi-redis -o jsonpath="{.items[0].metadat
 echo "redis_pod_name: $pod_name"
 
 
-# check whether redis server is ready or not
-# while true; do
-#     pong=$(kubectl exec -it $pod_name redis -- redis-cli ping)
-#     if [[ "$pong" == *"PONG"* ]]; then
-#         echo ok;
-#         break
-#     fi
-# done
-
+# check whether redis server is ready or not in staging
 if [[ $env == "staging" ]]; then
     pong=$(kubectl exec -it $pod_name redis -- redis-cli ping)
-    echo $pong
     if [[ $pong == *"PONG"* ]]; then
         echo "Redis is running"
     else
@@ -54,7 +45,7 @@ if [[ $env == "staging" ]]; then
 fi
 
 echo "Apply backend yaml"
-# kubectl apply -f ./k8s/$ev/deployment.yaml
+kubectl apply -f ./k8s/$env/deployment.yaml
 
 echo "done"
 echo "exit 0"
