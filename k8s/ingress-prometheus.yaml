@@ -37,13 +37,23 @@ spec:
                 name: robusta-kube-prometheus-st-alertmanager
                 port:
                   number: 9093
-    - host: api.pouchfi.com
+    # - host: api.pouchfi.com
+    #   http:
+    #     paths:
+    #       - path: /
+    #         pathType: Prefix
+    #         backend:
+    #           service:
+    #             name: pouchfi-backend
+    #             port:
+    #               number: 3005
+    - host: db.pouchfi.com
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: pouchfi-backend
+                name: pouchfi-postgres
                 port:
-                  number: 3005
+                  number: 5432
