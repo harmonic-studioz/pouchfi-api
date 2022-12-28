@@ -20,7 +20,7 @@ echo "deploying to $env..."
 if [[ $env == "production" ]]; then
     package_version=$(node -p "require('./package.json').version")
 else
-    package_version=$($GITHUB_SHA | head -c7)
+    package_version=$(echo $GITHUB_SHA | head -c7)
 fi
 
 # set image name and tag
