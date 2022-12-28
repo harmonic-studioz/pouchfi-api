@@ -2,12 +2,9 @@
 env="staging"
 project="pouchfi"
 cluster_name="k8s-pouchfi"
-# revert this to version number in package.json
-# package_version=$(node -p "require('./package.json').version")
-package_version="latest"
-echo "github-version: $GITHUB_SHA"
-echo $GITHUB_SHA | head -c7
-echo "removing later"
+if [[ $env == "production" ]]; then
+    cluster_name="k8s-pouchfi-production"
+fi
 
 if [ ! $@ ]
 then
@@ -18,6 +15,13 @@ fi
 # override the env base on command
 env="$@"
 echo "deploying to $env..."
+
+# if productin then tag should be version number
+if [[ $env == "production" ]]; then
+    package_version=$(node -p "require('./package.json').version")
+else
+    package_version=$($GITHUB_SHA | head -c7)
+fi
 
 # set image name and tag
 image_tag=$dh_username/pouchfi:$package_version
