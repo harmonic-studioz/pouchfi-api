@@ -18,13 +18,14 @@ echo "deploying to $env..."
 image_tag=$dh_username/pouchfi:$package_version
 
 # echo "building docker image"
-docker build -t $image_tag .
+# docker build -t $image_tag .
 
 # echo "Pushing image to docker hub"
-docker push $image_tag
+# docker push $image_tag
 
 echo "Updating deployment file"
 sed -i 's|thedumebi/pouchfi:latest|'$image_tag'|gi' ./k8s/$env/deployment.yaml
+cat ./k8s/$env/deployment.yaml
 
 echo "Save DigitalOcean kubeconfig with short-lived credentials"
 doctl kubernetes cluster kubeconfig save --expiry-seconds 600 $cluster_name
