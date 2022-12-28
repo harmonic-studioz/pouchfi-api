@@ -16,15 +16,15 @@ echo "deploying to $env..."
 # set image name and tag
 image_tag=$dh_username/pouchfi:$package_version
 
-echo "building docker image"
-docker build -t $image_tag .
+# echo "building docker image"
+# docker build -t $image_tag .
 
-echo "Pushing image to docker hub"
-docker push $image_tag
+# echo "Pushing image to docker hub"
+# docker push $image_tag
 
 echo "Updating deployment file"
-sed -i 's|thedumebi/pouchfi:latest|'$image_tag'|gi' ./k8s/$staging/deployment.yaml
-cat ./k8s/$staging/deployment.yaml
+sed -i 's|thedumebi/pouchfi:latest|'$image_tag'|gi' ./k8s/$env/deployment.yaml
+cat ./k8s/$env/deployment.yaml
 
 kubectl get pods
 
