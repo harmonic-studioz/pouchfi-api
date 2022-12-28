@@ -42,9 +42,9 @@ echo "redis_pod_name: $pod_name"
 #     fi
 # done
 
-if [[ "$env" == "staging"]]; then
+if [[ $env == "staging" ]]; then
     pong=$(kubectl exec -it $pod_name redis -- redis-cli ping)
-    if [[ "$pong" == *"PONG"* ]]; then
+    if [[ $pong == *"PONG"* ]]; then
         echo "Redis is running"
     else
         echo "Redis isn't runnning"
