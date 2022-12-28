@@ -61,6 +61,6 @@ jobs:
       #   run: cat deployment.yaml
 
       - name: Run Script
-        run: apk add bash
-      - run: chmod +x ./scripts/deploy.sh
+        # run: apk add bash
+        run: chmod +x ./scripts/deploy.sh
       - run: ./scripts/deploy.sh staging
