@@ -29,10 +29,10 @@ spec:
         - name: pouchfi-backend
           image: thedumebi/pouchfi:latest
           imagePullPolicy: Always
-          resources:
-            limits:
-              memory: "1Gi"
-              cpu: "500m"
+          # resources:
+          #   limits:
+          #     memory: "1Gi"
+          #     cpu: "500m"
           livenessProbe:
             httpGet:
               path: /healthcheck
