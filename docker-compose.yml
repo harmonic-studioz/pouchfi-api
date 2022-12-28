@@ -2,7 +2,7 @@ version: '3'
 services:
   api:
     # build: .
-    image: thedumebi/pouchfi
+    image: thedumebi/pouchfi:1.0.0
     env_file:
       - .env
     environment:

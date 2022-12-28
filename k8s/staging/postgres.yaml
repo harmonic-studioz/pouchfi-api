@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: pouchfi-postgres
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   selector:
     db: pouchfi-postgres
   ports:
