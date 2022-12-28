@@ -47,7 +47,7 @@ spec:
   volumes:
     - name: data
       persistentVolumeClaim:
-        claimName: postgres-pvc
+        claimName: redis-pvc
     - name: config
       configMap:
         name: pouchfi-redis

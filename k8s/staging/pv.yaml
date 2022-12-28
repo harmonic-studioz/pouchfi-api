@@ -4,7 +4,34 @@ metadata:
   name: postgres-pvc
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: redis-pv
+spec:
+  capacity:
+    storage: 5Gi
+  volumeMode: Filesystem
+  storageClassName: do-block-storage
+  accessModes:
+    - "ReadWriteOnce"
+  hostPath:
+    path: /data
+    type: DirectoryOrCreate
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: redis-pvc
+spec:
+  volumeName: redis-pv
+  accessModes:
+    - ReadWriteOnce
   resources:
     requests:
       storage: 5Gi

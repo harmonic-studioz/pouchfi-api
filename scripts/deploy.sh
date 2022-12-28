@@ -30,7 +30,7 @@ cat ./k8s/$env/deployment.yaml
 echo "Save DigitalOcean kubeconfig with short-lived credentials"
 doctl kubernetes cluster kubeconfig save --expiry-seconds 600 $cluster_name
 
-pod_name=$(kubectl get po -l app=pouchfi-redis | awk '{print $1}')
+pod_name=$(kubectl get pods -l app=pouchfi-redis -o jsonpath="{.items[0].metadata.name}")
 echo "redis_pod_name: $pod_name"
 
 
@@ -43,8 +43,18 @@ echo "redis_pod_name: $pod_name"
 #     fi
 # done
 
+if [[ "$env" == "staging"]]; then
+    pong=$(kubectl exec -it $pod_name redis -- redis-cli ping)
+    if [[ "$pong" == *"PONG"* ]]; then
+        echo ok;
+    else
+        echo "Redis isn't runnning"
+        exit 1
+    fi
+fi
+
 echo "Apply backend yaml"
-# kubectl apply -f ./k8s/$env/deployment.yaml
+# kubectl apply -f ./k8s/$ev/deployment.yaml
 
 echo "done"
 echo "exit 0"
