@@ -29,12 +29,9 @@ sed -i 's|thedumebi/pouchfi:latest|'$image_tag'|gi' ./k8s/$env/deployment.yaml
 echo "Save DigitalOcean kubeconfig with short-lived credentials"
 doctl kubernetes cluster kubeconfig save --expiry-seconds 600 $cluster_name
 
-pod_name=$(kubectl get pods -l app=pouchfi-redis -o jsonpath="{.items[0].metadata.name}")
-echo "redis_pod_name: $pod_name"
-
-
 # check whether redis server is ready or not in staging
 if [[ $env == "staging" ]]; then
+    pod_name=$(kubectl get pods -l app=pouchfi-redis -o jsonpath="{.items[0].metadata.name}")
     pong=$(kubectl exec -it $pod_name redis -- redis-cli ping)
     if [[ $pong == *"PONG"* ]]; then
         echo "Redis is running"
