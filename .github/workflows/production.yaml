@@ -44,4 +44,4 @@ jobs:
 
       - name: Run Script
         run: chmod +x ./scripts/deploy.sh
-      - run: ./scripts/deploy.sh production
+      - run: ./scripts/deploy.sh staging
