@@ -1,6 +1,7 @@
 #!/bin/bash
 env="staging"
 project="pouchfi"
+cluster_name="k8s-pouchfi"
 package_version=$(node -p "require('./package.json').version")
 
 if [ ! $@ ]
@@ -24,9 +25,13 @@ image_tag=$dh_username/pouchfi:$package_version
 
 echo "Updating deployment file"
 sed -i 's|thedumebi/pouchfi:latest|'$image_tag'|gi' ./k8s/$env/deployment.yaml
-cat ./k8s/$env/deployment.yaml
+
+echo "Save DigitalOcean kubeconfig with short-lived credentials"
+doctl kubernetes cluster kubeconfig save --expiry-seconds 600 $cluster_name
 
 kubectl get pods
+
+# kubectl apply -f staging
 
 # # run this once
 # kubectl create configmap pouchfi-env --from-env-file=./.env.staging
