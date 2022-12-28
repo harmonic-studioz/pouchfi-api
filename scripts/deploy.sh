@@ -25,7 +25,6 @@ image_tag=$dh_username/pouchfi:$package_version
 
 echo "Updating deployment file"
 sed -i 's|thedumebi/pouchfi:latest|'$image_tag'|gi' ./k8s/$env/deployment.yaml
-cat ./k8s/$env/deployment.yaml
 
 echo "Save DigitalOcean kubeconfig with short-lived credentials"
 doctl kubernetes cluster kubeconfig save --expiry-seconds 600 $cluster_name
@@ -46,7 +45,7 @@ echo "redis_pod_name: $pod_name"
 if [[ "$env" == "staging"]]; then
     pong=$(kubectl exec -it $pod_name redis -- redis-cli ping)
     if [[ "$pong" == *"PONG"* ]]; then
-        echo ok;
+        echo "Redis is running"
     else
         echo "Redis isn't runnning"
         exit 1
