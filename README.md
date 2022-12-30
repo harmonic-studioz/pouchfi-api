@@ -24,9 +24,9 @@ cd pouchfi-api
 mv .env.example .env.development.local
 
 # Generate JWT keys
-ssh-keygen -t rsa -b 2048 -q -N '' -m PEM -f private.key \
+ssh-keygen -t rsa -b 2048 -q -N '' -m PEM -f keys/private.key \
     && rm private.key.pub \
-    && openssl rsa -in private.key -pubout -outform PEM -out public.key
+    && openssl rsa -in private.key -pubout -outform PEM -out keys/public.key
 
 # Install all dependencies
 npm install
@@ -96,9 +96,9 @@ For VS Code users the [eslint](https://marketplace.visualstudio.com/items?itemNa
 
 ```shell
 # Generate JWT keys
-ssh-keygen -t rsa -b 2048 -q -N '' -m PEM -f private.key \
+ssh-keygen -t rsa -b 2048 -q -N '' -m PEM -f keys/private.key \
     && rm private.key.pub \
-    && openssl rsa -in private.key -pubout -outform PEM -out public.key
+    && openssl rsa -in private.key -pubout -outform PEM -out keys/public.key
 "(put the keys in the keys directory)"
 
 # Build image
