@@ -20,23 +20,27 @@ echo "deploying to $env..."
 if [[ $env == "production" ]]; then
     package_version=$(node -p "require('./package.json').version")
 else
-    package_version=$($GITHUB_SHA | head -c7)
+    package_version=$(echo $GITHUB_SHA | head -c7)
 fi
 
 # set image name and tag
 image_tag=$dh_username/pouchfi:$package_version
 
-# echo "building docker image"
+echo "building docker image"
 docker build -t $image_tag .
 
-# echo "Pushing image to docker hub"
+echo "Pushing image to docker hub"
 docker push $image_tag
 
 echo "Updating deployment file"
-sed -i 's|thedumebi/pouchfi:latest|'$image_tag'|gi' ./k8s/$env/deployment.yaml
+sed -i 's|thedumebi/pouchfi:latest|'$image_tag'|gi' ./k8s/deployment.yaml
+sed -i 's|namespace: staging|namespace: '$env'|gi' ./k8s/deployment.yaml
 
 echo "Save DigitalOcean kubeconfig with short-lived credentials"
 doctl kubernetes cluster kubeconfig save --expiry-seconds 600 $cluster_name
+
+echo "Switch to $env namespace"
+kubectl config set-context --current --namespace=$env
 
 # check whether redis server is ready or not in staging
 if [[ $env == "staging" ]]; then
@@ -51,7 +55,7 @@ if [[ $env == "staging" ]]; then
 fi
 
 echo "Apply backend yaml"
-kubectl apply -f ./k8s/$env/deployment.yaml
+kubectl apply -f ./k8s/deployment.yaml
 
 echo "done"
 echo "exit 0"
