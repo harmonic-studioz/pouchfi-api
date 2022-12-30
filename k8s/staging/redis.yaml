@@ -2,6 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: pouchfi-redis
+  namespace: staging
 data:
   redis-config: |
     maxmemory 1Gb
@@ -11,6 +12,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: pouchfi-redis
+  namespace: staging
 spec:
   type: ClusterIP
   selector:
@@ -23,6 +25,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: pouchfi-redis
+  namespace: staging
   labels:
     app: pouchfi-redis
 spec:
