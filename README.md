@@ -9,8 +9,8 @@
 - **Debuging**: Debug, VS Code configurations
 - **Logging**: Winston
 - **Testing**: Jest, SuperTest
-- **Continuous Integration**: GitHub Actions + Docker Compose
-- **Other**: PM2, DotEnv
+- **Continuous Integration**: GitHub Actions + Kubernetes
+- **Other**: Doctl, DotEnv
 - API versioning
 - Request Validation
 
@@ -27,10 +27,6 @@ mv .env.example .env.development.local
 ssh-keygen -t rsa -b 2048 -q -N '' -m PEM -f private.key \
     && rm private.key.pub \
     && openssl rsa -in private.key -pubout -outform PEM -out public.key
-
-# encrypt key
-base64 -i private.key
-base64 -i public.key
 
 # Install all dependencies
 npm install
@@ -103,6 +99,7 @@ For VS Code users the [eslint](https://marketplace.visualstudio.com/items?itemNa
 ssh-keygen -t rsa -b 2048 -q -N '' -m PEM -f private.key \
     && rm private.key.pub \
     && openssl rsa -in private.key -pubout -outform PEM -out public.key
+"(put the keys in the keys directory)"
 
 # Build image
 docker build -t app/pouchfi-backend:latest .
@@ -118,32 +115,39 @@ docker run -d --name pouchfi-backend --network=host app/pouchfi-backend:latest
 
 ```
 /
-├─src
-│ ├── classes                 # Classes
-│ │   ├── cache.js            # cache class
-│ │   └── ...                 # Other classes
-│ ├── config                  # App configuration files
-│ │   ├── sequelize.js        # sequelize config
-│ │   └── ...                 # Other configurations
-│ ├── db                      # Data access stuff
-│ │   ├── migrations          # Migrations
-│ │   ├── models              # Models
-│ │   └── seeds               # Seeds
-│ ├── helpers                 # Helpers (formats, validation, etc)
-│ ├── middlewares             # Middlewares (authorization, errorHandler, notFound etc)
-│ ├── routes
-│ │   ├── admin               # Defines routes and handlers for admin
-│ │   ├── client              # Defines routes and handlers for client
-│ │   └── internal            # Defines routes and handlers for internal processes (e.g. webhooks, cron job, cache handling)
-│ ├── services                # External services implementation
-│ │   ├── serviceOne
-│ │   └── serviceTwo
+├── k8s                       # Kubernetes files
+├── keys                      # Auth public and private keys
+│   ├── private.key           # Sign token
+│   └── public.key
+├── scripts
+│   ├── db
+|   |   └── init.js           # Connects to DB and runs migrations
+│   │   └── deploy.sh         # Controls k8s deployment config
+├── src
+│   ├── classes               # Classes
+│   │   ├── cache.js          # cache class
+│   │   └── ...               # Other classes
+│   ├── config                # App configuration files
+│   │   ├── sequelize.js      # sequelize config
+│   │   └── ...               # Other configurations
+│   ├── db                    # Data access stuff
+│   │   ├── migrations        # Migrations
+│   │   ├── models            # Models
+│   │   └── seeds             # Seeds
+│   ├── helpers               # Helpers (formats, validation, etc)
+│   ├── middlewares           # Middlewares (authorization, errorHandler, notFound etc)
+│   ├── routes
+│   │   ├── admin             # Defines routes and handlers for admin
+│   │   ├── client            # Defines routes and handlers for client
+│   │   └── internal          # Defines routes and handlers for internal processes (e.g. webhooks, cron job, cache handling)
+│   ├── services              # External services implementation
+│   │   ├── serviceOne
+│   │   └── serviceTwo
 ├── tests                     # Testing
 ├── .env                      # Environment variables
 ├── .sequelizerc              # Sequelize CLI config
 ├── Dockerfile                # Dockerfile
 ├── package.json
-├── private.key               # Sign tokens
 └── README.md
 └── ...
 ```
