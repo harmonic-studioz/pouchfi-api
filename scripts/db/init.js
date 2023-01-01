@@ -16,7 +16,7 @@ async function init () {
   try {
     await createSchemas([
       'networks',
-      'guests'
+      'users'
     ])
     await models.init()
     // can these guys run in just the master pod?

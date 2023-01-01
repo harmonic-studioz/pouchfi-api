@@ -73,6 +73,12 @@ const {
   FACEBOOK_CLIENT_ID,
   FACEBOOK_CLIENT_SECRET,
 
+  // FOREX
+  FOREX_URL = 'https://data-kong.rakutentravelxchange.com/',
+
+  // OPEN EXCHANGE RATES
+  EXCHANGE_RATE_COMMISION = 1,
+
   IS_STAGING
 } = process.env
 
@@ -196,6 +202,15 @@ module.exports = {
     clientID: FACEBOOK_CLIENT_ID,
     clientSecret: FACEBOOK_CLIENT_SECRET,
     strategyName: 'facebook'
+  },
+
+  forex: {
+    baseURL: FOREX_URL
+  },
+
+  openExchangeRates: {
+    commision: EXCHANGE_RATE_COMMISION,
+    defaultCommision: 1.00
   },
 
   time: getTimeFromString

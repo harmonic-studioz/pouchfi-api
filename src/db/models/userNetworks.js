@@ -42,9 +42,7 @@ module.exports = (sequelize, DataTypes) => {
     current: {
       type: DataTypes.BOOLEAN,
       defaultValue: true
-    },
-    // user address for the network
-    address: DataTypes.STRING(1000)
+    }
   }, {
     tableName: 'userNetworks'
   })
