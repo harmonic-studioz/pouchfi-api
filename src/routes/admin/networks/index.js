@@ -34,7 +34,7 @@ module.exports = router => {
   networkRouter.post(
     '/add',
     secureLimiter,
-    authenticated,
+    authenticated('staff'),
     rolePermission(roles),
     withErrorHandler(async (req, res) => {
       const network = await handler.addNetwork(req.body)
@@ -45,7 +45,7 @@ module.exports = router => {
   networkRouter.get(
     '/',
     normalLimiter,
-    authenticated,
+    authenticated('staff'),
     rolePermission(canView),
     withErrorHandler(async (req, res) => {
       const networks = await handler.getNetworks(req.query)
@@ -56,7 +56,7 @@ module.exports = router => {
   networkRouter.post(
     '/:id',
     normalLimiter,
-    authenticated,
+    authenticated('staff'),
     rolePermission(canView),
     withErrorHandler(async (req, res) => {
       const options = {

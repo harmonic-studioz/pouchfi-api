@@ -26,7 +26,15 @@ const USER_TOKEN_HEADER = 'authorization'
 /**
  * Checks if the incoming request is authenticated
  */
-exports.authenticated = async function authenticated (req, res, next) {
+exports.authenticated = (role) => async function authenticated (req, res, next) {
+  /**
+   * @type {Object.<string, Model>}
+   */
+  const models = {
+    staff: Staffs,
+    users: Users
+  }
+  const Model = models[role]
   if (req.isAunthenticated && !req.isAunthenticated()) {
     return next(errors.api.unauthorized('User is not authenticated'))
   }
@@ -37,7 +45,7 @@ exports.authenticated = async function authenticated (req, res, next) {
     return next(errors.api.unauthorized('Not authorized, no token'))
   }
 
-  const decoded = Users.verifyToken(token)
+  const decoded = Model.verifyToken(token)
   if (!decoded) {
     return next(errors.api.unauthorized('Token is invalid'))
   }
@@ -47,11 +55,16 @@ exports.authenticated = async function authenticated (req, res, next) {
     return next(errors.api.unauthorized('Token is invalid'))
   }
 
-  const user = await Users.findByPk(decoded.uid)
-  if (!user) {
-    return next(errors.api.unauthorized('Not authorizes, invalid user'))
+  let user
+  if (role === 'user') {
+    user = await Model.findByPk(decoded.uid)
+  } else {
+    user = await Model.scope('role').findByPk(decoded.uid)
   }
-  req.user = user
+  if (!user) {
+    return next(errors.api.unauthorized('Not authorized, invalid user'))
+  }
+  req.user = user.toClean()
   req.token = token
   return next()
 }

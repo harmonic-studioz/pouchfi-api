@@ -16,7 +16,7 @@ async function init () {
   try {
     await createSchemas([
       'networks',
-      'guests'
+      'users'
     ])
     await models.init()
     // can these guys run in just the master pod?
@@ -25,6 +25,7 @@ async function init () {
      */
     await execute('npx sequelize db:migrate')
     await execute('npx sequelize db:seed:all')
+    await execute('npm run seed:template')
 
     if (dbName.search('_test') > -1) {
       await execute(

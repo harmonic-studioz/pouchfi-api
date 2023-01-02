@@ -6,8 +6,8 @@ const jwt = require('jsonwebtoken')
 const { QueryTypes } = require('sequelize')
 
 const config = require('@config')
-const { LOCALE } = require('@/src/constants')
 const { api, domain } = require('@/src/classes/errors')
+const { LOCALE, ACCOUNT_TYPES } = require('@/src/constants')
 const { transformedLimit, transformedPage, pagiParser } = require('@/src/helpers')
 
 const BCRYPT_SALT_ROUNDS = 13
@@ -61,11 +61,13 @@ module.exports = (sequelize, DataTypes) => {
       get () {
         return this.firstName && this.lastName
           ? `${this.firstName} ${this.lastName}`
-          : this.firstName && !this.lastName
+          : this.firstName
             ? this.firstName
             : this.lastName
               ? this.lastName
-              : ''
+              : this.username
+                ? this.username
+                : ''
       },
       set (value) {
         throw new Error('Do not try to set the `fullName` value!')
@@ -172,10 +174,6 @@ module.exports = (sequelize, DataTypes) => {
     },
     // user last login time
     lastLogin: DataTypes.DATE,
-    // user spending wallet account balance
-    balance: {
-      type: DataTypes.DECIMAL
-    },
     // waitlist flag to see if user was waitlisted
     waitlist: {
       type: DataTypes.BOOLEAN,
@@ -238,7 +236,25 @@ module.exports = (sequelize, DataTypes) => {
       through: 'userNetworks',
       onDelete: 'CASCADE',
       as: 'networks',
+      foreignKey: 'uid'
+    })
+
+    User.belongsToMany(models.tokens, {
+      through: 'userTokens',
+      onDelete: 'CASCADE',
+      as: 'tokens',
       foreignKey: 'userId'
+    })
+
+    User.hasMany(models.transactions, {
+      targetKey: 'userId',
+      as: 'transactions'
+    })
+
+    User.hasMany(models.accounts, {
+      foreignKey: 'userId',
+      sourceKey: 'uid',
+      as: 'accounts'
     })
   }
 
@@ -248,7 +264,7 @@ module.exports = (sequelize, DataTypes) => {
    * @param {strin} issuer issuer string
    * @returns decoded token
    */
-  User.verifyToken = async (token, issuer = ADMIN_HOST) => {
+  User.verifyToken = (token, issuer = ADMIN_HOST) => {
     const claims = jwt.verify(token, config.jwtKeys.public, {
       issuer,
       algorithms: 'RS256'
@@ -587,6 +603,96 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     return user
+  }
+
+  /**
+   * Get details regarding the current network the user is on
+   * @param {number} uid user uid
+   * @param {object} [opts] options
+   * @param {Boolean} [opts.includeTokens] flag to include tokens
+   * @param {Boolean} [opts.plain] flag to return only network data
+   * @param {Boolean} [opts.includeTokenPrice] flag to include token prices
+   */
+  User.getUserCurrentNetwork = async function getUserCurrentNetwork (uid, opts = {}) {
+    const {
+      includeTokens = true,
+      plain = false,
+      includeTokenPrice = false
+    } = opts
+
+    const replacements = { uid }
+
+    const listSQL = `
+      SELECT
+        network.id,
+        network.name,
+        network.rpc,
+        network.symbol,
+        networl.api,
+        network.blockExplorer
+    `
+    const fromNJoins = `
+      FROM
+        userNetworks as user
+      LEFT JOIN
+        networks as network
+        ON user.networkId = network.id AND user.guestUid = :uid
+    `
+    const whereQuery = `
+      WHERE
+        user.guestUid = :uid
+        AND user.current = true
+    `
+    const groupQuery = `
+      GROUP BY
+        network.id
+    `
+
+    const query = listSQL + fromNJoins + whereQuery + groupQuery
+    const network = await sequelize.query(query, {
+      replacements,
+      type: QueryTypes.SELECT,
+      plain: true,
+      nest: true
+    })
+
+    if (!network) {
+      throw api.unprocessableEntity('Could not get user network!')
+    }
+
+    if (includeTokens) {
+      const tokens = await sequelize.models.tokens.getUserTokens(uid, network.id, includeTokenPrice)
+      network.tokens = tokens || []
+    }
+
+    if (plain) return { network }
+
+    const accountData = await sequelize.query(`
+      SELECT
+        address,
+        account
+      FROM
+        guests.accounts accounts
+      WHERE
+        accounts."userId" = :uid
+        AND accounts.current = true
+        AND accounts."accountCode" = :code
+        AND accounts."networkId" = :networkId
+    `, {
+      type: QueryTypes.SELECT,
+      plain: true,
+      replacements: {
+        uid,
+        networkId: network.id,
+        code: ACCOUNT_TYPES.CRYPTO_CUSTODIAL
+      }
+    })
+
+    return {
+      userAddress: accountData.address,
+      ethAccount: JSON.parse(accountData.account),
+      network
+    }
   }
 
   return User
