@@ -76,10 +76,10 @@ exports.inviteUser = async function inviteUser (inviter, invitee, req) {
   })
 
   // token and email creation
-  const tokenTimestamp = Date.now()
+  const tokenTimestamp = Date.now().toString()
   const token = staff.getInvitationToken({
     expiration: staff.roleCode === ROLE.SUPPLIER && '14 days',
-    timestamp: tokenTimestamp.toString()
+    timestamp: tokenTimestamp
   })
 
   const history = staff.history
@@ -255,10 +255,10 @@ exports.resendInvitation = async function resendInvitation (body, inviter, req) 
   }
 
   // token and email creation
-  const tokenTimestamp = Date.now()
+  const tokenTimestamp = Date.now().toString()
   const token = staff.getInvitationToken({
     expiration: staff.roleCode === ROLE.SUPPLIER && '14 days',
-    timestamp: tokenTimestamp.toString()
+    timestamp: tokenTimestamp
   })
 
   const link = new URL(invitationUrl)

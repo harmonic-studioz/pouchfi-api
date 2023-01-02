@@ -25,6 +25,7 @@ async function init () {
      */
     await execute('npx sequelize db:migrate')
     await execute('npx sequelize db:seed:all')
+    await execute('npm run seed:template')
 
     if (dbName.search('_test') > -1) {
       await execute(

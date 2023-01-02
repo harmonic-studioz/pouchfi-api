@@ -32,7 +32,7 @@ module.exports = _router => {
 
   router.post(
     '/logout',
-    authenticated,
+    authenticated('staff'),
     withErrorHandler(async (req, res) => {
       req.session.destroy()
       req.logout()

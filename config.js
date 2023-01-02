@@ -20,15 +20,21 @@ const {
   // Guest service
   GUEST_HOST = 'https://localhost:3000',
 
-  // Whitelisting for CORS
-  ORIGINS_WHITELIST = '',
+  // AUTHORIZATION
+  AUTHORIZATION_JWT_SECRET,
+  AUTHORIZATION_JWT_EXPIRES = '30 days',
 
   // POSTGRES
-  PG_HOST = 'localhost',
-  PG_PORT = '5432',
   PG_USERNAME,
   PG_PASSWORD,
   PG_DATABASE,
+  PG_HOST = 'localhost',
+  PG_PORT = '5432',
+
+  // SESSION COOKIES
+  COOKIE_NAME,
+  COOKIE_SECRET,
+  COOKIE_MAX_AGE = '15 minutes',
 
   // REDIS
   REDIS_HOST = 'localhost',
@@ -36,35 +42,8 @@ const {
   REDIS_PASSWORD,
   REDIS_DB = 0,
 
-  // SESSION COOKIES
-  COOKIE_NAME,
-  COOKIE_SECRET,
-  COOKIE_MAX_AGE = '15 minutes',
-
-  // AUTHORIZATION
-  AUTHORIZATION_JWT_SECRET,
-  AUTHORIZATION_JWT_EXPIRES = '30 days',
-
-  // MAILCHIMP
-  MANDRILL_API_KEY,
-  MANDRILL_SUB_ACCOUNT,
-  MANDRILL_WEBHOOK_KEY,
-  MAIL_SENDER = NO_REPLY,
-
-  // MAILS
-  MAIL_BIZ = NO_REPLY,
-  MAIL_GUEST_FAQ = NO_REPLY,
-  MAIL_BIZ_CS = NO_REPLY,
-  MAIL_PAYOUT_MONITOR = NO_REPLY,
-  MAIL_PARTNERSHIP,
-  MAIL_CONTACT_US,
-
-  // cache
-  CACHE_PREFIX = 'pouch_',
-  CACHE_DRIVER = 'redis',
-
-  // slack channels hooks
-  DEVELOPMENT_INFO,
+  // FOREX
+  FOREX_URL = 'https://data-kong.rakutentravelxchange.com/',
 
   // google app details
   GOOGLE_CLIENT_ID,
@@ -74,11 +53,32 @@ const {
   FACEBOOK_CLIENT_ID,
   FACEBOOK_CLIENT_SECRET,
 
-  // FOREX
-  FOREX_URL = 'https://data-kong.rakutentravelxchange.com/',
+  // MAILCHIMP
+  MANDRILL_API_KEY,
+  MANDRILL_SUB_ACCOUNT,
+  MANDRILL_WEBHOOK_KEY,
+  MAIL_SENDER = NO_REPLY,
 
   // OPEN EXCHANGE RATES
   EXCHANGE_RATE_COMMISION = 1,
+
+  // Whitelisting for CORS
+  ORIGINS_WHITELIST = '',
+
+  // cache
+  CACHE_PREFIX = 'pouch_',
+  CACHE_DRIVER = 'redis',
+
+  // MAILS
+  MAIL_BIZ = NO_REPLY,
+  MAIL_GUEST_FAQ = NO_REPLY,
+  MAIL_BIZ_CS = NO_REPLY,
+  MAIL_PAYOUT_MONITOR = NO_REPLY,
+  MAIL_PARTNERSHIP,
+  MAIL_CONTACT_US,
+
+  // slack channels hooks
+  DEVELOPMENT_INFO,
 
   IS_STAGING
 } = process.env

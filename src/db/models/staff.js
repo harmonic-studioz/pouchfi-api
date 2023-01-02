@@ -175,10 +175,10 @@ module.exports = (sequelize, DataTypes) => {
   })
 
   // before create hooks
-  Staff.addHook('beforeCreate', 'generateUid', async user => {
+  Staff.addHook('beforeCreate', 'generateUid', async staff => {
     const uid = `u${cuid()}`
-    user.setDataValue('uid', uid)
-    user.uid = uid
+    staff.setDataValue('uid', uid)
+    staff.uid = uid
   })
   Staff.addHook('beforeCreate', async staff => {
     const isUsernameSet = staff.getDataValue('username')
@@ -230,7 +230,7 @@ module.exports = (sequelize, DataTypes) => {
    * @param {strin} issuer issuer string
    * @returns decoded token
    */
-  Staff.verifyToken = async (token, issuer = ADMIN_HOST) => {
+  Staff.verifyToken = (token, issuer = ADMIN_HOST) => {
     const claims = jwt.verify(token, config.jwtKeys.public, {
       issuer,
       algorithms: 'RS256'
@@ -299,16 +299,8 @@ module.exports = (sequelize, DataTypes) => {
    * @return {string} jwt token
    */
   Staff.prototype.signToken = function (level, isRefreshToken = false, issuer = ADMIN_HOST, expiresIn = TOKEN_EXPIRES_IN) {
-    const {
-      createdAt,
-      updatedAt,
-      deletedAt,
-      invitedByUid,
-      ...rest
-    } = this.toClean()
-
     const token = jwt.sign({
-      ...rest,
+      uid: this.uid,
       isRefreshToken,
       level
     }, config.jwtKeys.private, {

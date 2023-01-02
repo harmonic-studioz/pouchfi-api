@@ -20,10 +20,10 @@ const { sq, Sequelize: { QueryTypes } } = require('@models')
 const Staffs = db.staffs
 
 exports = module.exports = {
-  local: passport.authenticate('local')
+  local: passport.authenticate('adminLocal')
 }
 
-passport.use(new LocalStrategy({
+passport.use('adminLocal', new LocalStrategy({
   usernameField: 'email'
 }, _verifyForLocalStrategy))
 passport.serializeUser(serializer)
@@ -145,7 +145,8 @@ async function _verifyForLocalStrategy (email, password, done) {
     type: QueryTypes.UPDATE
   })
 
-  done(null, staff.toClean())
+  const token = await staff.signToken(staff.level)
+  done(null, { ...staff.toClean(), token })
 }
 exports._verifyForLocalStrategy = _verifyForLocalStrategy
 

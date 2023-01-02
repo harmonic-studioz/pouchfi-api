@@ -8,7 +8,7 @@ const {
   metaHelper,
   normalLimiter,
   secureLimiter,
-  authenticated,
+  authenticated: auth,
   rolePermission
 } = require('@/src/middlewares')
 const handler = require('./handlers')
@@ -26,6 +26,7 @@ const canView = [...canModify, ROLE.POUCHFI_CS]
 
 const inviteAJV = new Ajv()
 ajvFormats(inviteAJV)
+const authenticated = auth('staff')
 
 /**
  * Mount endpoints for `/admin/staffs`
