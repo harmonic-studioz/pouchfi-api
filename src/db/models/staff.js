@@ -58,7 +58,15 @@ module.exports = (sequelize, DataTypes) => {
     fullName: {
       type: DataTypes.VIRTUAL,
       get () {
-        return `${this.firstName} ${this.lastName}`
+        return this.firstName && this.lastName
+          ? `${this.firstName} ${this.lastName}`
+          : this.firstName
+            ? this.firstName
+            : this.lastName
+              ? this.lastName
+              : this.username
+                ? this.username
+                : ''
       },
       set (value) {
         throw new Error('Do not try to set the `fullName` value!')
@@ -175,9 +183,16 @@ module.exports = (sequelize, DataTypes) => {
   Staff.addHook('beforeCreate', async staff => {
     const isUsernameSet = staff.getDataValue('username')
     if (isUsernameSet) return
-    const username = `${staff.firstName}${staff.lastName}${Math.random().toString(36).slice(2, 4)}`
-    staff.setDataValue('username', username)
-    staff.username = username
+    if (!staff.firstName && !staff.lastName) return
+    const username = staff.firstName
+      ? staff.lastName
+        ? `${staff.firstName}${staff.lastName}${Math.random().toString(36).slice(2, 4)}`
+        : `${staff.firstName}${Math.random().toString(36).slice(2, 4)}`
+      : `${staff.lastName}${Math.random().toString(36).slice(2, 4)}`
+    if (username) {
+      staff.setDataValue('username', username)
+      staff.username = username
+    }
   })
 
   // associations

@@ -3,8 +3,10 @@ const { LOCALE } = require('@/src/constants')
 const { sendEmail } = require('@/src/helpers/email')
 
 const PartnerWithUs = require('./messages/PartnerWithUs')
+const ForgotPassword = require('./messages/staff/forgotPassword')
 const CustomEmailMessage = require('./messages/staff/customEmail')
 const AdminInvitation = require('./messages/staff/adminInvitation')
+const ResetPasswordMessage = require('./messages/staff/resetPassword')
 const WaitlistNotification = require('./messages/users/waitlistNotification')
 const EmailErrorToAdminMessage = require('./messages/staff/emailErrorToAdmin')
 
@@ -41,13 +43,14 @@ module.exports = class SendMail {
    * @param {string} html message to be send
    * @param {string} subject Email subject
    * @param {string} receiverEmail receivers email
+   * @param {string} receiverName receivers name
    * @param {string} locale template locale
    * @returns {Promise<object>}
    */
-  static async sendCustomizedMail (subject, receiverEmail, replacements, locale = LOCALE.EN) {
+  static async sendCustomizedMail (subject, receiverEmail, receiverName, replacements, locale = LOCALE.EN) {
     const recipient = {
       email: receiverEmail,
-      name: 'Partnerships'
+      name: receiverName
     }
 
     const inst = new CustomEmailMessage(locale, replacements, recipient, {}, subject)
@@ -69,10 +72,11 @@ module.exports = class SendMail {
    * @param {object} invitedUser invited user data
    * @param {string} invitationLink invitation link
    * @param {object} request request object
-   * @param {string} locale template locale
+   * @param {string} emailLink email link to track opening of email
+   * @param {string} [locale] template locale
    * @returns {Promise<object>}
    */
-  static async sendAdminInvitation (invitedUser, invitationLink, request, locale = LOCALE.EN) {
+  static async sendAdminInvitation (invitedUser, invitationLink, request, emailLink, locale = LOCALE.EN) {
     const user = request.user
     const displayName = `${invitedUser.firstName} ${invitedUser.lastName}`
 
@@ -81,12 +85,13 @@ module.exports = class SendMail {
       '<%= link %>': invitationLink,
       inviteDisplayName: user.username,
       inviteUserEmail: user.email,
-      email: invitedUser.email
+      email: invitedUser.email,
+      '<%= emailLink %>': emailLink
     }
 
     const recipient = {
       email: invitedUser.email,
-      displayName
+      name: displayName
     }
 
     const meta = {
@@ -95,6 +100,56 @@ module.exports = class SendMail {
     }
 
     const inst = new AdminInvitation(locale, data, recipient, meta)
+    const message = await inst.buildMessage()
+    try {
+      return {
+        res: await sendEmail({ message })
+      }
+    } catch (error) {
+      return {
+        message,
+        error
+      }
+    }
+  }
+
+  /**
+   * Send email when a user requests for password reset
+   * @param {object} recipient email recipient data
+   * @param {string} recipient.email recipient email
+   * @param {string} recipient.name recipient name
+   * @param {object} data replacement data object
+   * @param {object} meta metadata
+   * @param {string} [locale] template locale
+   * @returns {Promise<object>}
+   */
+  static async sendForgotPasswordEmail (recipient, data, meta, locale = LOCALE.EN) {
+    const inst = new ForgotPassword(locale, data, recipient, meta)
+    const message = await inst.buildMessage()
+    try {
+      return {
+        res: await sendEmail({ message })
+      }
+    } catch (error) {
+      return {
+        message,
+        error
+      }
+    }
+  }
+
+  /**
+   * Send email when a user resets their password
+   * @param {object} recipient email recipient data
+   * @param {string} recipient.email recipient email
+   * @param {string} recipient.name recipient name
+   * @param {object} data replacement data object
+   * @param {object} meta metadata
+   * @param {string} [locale] template locale
+   * @returns {Promise<object>}
+   */
+  static async sendResetPasswordEmail (recipient, data, meta, locale = LOCALE.EN) {
+    const inst = new ResetPasswordMessage(locale, data, recipient, meta)
     const message = await inst.buildMessage()
     try {
       return {

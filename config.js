@@ -11,7 +11,7 @@ const {
   PORT = '3005',
 
   // BACKEND SERVICE
-  APP_HOST = 'http://localhost:3004',
+  APP_HOST = 'http://localhost:3005',
 
   // ADMIN SITE
   ADMIN_HOST = 'http://localhost:8080',

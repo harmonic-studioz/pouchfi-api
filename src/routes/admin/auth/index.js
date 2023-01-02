@@ -11,13 +11,13 @@ const { secureLimiter, metaHelper, authenticated } = require('@/src/middlewares'
 
 const Users = db.users
 
-module.exports = router => {
-  const authRouter = Router({
+module.exports = _router => {
+  const router = Router({
     caseSensitive: true,
     strict: true
   })
 
-  authRouter.post(
+  router.post(
     '/login',
     passport.local,
     withErrorHandler(async (req, res) => {
@@ -30,7 +30,7 @@ module.exports = router => {
     })
   )
 
-  authRouter.post(
+  router.post(
     '/logout',
     authenticated,
     withErrorHandler(async (req, res) => {
@@ -41,7 +41,7 @@ module.exports = router => {
     })
   )
 
-  authRouter.get(
+  router.get(
     '/me',
     withErrorHandler(async (req, res) => {
       let user = null
@@ -57,7 +57,7 @@ module.exports = router => {
     })
   )
 
-  authRouter.post(
+  router.post(
     '/confirm_registration',
     secureLimiter,
     metaHelper(),
@@ -67,22 +67,23 @@ module.exports = router => {
     })
   )
 
-  authRouter.post(
+  router.post(
     '/forgot_password',
     secureLimiter,
     metaHelper(),
     withErrorHandler(async (req, res) => {
-      await handlers.forgotPassword(req.body, res.locals.getProps())
+      await handlers.forgotPassword(req.body.email, res.locals.getProps())
       res.json({ ok: true })
     })
   )
 
-  authRouter.post(
+  router.post(
     '/reset_password',
     secureLimiter,
+    metaHelper(),
     verifyPasswordResetToken,
     withErrorHandler(async (req, res) => {
-      await handlers.resetpassword(req.body.password, req.claims)
+      await handlers.resetpassword(req.body.password, req.claims, res.locals.getProps())
       res.json({ ok: true })
     })
   )
@@ -104,5 +105,5 @@ module.exports = router => {
     }
   }
 
-  router.use('/auth', authRouter)
+  _router.use('/auth', router)
 }
