@@ -66,5 +66,17 @@ module.exports = [
     language: 'en-us',
     type: 'view',
     fileTemplate: loadHTMLTemplate(`${constants.EMAIL_TYPE.UNSUBSCRIBE}`)
+  },
+  {
+    name: constants.EMAIL_TYPE.FORGOT_PASSWORD,
+    language: 'en-us',
+    type: 'email',
+    fileTemplate: loadHTMLTemplate(`${constants.EMAIL_TYPE.FORGOT_PASSWORD}_en-us`)
+  },
+  {
+    name: constants.EMAIL_TYPE.RESET_PASSWORD,
+    language: 'en-us',
+    type: 'email',
+    fileTemplate: loadHTMLTemplate(`${constants.EMAIL_TYPE.RESET_PASSWORD}_en-us`)
   }
 ]

@@ -28,18 +28,18 @@ const inviteAJV = new Ajv()
 ajvFormats(inviteAJV)
 
 /**
- * Mount endpoints for `/admin/users`
+ * Mount endpoints for `/admin/staffs`
  *
  * @param {Router} router - Express Router
  */
-module.exports = router => {
-  const staffRouter = Router({
+module.exports = _router => {
+  const router = Router({
     strict: true,
     mergeParams: true,
     caseSenstitive: true
   })
 
-  staffRouter.post(
+  router.post(
     '/invite',
     secureLimiter,
     authenticated,
@@ -54,7 +54,7 @@ module.exports = router => {
     })
   )
 
-  staffRouter.get(
+  router.get(
     '/list',
     normalLimiter,
     authenticated,
@@ -67,7 +67,7 @@ module.exports = router => {
     })
   )
 
-  staffRouter.get(
+  router.get(
     '/one/:uid',
     secureLimiter,
     authenticated,
@@ -80,7 +80,7 @@ module.exports = router => {
     })
   )
 
-  staffRouter.delete(
+  router.delete(
     '/one/:uid',
     secureLimiter,
     authenticated,
@@ -91,7 +91,7 @@ module.exports = router => {
     })
   )
 
-  staffRouter.patch(
+  router.patch(
     '/one',
     secureLimiter,
     authenticated,
@@ -102,7 +102,20 @@ module.exports = router => {
     })
   )
 
-  staffRouter.post(
+  router.get(
+    '/one/:uid/history',
+    secureLimiter,
+    authenticated,
+    rolePermission(canModify, (req) => req.params.uid === req.user.uid),
+    metaHelper(),
+    withErrorHandler(async (req, res, next) => {
+      const data = await handler.history(req.params.uid, res.locals.getProps())
+      res.locals.setData(data)
+      next()
+    })
+  )
+
+  router.post(
     '/xls',
     secureLimiter,
     authenticated,
@@ -122,7 +135,7 @@ module.exports = router => {
     })
   )
 
-  staffRouter.post(
+  router.post(
     '/resend_invitation',
     secureLimiter,
     authenticated,
@@ -133,7 +146,7 @@ module.exports = router => {
     })
   )
 
-  staffRouter.get(
+  router.get(
     '/autosuggest',
     secureLimiter,
     authenticated,
@@ -151,8 +164,7 @@ module.exports = router => {
       'firstName',
       'lastName',
       'email',
-      'roleCode',
-      'language'
+      'roleCode'
     ],
     properties: {
       firstName: { type: 'string' },
@@ -166,7 +178,7 @@ module.exports = router => {
   function inviteValidator (req, _res, next) {
     const allowedRolesForNonSuperAdmin = [
       ROLE.SUPPLIER,
-      ROLE.POUCHFI_ADMIN
+      ROLE.POUCHFI_CS
     ]
     const isValid = inviteValidate(req.body)
     if (!isValid) {
@@ -184,5 +196,5 @@ module.exports = router => {
     next()
   }
 
-  router.use('/staffs', staffRouter)
+  _router.use('/staffs', router)
 }

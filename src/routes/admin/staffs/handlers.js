@@ -10,13 +10,15 @@ const excel = require('node-excel-export')
  * @type {Object.<string, Model>}
  */
 const db = require('@models')
+const { sq } = require('@models')
 const config = require('@config')
 const { Sequelize } = require('@models')
 const base64 = require('@/src/helpers/base64')
-const { formatDate, getLocale } = require('@/src/helpers')
 const { ROLE, EMAIL_TYPE } = require('@/src/constants')
 const { ApiError, api } = require('@/src/classes/errors')
 const SendMail = require('@/src/services/email/SendMail')
+const { formatDate, getLocale } = require('@/src/helpers')
+const mailHandlers = require('@/src/routes/admin/emails/handlers')
 
 const ADMIN_HOST = config.admin.host
 const invitationUrl = `${ADMIN_HOST}/register`
@@ -88,15 +90,17 @@ exports.inviteUser = async function inviteUser (inviter, invitee, req) {
   link.searchParams.set('firstName', staff.firstName)
   link.searchParams.set('lastName', staff.lastName)
 
-  const callbackUrl = new URL(config.service.host)
-  callbackUrl.pathname = '/__internal/emails/users/update'
-  callbackUrl.searchParams.set('emailId', base64.encode(tokenTimestamp))
-  callbackUrl.searchParams.set('userId', base64.encode(staff.uid))
+  const emailLink = new URL(config.service.host)
+  emailLink.pathname = '/__internal/emails/update'
+  emailLink.searchParams.set('emailId', base64.encode(tokenTimestamp))
+  emailLink.searchParams.set('uid', base64.encode(staff.uid))
+  emailLink.searchParams.set('type', base64.encode('staff'))
 
   const sent = await SendMail.sendAdminInvitation(
     staff,
     link,
     req,
+    emailLink,
     getLocale(staff.language && staff.language.toLowerCase())
   )
 
@@ -106,7 +110,8 @@ exports.inviteUser = async function inviteUser (inviter, invitee, req) {
     historyOpts = {
       event: {
         status: 'fail',
-        type: EMAIL_TYPE.USER_INVITATION
+        type: 'mail',
+        secondaryType: EMAIL_TYPE.USER_INVITATION
       },
       req: sent.message,
       res: sent.error
@@ -115,7 +120,8 @@ exports.inviteUser = async function inviteUser (inviter, invitee, req) {
     historyOpts = {
       event: {
         status: 'in-progress',
-        type: EMAIL_TYPE.USER_INVITATION
+        type: 'mail',
+        secondaryType: EMAIL_TYPE.USER_INVITATION
       },
       res: sent.res
     }
@@ -262,10 +268,17 @@ exports.resendInvitation = async function resendInvitation (body, inviter, req) 
   link.searchParams.set('firstName', staff.firstName)
   link.searchParams.set('lastName', staff.lastName)
 
+  const emailLink = new URL(config.service.host)
+  emailLink.pathname = '/__internal/emails/update'
+  emailLink.searchParams.set('emailId', base64.encode(tokenTimestamp))
+  emailLink.searchParams.set('uid', base64.encode(staff.uid))
+  emailLink.searchParams.set('type', base64.encode('staff'))
+
   const sent = await SendMail.sendAdminInvitation(
     staff,
     link,
     req,
+    emailLink,
     getLocale(staff.language && staff.language.toLowerCase())
   )
 
@@ -275,7 +288,8 @@ exports.resendInvitation = async function resendInvitation (body, inviter, req) 
     historyOpts = {
       event: {
         status: 'fail',
-        type: EMAIL_TYPE.USER_INVITATION
+        type: 'mail',
+        secondaryType: EMAIL_TYPE.USER_INVITATION
       },
       req: sent.message,
       res: sent.error
@@ -284,7 +298,8 @@ exports.resendInvitation = async function resendInvitation (body, inviter, req) 
     historyOpts = {
       event: {
         status: 'in-progress',
-        type: EMAIL_TYPE.USER_INVITATION
+        type: 'mail',
+        secondaryType: EMAIL_TYPE.USER_INVITATION
       },
       res: sent.res
     }
@@ -407,5 +422,83 @@ exports.autosuggest = async function autosuggest (query, props) {
   return {
     outlets,
     meta: { ...props.meta }
+  }
+}
+
+/**
+ *  Get a user history detail
+ * @param {string} uid user uid
+ * @param {object} props request props
+ * @returns {Promise<object>}
+ */
+exports.history = async function history (uid, props) {
+  const outlets = {
+    details: undefined
+  }
+  const inst = await sq.query(
+    `
+    SELECT
+      "staffs"."history"
+    FROM "staffs"
+    WHERE
+      "staffs"."deletedAt" IS NULL
+      AND "staffs"."uid" = :uid
+  `,
+    {
+      replacements: { uid },
+      type: sq.QueryTypes.SELECT,
+      plain: true
+    }
+  )
+  if (!inst) {
+    throw new ApiError(
+      400,
+      'invalid_request_error',
+      'user_not_found',
+      'User not found'
+    )
+  }
+
+  outlets.details = inst
+
+  if (outlets.details && outlets.details.history.length > 0) {
+    // currently only check for mail
+    for (let i = 0, len = outlets.details.history.length; i < len; i++) {
+      const item = outlets.details.history[i]
+
+      if (item.event && item.event.status === 'in-progress') {
+        try {
+          const mailId = (item.res?.[0]?._id || item.res?._id) ?? ''
+
+          const res = await mailHandlers.checkMailStatus({
+            mailId
+          }, props)
+
+          if (res.outlets.details.state !== item.event.status) {
+            await mailHandlers.updateUserHistoryLog({
+              uid,
+              index: i,
+              data: res.outlets.details
+            }, props)
+          }
+        } catch (error) {
+          const delayTime = new Date(item.createdAt).getTime() + (60000 * 60)
+          if (new Date().getTime() > delayTime) {
+            await mailHandlers.updateUserHistoryLog({
+              uid,
+              index: i,
+              data: { ...error, state: 'fail' }
+            }, props)
+          }
+        }
+      }
+    }
+  }
+
+  return {
+    outlets,
+    meta: {
+      ...props.meta
+    }
   }
 }

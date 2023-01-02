@@ -61,11 +61,13 @@ module.exports = (sequelize, DataTypes) => {
       get () {
         return this.firstName && this.lastName
           ? `${this.firstName} ${this.lastName}`
-          : this.firstName && !this.lastName
+          : this.firstName
             ? this.firstName
             : this.lastName
               ? this.lastName
-              : ''
+              : this.username
+                ? this.username
+                : ''
       },
       set (value) {
         throw new Error('Do not try to set the `fullName` value!')
