@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "ee7adca7-7c10-46b8-9bec-df0585b23f0a",
+		"_postman_id": "fd5fe3f0-a6ad-40f7-9f07-7c4e6944173d",
 		"name": "pouchfi",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -70,11 +70,7 @@
 											"key": "files",
 											"description": "files to be attached. Maximum of three(3)",
 											"type": "file",
-											"src": [
-												"/Users/danielchiwuzoh/Downloads/Customer Data Update Form - Copy.pdf",
-												"/Users/danielchiwuzoh/Downloads/LATEST SAVINGS MANDATE FORM.PDF",
-												"/Users/danielchiwuzoh/Downloads/Transaction Alert Form new.pdf"
-											]
+											"src": "/Users/danielchiwuzoh/Downloads/ZENITH_20221201_085951  _-1252102175.pdf"
 										},
 										{
 											"key": "message",
@@ -94,7 +90,496 @@
 									]
 								}
 							},
-							"response": []
+							"response": [
+								{
+									"name": "Send New Partner Email - no attachment",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "name",
+													"value": "Daniel Chiwuzoh",
+													"type": "default"
+												},
+												{
+													"key": "email",
+													"value": "chiwuzohdaniel@gmail.com",
+													"description": "the persons email",
+													"type": "default"
+												},
+												{
+													"key": "message",
+													"value": "Hi, I am testing the partnership email route. Attached to this mail is a document for you to look at.",
+													"description": "The message to be sent",
+													"type": "default"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{base_url}}partner/email",
+											"host": [
+												"{{base_url}}partner"
+											],
+											"path": [
+												"email"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Security-Policy",
+											"value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+										},
+										{
+											"key": "Cross-Origin-Embedder-Policy",
+											"value": "require-corp"
+										},
+										{
+											"key": "Cross-Origin-Opener-Policy",
+											"value": "same-origin"
+										},
+										{
+											"key": "Cross-Origin-Resource-Policy",
+											"value": "same-origin"
+										},
+										{
+											"key": "X-DNS-Prefetch-Control",
+											"value": "off"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=15552000; includeSubDomains"
+										},
+										{
+											"key": "X-Download-Options",
+											"value": "noopen"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "Origin-Agent-Cluster",
+											"value": "?1"
+										},
+										{
+											"key": "X-Permitted-Cross-Domain-Policies",
+											"value": "none"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Retry-After",
+											"value": "549.244"
+										},
+										{
+											"key": "X-RateLimit-Limit",
+											"value": "1000"
+										},
+										{
+											"key": "X-RateLimit-Remaining",
+											"value": "998"
+										},
+										{
+											"key": "X-RateLimit-Reset",
+											"value": "1672653927371 milliseconds"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "203"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"cb-TArUeWbgVJ19jne8lfNlrhTmMoA\""
+										},
+										{
+											"key": "Vary",
+											"value": "Accept-Encoding"
+										},
+										{
+											"key": "Date",
+											"value": "Mon, 02 Jan 2023 09:56:19 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"event\": {\n        \"status\": \"in-progress\",\n        \"type\": \"partner_with_us\"\n    },\n    \"res\": [\n        {\n            \"email\": \"chiwuzohdumebi@gmail.com\",\n            \"status\": \"sent\",\n            \"_id\": \"7a79e8883c654694b46f5e3acd9613d9\",\n            \"reject_reason\": null,\n            \"queued_reason\": null\n        }\n    ]\n}"
+								},
+								{
+									"name": "Send New Partner Email - with attachment",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "name",
+													"value": "Daniel Chiwuzoh",
+													"type": "default"
+												},
+												{
+													"key": "email",
+													"value": "chiwuzohdaniel@gmail.com",
+													"description": "the persons email",
+													"type": "default"
+												},
+												{
+													"key": "files",
+													"description": "files to be attached. Maximum of three(3)",
+													"type": "file",
+													"src": "/Users/danielchiwuzoh/Downloads/ZENITH_20221201_085951  _-1252102175.pdf"
+												},
+												{
+													"key": "message",
+													"value": "Hi, I am testing the partnership email route. Attached to this mail is a document for you to look at.",
+													"description": "The message to be sent",
+													"type": "default"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{base_url}}partner/email",
+											"host": [
+												"{{base_url}}partner"
+											],
+											"path": [
+												"email"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Security-Policy",
+											"value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+										},
+										{
+											"key": "Cross-Origin-Embedder-Policy",
+											"value": "require-corp"
+										},
+										{
+											"key": "Cross-Origin-Opener-Policy",
+											"value": "same-origin"
+										},
+										{
+											"key": "Cross-Origin-Resource-Policy",
+											"value": "same-origin"
+										},
+										{
+											"key": "X-DNS-Prefetch-Control",
+											"value": "off"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=15552000; includeSubDomains"
+										},
+										{
+											"key": "X-Download-Options",
+											"value": "noopen"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "Origin-Agent-Cluster",
+											"value": "?1"
+										},
+										{
+											"key": "X-Permitted-Cross-Domain-Policies",
+											"value": "none"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Retry-After",
+											"value": "443.824"
+										},
+										{
+											"key": "X-RateLimit-Limit",
+											"value": "1000"
+										},
+										{
+											"key": "X-RateLimit-Remaining",
+											"value": "997"
+										},
+										{
+											"key": "X-RateLimit-Reset",
+											"value": "1672653927371 milliseconds"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "193"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"c1-R6b7PK1NA7bRiX/AzZiQtt0fkdc\""
+										},
+										{
+											"key": "Vary",
+											"value": "Accept-Encoding"
+										},
+										{
+											"key": "Date",
+											"value": "Mon, 02 Jan 2023 09:58:05 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"event\": {\n        \"status\": \"in-progress\",\n        \"type\": \"partner_with_us\"\n    },\n    \"res\": [\n        {\n            \"email\": \"chiwuzohdumebi@gmail.com\",\n            \"status\": \"queued\",\n            \"queued_reason\": \"attachments\",\n            \"_id\": \"c99b12453ba84321b70caea258e29094\"\n        }\n    ]\n}"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Contact Us",
+					"item": [
+						{
+							"name": "Send New Contact us Email",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "firstName",
+											"value": "Daniel",
+											"description": "first name",
+											"type": "default"
+										},
+										{
+											"key": "lastName",
+											"value": "Chiwuzoh",
+											"description": "last name",
+											"type": "default"
+										},
+										{
+											"key": "email",
+											"value": "chiwuzohdaniel@gmail.com",
+											"description": "email address",
+											"type": "default"
+										},
+										{
+											"key": "message",
+											"value": "I am testing the contact-us message route",
+											"description": "message to be sent",
+											"type": "default"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}contact-us/email",
+									"host": [
+										"{{base_url}}contact-us"
+									],
+									"path": [
+										"email"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Send New Contact us Email",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "urlencoded",
+											"urlencoded": [
+												{
+													"key": "firstName",
+													"value": "Daniel",
+													"description": "first name",
+													"type": "default"
+												},
+												{
+													"key": "lastName",
+													"value": "Chiwuzoh",
+													"description": "last name",
+													"type": "default"
+												},
+												{
+													"key": "email",
+													"value": "chiwuzohdaniel@gmail.com",
+													"description": "email address",
+													"type": "default"
+												},
+												{
+													"key": "message",
+													"value": "I am testing the contact-us message route",
+													"description": "message to be sent",
+													"type": "default"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{base_url}}contact-us/email",
+											"host": [
+												"{{base_url}}contact-us"
+											],
+											"path": [
+												"email"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Security-Policy",
+											"value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+										},
+										{
+											"key": "Cross-Origin-Embedder-Policy",
+											"value": "require-corp"
+										},
+										{
+											"key": "Cross-Origin-Opener-Policy",
+											"value": "same-origin"
+										},
+										{
+											"key": "Cross-Origin-Resource-Policy",
+											"value": "same-origin"
+										},
+										{
+											"key": "X-DNS-Prefetch-Control",
+											"value": "off"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=15552000; includeSubDomains"
+										},
+										{
+											"key": "X-Download-Options",
+											"value": "noopen"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "Origin-Agent-Cluster",
+											"value": "?1"
+										},
+										{
+											"key": "X-Permitted-Cross-Domain-Policies",
+											"value": "none"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Retry-After",
+											"value": "600"
+										},
+										{
+											"key": "X-RateLimit-Limit",
+											"value": "1000"
+										},
+										{
+											"key": "X-RateLimit-Remaining",
+											"value": "999"
+										},
+										{
+											"key": "X-RateLimit-Reset",
+											"value": "1672653927371 milliseconds"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "203"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"cb-6IuukRBXqXRxb3nisBGdxYUX+jA\""
+										},
+										{
+											"key": "Vary",
+											"value": "Accept-Encoding"
+										},
+										{
+											"key": "Date",
+											"value": "Mon, 02 Jan 2023 09:55:29 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"event\": {\n        \"status\": \"in-progress\",\n        \"type\": \"partner_with_us\"\n    },\n    \"res\": [\n        {\n            \"email\": \"chiwuzohdumebi@gmail.com\",\n            \"status\": \"sent\",\n            \"_id\": \"86826fa2bfa44acabe3dd6ad7c47d273\",\n            \"reject_reason\": null,\n            \"queued_reason\": null\n        }\n    ]\n}"
+								}
+							]
 						}
 					]
 				},
@@ -111,13 +596,13 @@
 									"urlencoded": [
 										{
 											"key": "email",
-											"value": "chiwuzohdaniel@gmail.com",
+											"value": "chiwuzohdumebi@gmail.com",
 											"description": "user email",
 											"type": "default"
 										},
 										{
 											"key": "username",
-											"value": "dm",
+											"value": "dmb",
 											"description": "username to be reserved for user",
 											"type": "default",
 											"disabled": true
@@ -421,7 +906,138 @@
 							]
 						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "Get Postman Collection",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "User-Type",
+										"value": "pouchDev",
+										"type": "default"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}__internal/postman/",
+									"host": [
+										"{{base_url}}__internal"
+									],
+									"path": [
+										"postman",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Mon, 02 Jan 2023 11:17:34 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=UTF-8"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+								},
+								{
+									"key": "Cross-Origin-Embedder-Policy",
+									"value": "require-corp"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Resource-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "X-DNS-Prefetch-Control",
+									"value": "off"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=15724800; includeSubDomains"
+								},
+								{
+									"key": "X-Download-Options",
+									"value": "noopen"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Origin-Agent-Cluster",
+									"value": "?1"
+								},
+								{
+									"key": "X-Permitted-Cross-Domain-Policies",
+									"value": "none"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "no-referrer"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Disposition",
+									"value": "attachment; filename=\"pouchfi.postman_collection.json\""
+								},
+								{
+									"key": "Accept-Ranges",
+									"value": "bytes"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "public, max-age=0"
+								},
+								{
+									"key": "Last-Modified",
+									"value": "Mon, 02 Jan 2023 11:13:57 GMT"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"5607-18572302908\""
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Content-Encoding",
+									"value": "gzip"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"info\": {\n        \"_postman_id\": \"ee7adca7-7c10-46b8-9bec-df0585b23f0a\",\n        \"name\": \"pouchfi\",\n        \"schema\": \"https://schema.getpostman.com/json/collection/v2.1.0/collection.json\"\n    },\n    \"item\": [\n        {\n            \"name\": \"Guest\",\n            \"item\": [\n                {\n                    \"name\": \"Home Page\",\n                    \"item\": [\n                        {\n                            \"name\": \"Get homepage content\",\n                            \"request\": {\n                                \"method\": \"GET\",\n                                \"header\": [],\n                                \"url\": {\n                                    \"raw\": \"{{base_url}}homepage-contents/?language=en&locale=en-US&guestUid=uc63f0431859108edfec6d2e\",\n                                    \"host\": [\n                                        \"{{base_url}}homepage-contents\"\n                                    ],\n                                    \"path\": [\n                                        \"\"\n                                    ],\n                                    \"query\": [\n                                        {\n                                            \"key\": \"language\",\n                                            \"value\": \"en\"\n                                        },\n                                        {\n                                            \"key\": \"locale\",\n                                            \"value\": \"en-US\"\n                                        },\n                                        {\n                                            \"key\": \"guestUid\",\n                                            \"value\": \"uc63f0431859108edfec6d2e\"\n                                        }\n                                    ]\n                                }\n                            },\n                            \"response\": []\n                        }\n                    ]\n                },\n                {\n                    \"name\": \"Partners\",\n                    \"item\": [\n                        {\n                            \"name\": \"Send New Partner Email\",\n                            \"request\": {\n                                \"method\": \"POST\",\n                                \"header\": [],\n                                \"body\": {\n                                    \"mode\": \"formdata\",\n                                    \"formdata\": [\n                                        {\n                                            \"key\": \"name\",\n                                            \"value\": \"Daniel Chiwuzoh\",\n                                            \"type\": \"default\"\n                                        },\n                                        {\n                                            \"key\": \"email\",\n                                            \"value\": \"chiwuzohdaniel@gmail.com\",\n                                            \"description\": \"the persons email\",\n                                            \"type\": \"default\"\n                                        },\n                                        {\n                                            \"key\": \"files\",\n                                            \"description\": \"files to be attached. Maximum of three(3)\",\n                                            \"type\": \"file\",\n                                            \"src\": [\n                                                \"/Users/danielchiwuzoh/Downloads/Customer Data Update Form - Copy.pdf\",\n                                                \"/Users/danielchiwuzoh/Downloads/LATEST SAVINGS MANDATE FORM.PDF\",\n                                                \"/Users/danielchiwuzoh/Downloads/Transaction Alert Form new.pdf\"\n                                            ]\n                                        },\n                                        {\n                                            \"key\": \"message\",\n                                            \"value\": \"Hi, I am testing the partnership email route. Attached to this mail is a document for you to look at.\",\n                                            \"description\": \"The message to be sent\",\n                                            \"type\": \"default\"\n                                        }\n                                    ]\n                                },\n                                \"url\": {\n                                    \"raw\": \"{{base_url}}partner/email\",\n                                    \"host\": [\n                                        \"{{base_url}}partner\"\n                                    ],\n                                    \"path\": [\n                                        \"email\"\n                                    ]\n                                }\n                            },\n                            \"response\": []\n                        }\n                    ]\n                },\n                {\n                    \"name\": \"Users\",\n                    \"item\": [\n                        {\n                            \"name\": \"Waitlist User\",\n                            \"request\": {\n                                \"method\": \"POST\",\n                                \"header\": [],\n                                \"body\": {\n                                    \"mode\": \"urlencoded\",\n                                    \"urlencoded\": [\n                                        {\n                                            \"key\": \"email\",\n                                            \"value\": \"chiwuzohdaniel@gmail.com\",\n                                            \"description\": \"user email\",\n                                            \"type\": \"default\"\n                                        },\n                                        {\n                                            \"key\": \"username\",\n                                            \"value\": \"dm\",\n                                            \"description\": \"username to be reserved for user\",\n                                            \"type\": \"default\",\n                                            \"disabled\": true\n                                        }\n                                    ]\n                                },\n                                \"url\": {\n                                    \"raw\": \"{{base_url}}users/waitlist\",\n                                    \"host\": [\n                                        \"{{base_url}}users\"\n                                    ],\n                                    \"path\": [\n                                        \"waitlist\"\n                                    ]\n                                }\n                            },\n                            \"response\": [\n                                {\n                                    \"name\": \"Waitlist User\",\n                                    \"originalRequest\": {\n                                        \"method\": \"POST\",\n                                        \"header\": [],\n                                        \"body\": {\n                                            \"mode\": \"urlencoded\",\n                                            \"urlencoded\": [\n                                                {\n                                                    \"key\": \"email\",\n                                                    \"value\": \"chiwuzohdaniel@gmail.com\",\n                                                    \"description\": \"user email\",\n                                                    \"type\": \"default\"\n                                                },\n                                                {\n                                                    \"key\": \"username\",\n                                                    \"value\": \"dm\",\n                                                    \"description\": \"username to be reserved for user\",\n                                                    \"type\": \"default\",\n                                                    \"disabled\": true\n                                                }\n                                            ]\n                                        },\n                                        \"url\": {\n                                            \"raw\": \"{{base_url}}users/waitlist\",\n                                            \"host\": [\n                                                \"{{base_url}}users\"\n                                            ],\n                                            \"path\": [\n                                                \"waitlist\"\n                                            ]\n                                        }\n                                    },\n                                    \"status\": \"OK\",\n                                    \"code\": 200,\n                                    \"_postman_previewlanguage\": \"json\",\n                                    \"header\": [\n                                        {\n                                            \"key\": \"Content-Security-Policy\",\n                                            \"value\": \"default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests\"\n                                        },\n                                        {\n                                            \"key\": \"Cross-Origin-Embedder-Policy\",\n                                            \"value\": \"require-corp\"\n                                        },\n                                        {\n                                            \"key\": \"Cross-Origin-Opener-Policy\",\n                                            \"value\": \"same-origin\"\n                                        },\n                                        {\n                                            \"key\": \"Cross-Origin-Resource-Policy\",\n                                            \"value\": \"same-origin\"\n                                        },\n                                        {\n                                            \"key\": \"X-DNS-Prefetch-Control\",\n                                            \"value\": \"off\"\n                                        },\n                                        {\n                                            \"key\": \"X-Frame-Options\",\n                                            \"value\": \"SAMEORIGIN\"\n                                        },\n                                        {\n                                            \"key\": \"Strict-Transport-Security\",\n                                            \"value\": \"max-age=15552000; includeSubDomains\"\n                                        },\n                                        {\n                                            \"key\": \"X-Download-Options\",\n                                            \"value\": \"noopen\"\n                                        },\n                                        {\n                                            \"key\": \"X-Content-Type-Options\",\n                                            \"value\": \"nosniff\"\n                                        },\n                                        {\n                                            \"key\": \"Origin-Agent-Cluster\",\n                                            \"value\": \"?1\"\n                                        },\n                                        {\n                                            \"key\": \"X-Permitted-Cross-Domain-Policies\",\n                                            \"value\": \"none\"\n                                        },\n                                        {\n                                            \"key\": \"Referrer-Policy\",\n                                            \"value\": \"no-referrer\"\n                                        },\n                                        {\n                                            \"key\": \"X-XSS-Protection\",\n                                            \"value\": \"0\"\n                                        },\n                                        {\n                                            \"key\": \"Retry-After\",\n                                            \"value\": \"870.636\"\n                                        },\n                                        {\n                                            \"key\": \"X-RateLimit-Limit\",\n                                            \"value\": \"30\"\n                                        },\n                                        {\n                                            \"key\": \"X-RateLimit-Remaining\",\n                                            \"value\": \"27\"\n                                        },\n                                        {\n                                            \"key\": \"X-RateLimit-Reset\",\n                                            \"value\": \"1671739830456 milliseconds\"\n                                        },\n                                        {\n                                            \"key\": \"Content-Type\",\n                                            \"value\": \"application/json; charset=utf-8\"\n                                        },\n                                        {\n                                            \"key\": \"Content-Length\",\n                                            \"value\": \"940\"\n                                        },\n                                        {\n                                            \"key\": \"ETag\",\n                                            \"value\": \"W/\\\"3ac-Ps8Nhbt+YX4cIOq40OpGuJnoWh0\\\"\"\n                                        },\n                                        {\n                                            \"key\": \"Vary\",\n                                            \"value\": \"Accept-Encoding\"\n                                        },\n                                        {\n                                            \"key\": \"Date\",\n                                            \"value\": \"Thu, 22 Dec 2022 19:56:01 GMT\"\n                                        },\n                                        {\n                                            \"key\": \"Connection\",\n                                            \"value\": \"keep-alive\"\n                                        },\n                                        {\n                                            \"key\": \"Keep-Alive\",\n                                            \"value\": \"timeout=5\"\n                                        }\n                                    ],\n                                    \"cookie\": [],\n                                    \"body\": \"{\\n    \\\"fullName\\\": \\\"\\\",\\n    \\\"inactive\\\": false,\\n    \\\"language\\\": \\\"en-us\\\",\\n    \\\"gender\\\": \\\"MALE\\\",\\n    \\\"metadata\\\": {},\\n    \\\"oAuthResponse\\\": {},\\n    \\\"newsletters\\\": true,\\n    \\\"email\\\": \\\"chiwuzohdaniel@gmail.com\\\",\\n    \\\"waitlist\\\": true,\\n    \\\"uid\\\": \\\"uclbzi7owi0005s7mx4fmvhst7\\\",\\n    \\\"registeredFrom\\\": \\\"email\\\",\\n    \\\"history\\\": [\\n        {\\n            \\\"type\\\": \\\"CREATED\\\",\\n            \\\"createdAt\\\": 1671738959826,\\n            \\\"waitlistedAt\\\": 1671738959826\\n        },\\n        {\\n            \\\"event\\\": {\\n                \\\"status\\\": \\\"in-progress\\\",\\n                \\\"type\\\": \\\"waitlist_notification\\\"\\n            },\\n            \\\"res\\\": [\\n                {\\n                    \\\"email\\\": \\\"chiwuzohdaniel@gmail.com\\\",\\n                    \\\"status\\\": \\\"sent\\\",\\n                    \\\"_id\\\": \\\"b8cfe59f51e449a0a4af6aa3d4c1095f\\\",\\n                    \\\"reject_reason\\\": null,\\n                    \\\"queued_reason\\\": null\\n                }\\n            ],\\n            \\\"createdAt\\\": 1671738961294,\\n            \\\"type\\\": \\\"WAITLIST_ISSUED\\\",\\n            \\\"openedAt\\\": null,\\n            \\\"read\\\": false\\n        }\\n    ],\\n    \\\"updatedAt\\\": \\\"2022-12-22T19:56:01.294Z\\\",\\n    \\\"createdAt\\\": \\\"2022-12-22T19:55:59.826Z\\\",\\n    \\\"id\\\": 3,\\n    \\\"username\\\": null,\\n    \\\"firstName\\\": null,\\n    \\\"lastName\\\": null,\\n    \\\"passwordHash\\\": null,\\n    \\\"avatar\\\": null,\\n    \\\"phone\\\": null,\\n    \\\"bio\\\": null,\\n    \\\"nationality\\\": null,\\n    \\\"birthday\\\": null,\\n    \\\"externalAuthId\\\": null,\\n    \\\"provider\\\": null,\\n    \\\"invitedByUid\\\": null,\\n    \\\"lastLogin\\\": null,\\n    \\\"balance\\\": null,\\n    \\\"deletedAt\\\": null\\n}\"\n                                }\n                            ]\n                        }\n                    ]\n                }\n            ],\n            \"event\": [\n                {\n                    \"listen\": \"prerequest\",\n                    \"script\": {\n                        \"type\": \"text/javascript\",\n                        \"exec\": [\n                            \"pm.request.headers.add({ key: \\\"User-Type\\\", value: 'guest' })\"\n                        ]\n                    }\n                },\n                {\n                    \"listen\": \"test\",\n                    \"script\": {\n                        \"type\": \"text/javascript\",\n                        \"exec\": [\n                            \"\"\n                        ]\n                    }\n                }\n            ]\n        },\n        {\n            \"name\": \"Cache\",\n            \"item\": [\n                {\n                    \"name\": \"Get key\",\n                    \"request\": {\n                        \"method\": \"GET\",\n                        \"header\": [],\n                        \"url\": {\n                            \"raw\": \"{{base_url}}__internal/cache/homepage_find_pk_1\",\n                            \"host\": [\n                                \"{{base_url}}__internal\"\n                            ],\n                            \"path\": [\n                                \"cache\",\n                                \"homepage_find_pk_1\"\n                            ]\n                        }\n                    },\n                    \"response\": []\n                },\n                {\n                    \"name\": \"Delete Cache key\",\n                    \"request\": {\n                        \"method\": \"DELETE\",\n                        \"header\": [],\n                        \"url\": {\n                            \"raw\": \"{{base_url}}__internal/cache/rte_predictionary\",\n                            \"host\": [\n                                \"{{base_url}}__internal\"\n                            ],\n                            \"path\": [\n                                \"cache\",\n                                \"rte_predictionary\"\n                            ]\n                        }\n                    },\n                    \"response\": []\n                },\n                {\n                    \"name\": \"Flush\",\n                    \"request\": {\n                        \"method\": \"DELETE\",\n                        \"header\": [],\n                        \"url\": {\n                            \"raw\": \"{{base_url}}__internal/cache?pattern=*key_informations_client_list*\",\n                            \"host\": [\n                                \"{{base_url}}__internal\"\n                            ],\n                            \"path\": [\n                                \"cache\"\n                            ],\n                            \"query\": [\n                                {\n                                    \"key\": \"pattern\",\n                                    \"value\": \"*key_informations_client_list*\"\n                                }\n                            ]\n                        }\n                    },\n                    \"response\": []\n                }\n            ]\n        },\n        {\n            \"name\": \"Internal\",\n            \"item\": [\n                {\n                    \"name\": \"Webhooks\",\n                    \"item\": [\n                        {\n                            \"name\": \"Check Email Status\",\n                            \"request\": {\n                                \"method\": \"POST\",\n                                \"header\": [],\n                                \"body\": {\n                                    \"mode\": \"urlencoded\",\n                                    \"urlencoded\": [\n                                        {\n                                            \"key\": \"mailId\",\n                                            \"value\": \"0b3eb44372064885ac0e8d488c828064\",\n                                            \"type\": \"default\"\n                                        }\n                                    ]\n                                },\n                                \"url\": {\n                                    \"raw\": \"{{base_url}}__internal/webhooks/mail/status\",\n                                    \"host\": [\n                                        \"{{base_url}}__internal\"\n                                    ],\n                                    \"path\": [\n                                        \"webhooks\",\n                                        \"mail\",\n                                        \"status\"\n                                    ]\n                                }\n                            },\n                            \"response\": []\n                        }\n                    ]\n                },\n                {\n                    \"name\": \"Get Postman Collection\",\n                    \"request\": {\n                        \"method\": \"GET\",\n                        \"header\": [\n                            {\n                                \"key\": \"User-Type\",\n                                \"value\": \"pouchDev\",\n                                \"type\": \"default\"\n                            }\n                        ],\n                        \"url\": {\n                            \"raw\": \"{{base_url}}__internal/postman/\",\n                            \"host\": [\n                                \"{{base_url}}__internal\"\n                            ],\n                            \"path\": [\n                                \"postman\",\n                                \"\"\n                            ]\n                        }\n                    },\n                    \"response\": []\n                }\n            ]\n        },\n        {\n            \"name\": \"Admin\",\n            \"item\": [\n                {\n                    \"name\": \"Send Custom Email to users\",\n                    \"request\": {\n                        \"method\": \"POST\",\n                        \"header\": [],\n                        \"body\": {\n                            \"mode\": \"raw\",\n                            \"raw\": \"{\\n    \\\"html\\\": \\\"<p>Hello, this is a custom email</p>\\\",\\n    \\\"subject\\\": \\\"This is a custom email.\\\",\\n    \\\"users\\\": [\\n        \\\"chiwuzohdumebi@gmail.com\\\",\\n        \\\"chiwuzohdaniel@gmail.com\\\"\\n    ],\\n    \\\"newsletter\\\": false\\n}\",\n                            \"options\": {\n                                \"raw\": {\n                                    \"language\": \"json\"\n                                }\n                            }\n                        },\n                        \"url\": {\n                            \"raw\": \"{{base_url}}admin/emails/custom\",\n                            \"host\": [\n                                \"{{base_url}}admin\"\n                            ],\n                            \"path\": [\n                                \"emails\",\n                                \"custom\"\n                            ]\n                        },\n                        \"description\": \"Request Details\\n- **html** - the html to be sent to the user\\n- **subject** - the subject of the email\\n- **users** - a list of emails to be sent the message (not required)\\n- **newsletter** -  a boolean flag. If true it sends the email to everyone that is subscribed.\\n\\n**html and subject are required**\\n**one of users array or newsletter boolean is required**\\n\\n*See attached examples*\"\n                    },\n                    \"response\": [\n                        {\n                            \"name\": \"Send Custom Email to users\",\n                            \"originalRequest\": {\n                                \"method\": \"POST\",\n                                \"header\": [],\n                                \"body\": {\n                                    \"mode\": \"raw\",\n                                    \"raw\": \"{\\n    \\\"html\\\": \\\"<p>Hello, this is a custom email</p>\\\",\\n    \\\"subject\\\": \\\"This is a custom email.\\\",\\n    \\\"users\\\": [\\n        \\\"chiwuzohdumebi@gmail.com\\\",\\n        \\\"chiwuzohdaniel@gmail.com\\\"\\n    ],\\n    \\\"newsletter\\\": false\\n}\",\n                                    \"options\": {\n                                        \"raw\": {\n                                            \"language\": \"json\"\n                                        }\n                                    }\n                                },\n                                \"url\": {\n                                    \"raw\": \"{{base_url}}admin/emails/custom\",\n                                    \"host\": [\n                                        \"{{base_url}}admin\"\n                                    ],\n                                    \"path\": [\n                                        \"emails\",\n                                        \"custom\"\n                                    ]\n                                }\n                            },\n                            \"status\": \"OK\",\n                            \"code\": 200,\n                            \"_postman_previewlanguage\": \"json\",\n                            \"header\": [\n                                {\n                                    \"key\": \"Content-Security-Policy\",\n                                    \"value\": \"default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests\"\n                                },\n                                {\n                                    \"key\": \"Cross-Origin-Embedder-Policy\",\n                                    \"value\": \"require-corp\"\n                                },\n                                {\n                                    \"key\": \"Cross-Origin-Opener-Policy\",\n                                    \"value\": \"same-origin\"\n                                },\n                                {\n                                    \"key\": \"Cross-Origin-Resource-Policy\",\n                                    \"value\": \"same-origin\"\n                                },\n                                {\n                                    \"key\": \"X-DNS-Prefetch-Control\",\n                                    \"value\": \"off\"\n                                },\n                                {\n                                    \"key\": \"X-Frame-Options\",\n                                    \"value\": \"SAMEORIGIN\"\n                                },\n                                {\n                                    \"key\": \"Strict-Transport-Security\",\n                                    \"value\": \"max-age=15552000; includeSubDomains\"\n                                },\n                                {\n                                    \"key\": \"X-Download-Options\",\n                                    \"value\": \"noopen\"\n                                },\n                                {\n                                    \"key\": \"X-Content-Type-Options\",\n                                    \"value\": \"nosniff\"\n                                },\n                                {\n                                    \"key\": \"Origin-Agent-Cluster\",\n                                    \"value\": \"?1\"\n                                },\n                                {\n                                    \"key\": \"X-Permitted-Cross-Domain-Policies\",\n                                    \"value\": \"none\"\n                                },\n                                {\n                                    \"key\": \"Referrer-Policy\",\n                                    \"value\": \"no-referrer\"\n                                },\n                                {\n                                    \"key\": \"X-XSS-Protection\",\n                                    \"value\": \"0\"\n                                },\n                                {\n                                    \"key\": \"Vary\",\n                                    \"value\": \"Origin, Accept-Encoding\"\n                                },\n                                {\n                                    \"key\": \"Access-Control-Allow-Credentials\",\n                                    \"value\": \"true\"\n                                },\n                                {\n                                    \"key\": \"Retry-After\",\n                                    \"value\": \"900\"\n                                },\n                                {\n                                    \"key\": \"X-RateLimit-Limit\",\n                                    \"value\": \"30\"\n                                },\n                                {\n                                    \"key\": \"X-RateLimit-Remaining\",\n                                    \"value\": \"29\"\n                                },\n                                {\n                                    \"key\": \"X-RateLimit-Reset\",\n                                    \"value\": \"1671739585256 milliseconds\"\n                                },\n                                {\n                                    \"key\": \"Content-Type\",\n                                    \"value\": \"application/json; charset=utf-8\"\n                                },\n                                {\n                                    \"key\": \"Content-Length\",\n                                    \"value\": \"293\"\n                                },\n                                {\n                                    \"key\": \"ETag\",\n                                    \"value\": \"W/\\\"125-ZKJUdzEsADkYnRqEVKw1y9B+s/4\\\"\"\n                                },\n                                {\n                                    \"key\": \"Date\",\n                                    \"value\": \"Thu, 22 Dec 2022 19:51:26 GMT\"\n                                },\n                                {\n                                    \"key\": \"Connection\",\n                                    \"value\": \"keep-alive\"\n                                },\n                                {\n                                    \"key\": \"Keep-Alive\",\n                                    \"value\": \"timeout=5\"\n                                }\n                            ],\n                            \"cookie\": [],\n                            \"body\": \"[\\n    {\\n        \\\"res\\\": [\\n            {\\n                \\\"email\\\": \\\"chiwuzohdumebi@gmail.com\\\",\\n                \\\"status\\\": \\\"sent\\\",\\n                \\\"_id\\\": \\\"d472d97463d24f0dbd5586346efe7db6\\\",\\n                \\\"reject_reason\\\": null,\\n                \\\"queued_reason\\\": null\\n            }\\n        ]\\n    },\\n    {\\n        \\\"res\\\": [\\n            {\\n                \\\"email\\\": \\\"chiwuzohdaniel@gmail.com\\\",\\n                \\\"status\\\": \\\"sent\\\",\\n                \\\"_id\\\": \\\"f23e14c3e37e46be98cd5cebe0f01f75\\\",\\n                \\\"reject_reason\\\": null,\\n                \\\"queued_reason\\\": null\\n            }\\n        ]\\n    }\\n]\"\n                        },\n                        {\n                            \"name\": \"Send Custom Email to all users who are subscribed for emails\",\n                            \"originalRequest\": {\n                                \"method\": \"POST\",\n                                \"header\": [],\n                                \"body\": {\n                                    \"mode\": \"raw\",\n                                    \"raw\": \"{\\n    \\\"html\\\": \\\"<p>Hello, this is a custom email</p>\\\",\\n    \\\"subject\\\": \\\"This is a custom email.\\\",\\n    \\\"newsletter\\\": true\\n}\",\n                                    \"options\": {\n                                        \"raw\": {\n                                            \"language\": \"json\"\n                                        }\n                                    }\n                                },\n                                \"url\": {\n                                    \"raw\": \"{{base_url}}admin/emails/custom\",\n                                    \"host\": [\n                                        \"{{base_url}}admin\"\n                                    ],\n                                    \"path\": [\n                                        \"emails\",\n                                        \"custom\"\n                                    ]\n                                }\n                            },\n                            \"status\": \"OK\",\n                            \"code\": 200,\n                            \"_postman_previewlanguage\": \"json\",\n                            \"header\": [\n                                {\n                                    \"key\": \"Content-Security-Policy\",\n                                    \"value\": \"default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests\"\n                                },\n                                {\n                                    \"key\": \"Cross-Origin-Embedder-Policy\",\n                                    \"value\": \"require-corp\"\n                                },\n                                {\n                                    \"key\": \"Cross-Origin-Opener-Policy\",\n                                    \"value\": \"same-origin\"\n                                },\n                                {\n                                    \"key\": \"Cross-Origin-Resource-Policy\",\n                                    \"value\": \"same-origin\"\n                                },\n                                {\n                                    \"key\": \"X-DNS-Prefetch-Control\",\n                                    \"value\": \"off\"\n                                },\n                                {\n                                    \"key\": \"X-Frame-Options\",\n                                    \"value\": \"SAMEORIGIN\"\n                                },\n                                {\n                                    \"key\": \"Strict-Transport-Security\",\n                                    \"value\": \"max-age=15552000; includeSubDomains\"\n                                },\n                                {\n                                    \"key\": \"X-Download-Options\",\n                                    \"value\": \"noopen\"\n                                },\n                                {\n                                    \"key\": \"X-Content-Type-Options\",\n                                    \"value\": \"nosniff\"\n                                },\n                                {\n                                    \"key\": \"Origin-Agent-Cluster\",\n                                    \"value\": \"?1\"\n                                },\n                                {\n                                    \"key\": \"X-Permitted-Cross-Domain-Policies\",\n                                    \"value\": \"none\"\n                                },\n                                {\n                                    \"key\": \"Referrer-Policy\",\n                                    \"value\": \"no-referrer\"\n                                },\n                                {\n                                    \"key\": \"X-XSS-Protection\",\n                                    \"value\": \"0\"\n                                },\n                                {\n                                    \"key\": \"Vary\",\n                                    \"value\": \"Origin, Accept-Encoding\"\n                                },\n                                {\n                                    \"key\": \"Access-Control-Allow-Credentials\",\n                                    \"value\": \"true\"\n                                },\n                                {\n                                    \"key\": \"Retry-After\",\n                                    \"value\": \"900\"\n                                },\n                                {\n                                    \"key\": \"X-RateLimit-Limit\",\n                                    \"value\": \"30\"\n                                },\n                                {\n                                    \"key\": \"X-RateLimit-Remaining\",\n                                    \"value\": \"29\"\n                                },\n                                {\n                                    \"key\": \"X-RateLimit-Reset\",\n                                    \"value\": \"1671740082282 milliseconds\"\n                                },\n                                {\n                                    \"key\": \"Content-Type\",\n                                    \"value\": \"application/json; charset=utf-8\"\n                                },\n                                {\n                                    \"key\": \"Content-Length\",\n                                    \"value\": \"444\"\n                                },\n                                {\n                                    \"key\": \"ETag\",\n                                    \"value\": \"W/\\\"1bc-x2TK+Z+U1Gi36CtJ7eiSHtrzSOw\\\"\"\n                                },\n                                {\n                                    \"key\": \"Date\",\n                                    \"value\": \"Thu, 22 Dec 2022 19:59:43 GMT\"\n                                },\n                                {\n                                    \"key\": \"Connection\",\n                                    \"value\": \"keep-alive\"\n                                },\n                                {\n                                    \"key\": \"Keep-Alive\",\n                                    \"value\": \"timeout=5\"\n                                }\n                            ],\n                            \"cookie\": [],\n                            \"body\": \"[\\n    {\\n        \\\"res\\\": [\\n            {\\n                \\\"email\\\": \\\"daniel.chiwuzoh@stu.cu.edu.ng\\\",\\n                \\\"status\\\": \\\"sent\\\",\\n                \\\"_id\\\": \\\"f4e7f167173e41f5bc12284447a567f0\\\",\\n                \\\"reject_reason\\\": null,\\n                \\\"queued_reason\\\": null\\n            }\\n        ]\\n    },\\n    {\\n        \\\"res\\\": [\\n            {\\n                \\\"email\\\": \\\"chiwuzohdumebi@gmail.com\\\",\\n                \\\"status\\\": \\\"sent\\\",\\n                \\\"_id\\\": \\\"948fac8944474407b63d6ad2dfd5fdbb\\\",\\n                \\\"reject_reason\\\": null,\\n                \\\"queued_reason\\\": null\\n            }\\n        ]\\n    },\\n    {\\n        \\\"res\\\": [\\n            {\\n                \\\"email\\\": \\\"chiwuzohdaniel@gmail.com\\\",\\n                \\\"status\\\": \\\"sent\\\",\\n                \\\"_id\\\": \\\"6886d834491d4fcda5815af9cb73d09a\\\",\\n                \\\"reject_reason\\\": null,\\n                \\\"queued_reason\\\": null\\n            }\\n        ]\\n    }\\n]\"\n                        }\n                    ]\n                }\n            ]\n        }\n    ],\n    \"event\": [\n        {\n            \"listen\": \"prerequest\",\n            \"script\": {\n                \"type\": \"text/javascript\",\n                \"exec\": [\n                    \"pm.environment.set(\\\"xsrf-token\\\", decodeURIComponent(pm.cookies.get(\\\"XSRF-TOKEN\\\")))\",\n                    \"// local\",\n                    \"pm.request.headers.add({\",\n                    \"    key: \\\"User-Token\\\",\",\n                    \"    value: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJob3N0IjoiaHR0cDovL2xvY2FsaG9zdDozMDA0IiwiaWF0IjoxNjUxNjYzODMwfQ.J15W0tsZuN8N27TBF6wxJu3PoLoBJqRQoysDx14Iy8I'\",\n                    \"})\",\n                    \"// stg\",\n                    \"// pm.request.headers.add({\",\n                    \"//     key: \\\"User-Token\\\",\",\n                    \"//     value: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJob3N0IjoiaHR0cHM6Ly9zdGctYXBpLXZveWFnaW4ucmFrdXRlbnRyYXZlbHhjaGFuZ2UuY29tIiwiaWF0IjoxNjU5Mzg5NzA1fQ.-PPXHDwkhkuM4fdXmBtDNXQy89dXLBMjnLPXP2WnlGE'\",\n                    \"// })\"\n                ]\n            }\n        },\n        {\n            \"listen\": \"test\",\n            \"script\": {\n                \"type\": \"text/javascript\",\n                \"exec\": [\n                    \"\"\n                ]\n            }\n        }\n    ],\n    \"variable\": [\n        {\n            \"key\": \"base_url\",\n            \"value\": \"http://localhost:3005/\",\n            \"type\": \"default\"\n        }\n    ]\n}"
+						}
+					]
 				}
 			]
 		},
@@ -429,13 +1045,231 @@
 			"name": "Admin",
 			"item": [
 				{
+					"name": "Staffs",
+					"item": [
+						{
+							"name": "Auth",
+							"item": [
+								{
+									"name": "Login",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "urlencoded",
+											"urlencoded": [
+												{
+													"key": "email",
+													"value": "chiwuzohdumebi@gmail.com",
+													"description": "email address",
+													"type": "default"
+												},
+												{
+													"key": "password",
+													"value": "PouchfiSuperPassword123",
+													"description": "password",
+													"type": "default"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{base_url}}admin/auth/login",
+											"host": [
+												"{{base_url}}admin"
+											],
+											"path": [
+												"auth",
+												"login"
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Login",
+											"originalRequest": {
+												"method": "POST",
+												"header": [],
+												"body": {
+													"mode": "urlencoded",
+													"urlencoded": [
+														{
+															"key": "email",
+															"value": "chiwuzohdumebi@gmail.com",
+															"description": "email address",
+															"type": "default"
+														},
+														{
+															"key": "password",
+															"value": "PouchfiSuperPassword123",
+															"description": "password",
+															"type": "default"
+														}
+													]
+												},
+												"url": {
+													"raw": "{{base_url}}admin/auth/login",
+													"host": [
+														"{{base_url}}admin"
+													],
+													"path": [
+														"auth",
+														"login"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Security-Policy",
+													"value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+												},
+												{
+													"key": "Cross-Origin-Embedder-Policy",
+													"value": "require-corp"
+												},
+												{
+													"key": "Cross-Origin-Opener-Policy",
+													"value": "same-origin"
+												},
+												{
+													"key": "Cross-Origin-Resource-Policy",
+													"value": "same-origin"
+												},
+												{
+													"key": "X-DNS-Prefetch-Control",
+													"value": "off"
+												},
+												{
+													"key": "X-Frame-Options",
+													"value": "SAMEORIGIN"
+												},
+												{
+													"key": "Strict-Transport-Security",
+													"value": "max-age=15552000; includeSubDomains"
+												},
+												{
+													"key": "X-Download-Options",
+													"value": "noopen"
+												},
+												{
+													"key": "X-Content-Type-Options",
+													"value": "nosniff"
+												},
+												{
+													"key": "Origin-Agent-Cluster",
+													"value": "?1"
+												},
+												{
+													"key": "X-Permitted-Cross-Domain-Policies",
+													"value": "none"
+												},
+												{
+													"key": "Referrer-Policy",
+													"value": "no-referrer"
+												},
+												{
+													"key": "X-XSS-Protection",
+													"value": "0"
+												},
+												{
+													"key": "Vary",
+													"value": "Origin, Accept-Encoding"
+												},
+												{
+													"key": "Access-Control-Allow-Credentials",
+													"value": "true"
+												},
+												{
+													"key": "Content-Type",
+													"value": "application/json; charset=utf-8"
+												},
+												{
+													"key": "Content-Length",
+													"value": "1020"
+												},
+												{
+													"key": "ETag",
+													"value": "W/\"3fc-ovCqcRiHrZHQxWTgYIrVa6I5qf8\""
+												},
+												{
+													"key": "Date",
+													"value": "Mon, 02 Jan 2023 10:34:36 GMT"
+												},
+												{
+													"key": "Connection",
+													"value": "keep-alive"
+												},
+												{
+													"key": "Keep-Alive",
+													"value": "timeout=5"
+												}
+											],
+											"cookie": [],
+											"body": "{\n    \"ok\": true,\n    \"outlets\": {\n        \"user\": {\n            \"fullName\": \"Super Admin\",\n            \"uid\": \"url5Xy8pPbKj4VQDW\",\n            \"username\": \"Super Admin\",\n            \"firstName\": \"Super\",\n            \"lastName\": \"Admin\",\n            \"email\": \"chiwuzohdumebi@gmail.com\",\n            \"inactive\": false,\n            \"avatar\": null,\n            \"phone\": null,\n            \"bio\": null,\n            \"language\": \"en-us\",\n            \"roleCode\": \"SUPER_ADMIN\",\n            \"registeredFrom\": \"email\",\n            \"invitedByUid\": null,\n            \"lastLogin\": \"2023-01-02T10:33:05.580Z\",\n            \"level\": 999,\n            \"roleName\": \"Super Admin\",\n            \"token\": \"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiJ1cmw1WHk4cFBiS2o0VlFEVyIsImlzUmVmcmVzaFRva2VuIjpmYWxzZSwiaWF0IjoxNjcyNjU1Njc2LCJleHAiOjE2NzUyNDc2NzYsImF1ZCI6Imh0dHA6Ly8xMjcuMC4wLjE6ODA4MCIsImlzcyI6Imh0dHA6Ly8xMjcuMC4wLjE6ODA4MCIsInN1YiI6InVybDVYeThwUGJLajRWUURXIn0.QhFiYNEAbnKkqwmhlfKQH1tpwdUmLUq5UlXzWXKW2jXJbz9-J3UTZ2_cAjMWXase0qF9vmvKnIlMAkCe88N_oK6NqEO0OxXu0PXRCk61VS3_KawcvMjcL2dTOoWpa7e2SOn9paiTonF3iRUvRsqeXgrNRLU4tNLmbZkFM0wL-zcoQOvsAmid4y6oP-9NdR17mNMlP3g9ouZrEPcLGObWu6jBhQdC_L61BQbIec78CZ1wZvGxins6KS11CoKpLPHlacjX2ZVCLa6iEGMNW45LXGzTU-mxwufWNZ5ZaP3jeeCEEn-1L4V6LGxHlFOj7tyfI16cwHNHM39WuW5d-_uNlQ\"\n        }\n    }\n}"
+										}
+									]
+								},
+								{
+									"name": "Invite user",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "urlencoded",
+											"urlencoded": [
+												{
+													"key": "email",
+													"value": "chiwuzohdaniel@gmail.com",
+													"description": "staff email",
+													"type": "default"
+												},
+												{
+													"key": "roleCode",
+													"value": "SUPER_ADMIN",
+													"description": "staff role",
+													"type": "default"
+												},
+												{
+													"key": "firstName",
+													"value": "Daniel",
+													"description": "first name",
+													"type": "default"
+												},
+												{
+													"key": "lastName",
+													"value": "Chiwuzoh",
+													"description": "last name",
+													"type": "default"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{base_url}}admin/staffs/invite",
+											"host": [
+												"{{base_url}}admin"
+											],
+											"path": [
+												"staffs",
+												"invite"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				},
+				{
 					"name": "Send Custom Email to users",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"html\": \"<p>Hello, this is a custom email</p>\",\n    \"subject\": \"This is a custom email.\",\n    \"users\": [\n        \"chiwuzohdumebi@gmail.com\",\n        \"chiwuzohdaniel@gmail.com\"\n    ],\n    \"newsletter\": false\n}",
+							"raw": "{\n    \"html\": \"<p>Hello, this is a custom email</p>\",\n    \"subject\": \"This is a custom email.\",\n    \"users\": [\n        \"chiwuzohdumebi@gmail.com\",\n        \"chiwuzohdaniel@gmail.com\"\n    ],\n    \"newsletter\": true\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -726,6 +1560,16 @@
 			]
 		}
 	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
 	"event": [
 		{
 			"listen": "prerequest",
@@ -760,6 +1604,16 @@
 		{
 			"key": "base_url",
 			"value": "http://localhost:3005/",
+			"type": "default"
+		},
+		{
+			"key": "staging_base_url",
+			"value": "https://api.pouchfi.com/",
+			"type": "default"
+		},
+		{
+			"key": "token",
+			"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiJ1cmw1WHk4cFBiS2o0VlFEVyIsImlzUmVmcmVzaFRva2VuIjpmYWxzZSwiaWF0IjoxNjcyNjU1Njc2LCJleHAiOjE2NzUyNDc2NzYsImF1ZCI6Imh0dHA6Ly8xMjcuMC4wLjE6ODA4MCIsImlzcyI6Imh0dHA6Ly8xMjcuMC4wLjE6ODA4MCIsInN1YiI6InVybDVYeThwUGJLajRWUURXIn0.QhFiYNEAbnKkqwmhlfKQH1tpwdUmLUq5UlXzWXKW2jXJbz9-J3UTZ2_cAjMWXase0qF9vmvKnIlMAkCe88N_oK6NqEO0OxXu0PXRCk61VS3_KawcvMjcL2dTOoWpa7e2SOn9paiTonF3iRUvRsqeXgrNRLU4tNLmbZkFM0wL-zcoQOvsAmid4y6oP-9NdR17mNMlP3g9ouZrEPcLGObWu6jBhQdC_L61BQbIec78CZ1wZvGxins6KS11CoKpLPHlacjX2ZVCLa6iEGMNW45LXGzTU-mxwufWNZ5ZaP3jeeCEEn-1L4V6LGxHlFOj7tyfI16cwHNHM39WuW5d-_uNlQ",
 			"type": "default"
 		}
 	]
