@@ -39,7 +39,7 @@ module.exports = _router => {
   router.get(
     '/list',
     normalLimiter,
-    authenticated,
+    authenticated('staff'),
     rolePermission(canModify),
     metaHelper(),
     withErrorHandler(async (req, res, next) => {

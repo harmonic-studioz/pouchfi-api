@@ -61,11 +61,13 @@ module.exports = (sequelize, DataTypes) => {
       get () {
         return this.firstName && this.lastName
           ? `${this.firstName} ${this.lastName}`
-          : this.firstName && !this.lastName
+          : this.firstName
             ? this.firstName
             : this.lastName
               ? this.lastName
-              : ''
+              : this.username
+                ? this.username
+                : ''
       },
       set (value) {
         throw new Error('Do not try to set the `fullName` value!')
@@ -262,7 +264,7 @@ module.exports = (sequelize, DataTypes) => {
    * @param {strin} issuer issuer string
    * @returns decoded token
    */
-  User.verifyToken = async (token, issuer = ADMIN_HOST) => {
+  User.verifyToken = (token, issuer = ADMIN_HOST) => {
     const claims = jwt.verify(token, config.jwtKeys.public, {
       issuer,
       algorithms: 'RS256'

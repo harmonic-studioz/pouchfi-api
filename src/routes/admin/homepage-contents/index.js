@@ -30,7 +30,7 @@ module.exports = router => {
   homeRouter.get(
     '/',
     normalLimiter,
-    authenticated,
+    authenticated('staff'),
     rolePermission(roles),
     metaHelper(),
     withErrorHandler(async (req, res, next) => {
@@ -43,7 +43,7 @@ module.exports = router => {
   homeRouter.put(
     '/update',
     secureLimiter,
-    authenticated,
+    authenticated('staff'),
     rolePermission(roles),
     metaHelper(),
     withErrorHandler(async (req, res, next) => {

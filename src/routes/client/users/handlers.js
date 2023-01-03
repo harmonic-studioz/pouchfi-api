@@ -32,6 +32,16 @@ exports.enterWaitlist = async function enterWaitlist (data) {
     throw new ApiError(400, 'invalid_request_error', 'email_exist', 'Invalid param "email", email already taken.')
   }
 
+  if (username) {
+    user = await Users.findOne({
+      where: { username }
+    })
+
+    if (user) {
+      throw new ApiError(400, 'invalid_request_error', 'username_exist', 'Invalid param "username", username already taken.')
+    }
+  }
+
   const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
   if (emailRegex.test(email) === false) {
     throw api.badRequest('This e-mail is invalid.')
@@ -55,7 +65,6 @@ exports.enterWaitlist = async function enterWaitlist (data) {
   const sent = await SendMail.sendWaitlistEmail(user)
 
   let historyOpts = {}
-  console.log({ sent })
   if (sent.error || sent.res.isAxiosError) {
     if (sent.message && sent.message.html)sent.message.html = '...'
     historyOpts = {

@@ -30,7 +30,6 @@ module.exports = _router => {
    * @param {Response} res response object
    */
   async function unsubscribe (req, res) {
-    console.log({ email: req.params.email })
     const { html } = await handlers.unsubscribe(req.params.email)
     res.setHeader('Content-Type', 'text/html')
     res.send(html)

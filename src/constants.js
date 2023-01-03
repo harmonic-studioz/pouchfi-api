@@ -36,7 +36,10 @@ module.exports = {
     WAITLIST_NOTIFICATION: 'waitlist_notification',
     ADMIN_CUSTOM_EMAIL: 'admin_custom_email',
     TEMPLATE: 'template',
-    UNSUBSCRIBE: 'unsubscribe'
+    UNSUBSCRIBE: 'unsubscribe',
+    CONTACT_US: 'contact_us',
+    FORGOT_PASSWORD: 'forgot_password',
+    RESET_PASSWORD: 'reset_password'
   },
 
   REGISTERED_FROM: {

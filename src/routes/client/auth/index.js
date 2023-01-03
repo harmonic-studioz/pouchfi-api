@@ -27,7 +27,7 @@ module.exports = router => {
 
   authRouter.post(
     '/logout',
-    authenticated,
+    authenticated('user'),
     withErrorHandler(async (req, res) => {
       req.session.destroy()
       req.logout()
