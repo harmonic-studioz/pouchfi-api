@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: pouchfi-backend
+  namespace: staging
 spec:
   selector:
     app: pouchfi-backend
@@ -9,12 +10,13 @@ spec:
     - protocol: 'TCP'
       port: 3005
       targetPort: 3005
-  type: LoadBalancer
+  type: ClusterIP
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: pouchfi-backend
+  namespace: staging
 spec:
   replicas: 1
   selector:
@@ -30,9 +32,9 @@ spec:
           image: thedumebi/pouchfi:latest
           imagePullPolicy: Always
           resources:
-            limits:
-              memory: "1Gi"
-              cpu: "500m"
+            # limits:
+              # memory: "1Gi"
+              # cpu: "500m"
           livenessProbe:
             httpGet:
               path: /healthcheck
@@ -51,7 +53,7 @@ spec:
       volumes:
         - name: pouchfi-uploads
           persistentVolumeClaim:
-            claimName: postgres-pvc
+            claimName: backend-pvc
         - name: keys
           secret:
             secretName: pouchfi-keys

@@ -32,7 +32,7 @@ public.key
 
 # Ignore package lock that can cause conflicts and would cause
 # changes not being deployed successfull
-package-lock.json
+# package-lock.json
 
 coverage/
 
@@ -44,3 +44,7 @@ coverage/
 .DS_Store
 
 invitation.html
+
+k8s/secret.yaml
+k8s/staging/pv.yaml
+*.env.*
