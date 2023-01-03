@@ -14,30 +14,28 @@ const { secureLimiter, authenticated } = require('@/src/middlewares')
 
 /**
  * Mount endpoints for /admin/blogs
- * @param {Router} _router - express router
+ * @type {Router} router - express router
  */
-module.exports = _router => {
-  const router = Router({
-    strict: true,
-    caseSensitive: true
-  })
+const router = Router({
+  strict: true,
+  caseSensitive: true
+})
 
-  router.post(
-    '/create',
-    secureLimiter,
-    authenticated,
-    withErrorHandler(createBlog)
-  )
+router.post(
+  '/create',
+  secureLimiter,
+  authenticated,
+  withErrorHandler(createBlog)
+)
 
-  /**
-   * Create a blog database entry
-   * @param {Request} req request object
-   * @param {Response} res response object
-   */
-  async function createBlog (req, res) {
-    const { blog, tags } = await handlers.createBlog(req.body)
-    res.json({ blog, identifiedTags: tags })
-  }
-
-  _router.use('/blogs', router)
+/**
+ * Create a blog database entry
+ * @param {Request} req request object
+ * @param {Response} res response object
+ */
+async function createBlog (req, res) {
+  const { blog, tags } = await handlers.createBlog(req.body)
+  res.json({ blog, identifiedTags: tags })
 }
+
+module.exports = router

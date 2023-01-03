@@ -27,27 +27,25 @@ ajvFormats(inviteAJV)
 /**
  * Mount endpoints for `/admin/users`
  *
- * @param {Router} _router - Express Router
+ * @type {Router} - Express Router
  */
-module.exports = _router => {
-  const router = Router({
-    strict: true,
-    mergeParams: true,
-    caseSenstitive: true
+const router = Router({
+  strict: true,
+  mergeParams: true,
+  caseSenstitive: true
+})
+
+router.get(
+  '/list',
+  normalLimiter,
+  authenticated,
+  rolePermission(canModify),
+  metaHelper(),
+  withErrorHandler(async (req, res, next) => {
+    const data = await handlers.list(req.query)
+    res.locals.setData(data)
+    next()
   })
+)
 
-  router.get(
-    '/list',
-    normalLimiter,
-    authenticated,
-    rolePermission(canModify),
-    metaHelper(),
-    withErrorHandler(async (req, res, next) => {
-      const data = await handlers.list(req.query)
-      res.locals.setData(data)
-      next()
-    })
-  )
-
-  _router.use('/users', router)
-}
+module.exports = router
