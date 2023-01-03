@@ -28,7 +28,7 @@ const router = Router({
 router.get(
   '/',
   normalLimiter,
-  authenticated,
+  authenticated('staff'),
   rolePermission(roles),
   metaHelper(),
   withErrorHandler(async (req, res, next) => {
@@ -41,7 +41,7 @@ router.get(
 router.put(
   '/update',
   secureLimiter,
-  authenticated,
+  authenticated('staff'),
   rolePermission(roles),
   metaHelper(),
   withErrorHandler(async (req, res, next) => {

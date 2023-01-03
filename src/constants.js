@@ -36,7 +36,10 @@ module.exports = {
     WAITLIST_NOTIFICATION: 'waitlist_notification',
     ADMIN_CUSTOM_EMAIL: 'admin_custom_email',
     TEMPLATE: 'template',
-    UNSUBSCRIBE: 'unsubscribe'
+    UNSUBSCRIBE: 'unsubscribe',
+    CONTACT_US: 'contact_us',
+    FORGOT_PASSWORD: 'forgot_password',
+    RESET_PASSWORD: 'reset_password'
   },
 
   REGISTERED_FROM: {
@@ -57,5 +60,24 @@ module.exports = {
     PASSWORD: 'password',
     PASSWORD_RESET: 'passwordReset',
     UPDATED: 'updated'
+  },
+
+  FOREX: {
+    RATES: 'forex.rates',
+    RATES_BACKUP: 'forex.rates.backup',
+    TOKEN_LIST: 'forex.tokenList',
+    TOKEN_LIST_BACKUP: 'forex.tokenList.backup'
+  },
+
+  TOKEN_TYPE: {
+    NETWORK: 'network',
+    NORMAL: 'normal'
+  },
+
+  ACCOUNT_TYPES: {
+    FIAT_NORMAL: 'FIAT_NORMAL',
+    FIAT_KYC: 'FIAT_KYC',
+    CRYPTO_CUSTODIAL: 'CRYPTO_CUSTODIAL',
+    CRYPTO_IMPORTED: 'CRYPTO_IMPORTED'
   }
 }

@@ -32,7 +32,7 @@ const router = Router({
 router.post(
   '/add',
   secureLimiter,
-  authenticated,
+  authenticated('staff'),
   rolePermission(roles),
   withErrorHandler(async (req, res) => {
     const network = await handler.addNetwork(req.body)
@@ -43,7 +43,7 @@ router.post(
 router.get(
   '/',
   normalLimiter,
-  authenticated,
+  authenticated('staff'),
   rolePermission(canView),
   withErrorHandler(async (req, res) => {
     const networks = await handler.getNetworks(req.query)
@@ -54,7 +54,7 @@ router.get(
 router.post(
   '/:id',
   normalLimiter,
-  authenticated,
+  authenticated('staff'),
   rolePermission(canView),
   withErrorHandler(async (req, res) => {
     const options = {

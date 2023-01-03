@@ -89,6 +89,12 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'networkId'
     })
 
+    Network.hasMany(models.accounts, {
+      foreignKey: 'networkId',
+      sourceKey: 'id',
+      as: 'accounts'
+    })
+
     Network.addScope('tokens', {
       include: [{
         model: models.tokens,

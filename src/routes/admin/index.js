@@ -9,7 +9,7 @@ const session = require('express-session')
 const connectRedis = require('connect-redis')
 
 const config = require('@config')
-const redis = require('@/src/helpers/redis')
+const { redis } = require('@/src/helpers/redis')
 // Middlewares
 const { initializer, errorHandler, notFound, okResponse } = require('@/src/middlewares')
 

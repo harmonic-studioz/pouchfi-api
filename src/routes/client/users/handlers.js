@@ -55,7 +55,6 @@ exports.enterWaitlist = async function enterWaitlist (data) {
   const sent = await SendMail.sendWaitlistEmail(user)
 
   let historyOpts = {}
-  console.log({ sent })
   if (sent.error || sent.res.isAxiosError) {
     if (sent.message && sent.message.html)sent.message.html = '...'
     historyOpts = {

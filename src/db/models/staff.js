@@ -58,7 +58,15 @@ module.exports = (sequelize, DataTypes) => {
     fullName: {
       type: DataTypes.VIRTUAL,
       get () {
-        return `${this.firstName} ${this.lastName}`
+        return this.firstName && this.lastName
+          ? `${this.firstName} ${this.lastName}`
+          : this.firstName
+            ? this.firstName
+            : this.lastName
+              ? this.lastName
+              : this.username
+                ? this.username
+                : ''
       },
       set (value) {
         throw new Error('Do not try to set the `fullName` value!')
@@ -167,17 +175,24 @@ module.exports = (sequelize, DataTypes) => {
   })
 
   // before create hooks
-  Staff.addHook('beforeCreate', 'generateUid', async user => {
+  Staff.addHook('beforeCreate', 'generateUid', async staff => {
     const uid = `u${cuid()}`
-    user.setDataValue('uid', uid)
-    user.uid = uid
+    staff.setDataValue('uid', uid)
+    staff.uid = uid
   })
   Staff.addHook('beforeCreate', async staff => {
     const isUsernameSet = staff.getDataValue('username')
     if (isUsernameSet) return
-    const username = `${staff.firstName}${staff.lastName}${Math.random().toString(36).slice(2, 4)}`
-    staff.setDataValue('username', username)
-    staff.username = username
+    if (!staff.firstName && !staff.lastName) return
+    const username = staff.firstName
+      ? staff.lastName
+        ? `${staff.firstName}${staff.lastName}${Math.random().toString(36).slice(2, 4)}`
+        : `${staff.firstName}${Math.random().toString(36).slice(2, 4)}`
+      : `${staff.lastName}${Math.random().toString(36).slice(2, 4)}`
+    if (username) {
+      staff.setDataValue('username', username)
+      staff.username = username
+    }
   })
 
   // associations
@@ -215,7 +230,7 @@ module.exports = (sequelize, DataTypes) => {
    * @param {strin} issuer issuer string
    * @returns decoded token
    */
-  Staff.verifyToken = async (token, issuer = ADMIN_HOST) => {
+  Staff.verifyToken = (token, issuer = ADMIN_HOST) => {
     const claims = jwt.verify(token, config.jwtKeys.public, {
       issuer,
       algorithms: 'RS256'
@@ -284,16 +299,8 @@ module.exports = (sequelize, DataTypes) => {
    * @return {string} jwt token
    */
   Staff.prototype.signToken = function (level, isRefreshToken = false, issuer = ADMIN_HOST, expiresIn = TOKEN_EXPIRES_IN) {
-    const {
-      createdAt,
-      updatedAt,
-      deletedAt,
-      invitedByUid,
-      ...rest
-    } = this.toClean()
-
     const token = jwt.sign({
-      ...rest,
+      uid: this.uid,
       isRefreshToken,
       level
     }, config.jwtKeys.private, {

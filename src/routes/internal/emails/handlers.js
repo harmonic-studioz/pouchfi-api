@@ -8,11 +8,11 @@
  * @type {Object.<string, Model>}
  */
 const db = require('@models')
-const { USER_HISTORY: history } = require('@/src/constants')
 const base64 = require('@/src/helpers/base64')
 const errors = require('@/src/classes/errors')
 
 const Users = db.users
+const Staffs = db.staffs
 
 /**
  * marks a user email as read when the user opens the email
@@ -20,7 +20,7 @@ const Users = db.users
  * @returns {Promise<object>} email data
  */
 exports.updateUserEmail = async function (data) {
-  let { uid, emailId } = data
+  let { uid, emailId, type } = data
 
   // no need to throw error, silently fail
   if (!uid || !emailId) return
@@ -28,24 +28,34 @@ exports.updateUserEmail = async function (data) {
   // decode emailId and userId
   uid = base64.decode(uid)
   emailId = base64.decode(emailId)
+  type = type ? base64.decode(type) : 'user'
 
-  const user = await Users.findByPk(uid)
+  /**
+   * @type {Object.<string, Model>}
+   */
+  const models = {
+    staff: Staffs,
+    user: Users
+  }
+  const Model = models[type]
+
+  const user = await Model.findByPk(uid)
   if (!user) return
 
-  const emailHistory = user.history[history.EMAIL]
-  const emailData = emailHistory[emailId]
-  if (!emailData) {
+  const history = user.history
+  const emailIndex = history.findIndex(mail => mail.createdAt === emailId)
+  if (emailIndex < 0) {
     throw errors.api.unprocessableEntity('Cannot process invalid email ID')
   }
 
   // mark that the user has read the email
-  emailData.data.read = true
-  emailData.data.openedAt = new Date()
+  history[emailIndex].read = true
+  history[emailIndex].openedAt = new Date()
 
   user.changed('history', true)
-  await user.save({ hooks: false })
+  await user.update({ history })
 
   return {
-    outlets: { email: emailData }
+    outlets: { email: history[emailIndex] }
   }
 }

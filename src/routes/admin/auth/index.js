@@ -35,7 +35,7 @@ router.post(
 
 router.post(
   '/logout',
-  authenticated,
+  authenticated('staff'),
   withErrorHandler(async (req, res) => {
     req.session.destroy()
     req.logout()
@@ -75,7 +75,7 @@ router.post(
   secureLimiter,
   metaHelper(),
   withErrorHandler(async (req, res) => {
-    await handlers.forgotPassword(req.body, res.locals.getProps())
+    await handlers.forgotPassword(req.body.email, res.locals.getProps())
     res.json({ ok: true })
   })
 )
@@ -83,9 +83,10 @@ router.post(
 router.post(
   '/reset_password',
   secureLimiter,
+  metaHelper(),
   verifyPasswordResetToken,
   withErrorHandler(async (req, res) => {
-    await handlers.resetpassword(req.body.password, req.claims)
+    await handlers.resetpassword(req.body.password, req.claims, res.locals.getProps())
     res.json({ ok: true })
   })
 )

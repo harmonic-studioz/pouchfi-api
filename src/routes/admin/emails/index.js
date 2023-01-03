@@ -30,7 +30,7 @@ const router = Router({
 router.post(
   '/custom',
   secureLimiter,
-  authenticated,
+  authenticated('staff'),
   rolePermission(canModify),
   withErrorHandler(async (req, res) => {
     const result = await handlers.sendUsersMail(req.body)
