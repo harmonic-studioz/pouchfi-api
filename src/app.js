@@ -69,6 +69,11 @@ function App (config) {
 
     app.get('/healthcheck', (req, res) => res.send())
 
+    app.get('/k8s/restart', (req, res) => {
+      process.exit(1)
+      res.send()
+    })
+
     app.get('/_ah/stop', async (_req, res, _next) => {
       // wait for ongoing requests to finish and close Postgres connect
       await sq.close()
