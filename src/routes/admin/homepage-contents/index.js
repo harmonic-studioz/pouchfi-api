@@ -17,41 +17,38 @@ const roles = [ROLE.SUPER_ADMIN, ROLE.POUCHFI_ADMIN]
 
 /**
  * Mount endpoints for `/admin/homepage-content`
- *
- * @param {Router} router - Express Router
+ * @type {Router} router - Express Router
  */
-module.exports = router => {
-  const homeRouter = Router({
-    strict: true,
-    mergeParams: true,
-    caseSenstitive: true
+const router = Router({
+  strict: true,
+  mergeParams: true,
+  caseSenstitive: true
+})
+
+router.get(
+  '/',
+  normalLimiter,
+  authenticated('staff'),
+  rolePermission(roles),
+  metaHelper(),
+  withErrorHandler(async (req, res, next) => {
+    const data = await handler.get()
+    res.locals.setData(data)
+    next()
   })
+)
 
-  homeRouter.get(
-    '/',
-    normalLimiter,
-    authenticated('staff'),
-    rolePermission(roles),
-    metaHelper(),
-    withErrorHandler(async (req, res, next) => {
-      const data = await handler.get()
-      res.locals.setData(data)
-      next()
-    })
-  )
+router.put(
+  '/update',
+  secureLimiter,
+  authenticated('staff'),
+  rolePermission(roles),
+  metaHelper(),
+  withErrorHandler(async (req, res, next) => {
+    const data = await handler.update(req.body)
+    res.locals.setData(data)
+    next()
+  })
+)
 
-  homeRouter.put(
-    '/update',
-    secureLimiter,
-    authenticated('staff'),
-    rolePermission(roles),
-    metaHelper(),
-    withErrorHandler(async (req, res, next) => {
-      const data = await handler.update(req.body)
-      res.locals.setData(data)
-      next()
-    })
-  )
-
-  router.use('/homepage-contents', homeRouter)
-}
+module.exports = router

@@ -93,7 +93,7 @@ module.exports = (sequelize, DataTypes) => {
 
   // associations
   Account.associate = function associate (models) {
-    Account.belongsTo(models.accounts.relations.types, {
+    Account.belongsTo(models.accountTypes, {
       foreignKey: 'accountCode',
       as: 'type'
     })
@@ -110,7 +110,7 @@ module.exports = (sequelize, DataTypes) => {
 
     Account.addScope('list', {
       include: [{
-        model: models.accounts.relations.types,
+        model: models.types,
         as: 'types',
         attributes: ['name', 'code', 'type']
       }]
@@ -118,7 +118,7 @@ module.exports = (sequelize, DataTypes) => {
 
     Account.addScope('role', {
       include: [{
-        model: models.accounts.relations.types,
+        model: models.types,
         as: 'types',
         attributes: ['name', 'code', 'type', 'level']
       }]

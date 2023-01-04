@@ -1,7 +1,7 @@
 'use strict'
 
 /**
- * @typedef {import ("@models").dummyModel} Model
+ * @typedef {import ("@models").tokens} Model
  *
  */
 
@@ -166,7 +166,7 @@ async function _verifyUserId (guestId) {
     })
   }
 
-  return guest.toJSON()
+  return guest.toClean()
 }
 
 /**
@@ -185,7 +185,7 @@ async function _verifyAdminId (adminId) {
     })
   }
 
-  return user.toJSON()
+  return user.toClean()
 }
 
 /**

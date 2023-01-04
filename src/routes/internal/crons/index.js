@@ -11,16 +11,16 @@ const { withErrorHandler } = require('@/src/helpers')
  * Mount endpoints for `/crons`
  * Call cron jobs either by using terminal crontab or use node-cron
  *
- * @param {Router} router - Express Router
+ * @param {Router} _router - Express Router
  */
-module.exports = router => {
-  const cronRouter = Router({
+module.exports = _router => {
+  const router = Router({
     strict: true,
     mergeParams: true,
     caseSenstitive: true
   })
 
-  cronRouter.use((req, _res, next) => {
+  router.use((req, _res, next) => {
     if (req.headers['x-appengine-cron'] || req.headers['x-cloudscheduler']) {
       next()
 
@@ -35,7 +35,7 @@ module.exports = router => {
    * 0 0 * * * curl --silent --request POST --url http://localhost:3005/__internal/crons/tokens/test-cron --header 'x-cloudscheduler: true'
    * down side is someone can trigger this if they know server URL and headers to send.
    */
-  cronRouter.post(
+  router.post(
     '/test-cron',
     withErrorHandler(async (_req, res) => {
       await handler.testCron()
@@ -47,5 +47,18 @@ module.exports = router => {
    */
   cron.schedule('0 0 * * *', handler.testCron(), { timezone: 'Africa/Lagos' })
 
-  router.use('/crons', cronRouter)
+  router.post(
+    '/reset-trending-tags',
+    async (_req, res, next) => {
+      try {
+        await handler.resetTrendingTags()
+
+        res.send({ ok: true })
+      } catch (err) {
+        next(err)
+      }
+    }
+  )
+
+  _router.use('/crons', router)
 }

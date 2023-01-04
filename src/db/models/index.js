@@ -7,7 +7,9 @@ const Sequelize = require('sequelize')
 const { postgres } = require('@config')
 const Tokens = require('./networks/tokens')
 const Accounts = require('./users/accounts')
+const ExperienceImages = require('./blogs/images')
 const AccountTypes = require('./users/accountTypes')
+const BlogTranslations = require('./blogs/translations')
 /**
  * @typedef {import ("sequelize").Sequelize} Sequelize
  *
@@ -42,26 +44,16 @@ for (const file of files) {
   db[model.name] = model
 }
 db.tokens = Tokens(sequelize, Sequelize.DataTypes)
+db.accountTypes = AccountTypes(sequelize, Sequelize.DataTypes)
 db.accounts = Accounts(sequelize, Sequelize.DataTypes)
-if (!db.accounts.relations) {
-  db.accounts.relations = Object.create(null)
-  db.accounts.relations.types = AccountTypes(sequelize, Sequelize.DataTypes)
-
-  Object.keys(db.accounts.relations).forEach(modelName => {
-    if (db.accounts.relations[modelName].associate) {
-      db.accounts.relations[modelName].associate(db)
-    }
-  })
-}
+db.images = ExperienceImages(sequelize, Sequelize.DataTypes)
+db.blogTranslations = BlogTranslations(sequelize, Sequelize.DataTypes)
 
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {
     db[modelName].associate(db)
   }
 })
-
-// this is for intellisense purposes
-const dummyModel = sequelize.define()
 
 /**
  * SHIM: Sequelize return DECIMAL as string.
@@ -73,7 +65,6 @@ Sequelize.postgres.DECIMAL.parse = function decimal (value) {
 
 db.sq = sequelize
 db.Sequelize = Sequelize
-db.dummyModel = dummyModel
 
 module.exports = db
 
@@ -81,11 +72,12 @@ module.exports.init = async function init (retries = 0) {
   try {
     await sequelize.sync()
     await db.tokens.sync()
-    await db.accounts.relations.types.sync()
+    await db.accountTypes.sync()
     await db.accounts.sync()
+    await db.blogTranslations.sync()
   } catch (err) {
     if (err.parent?.code === '42P01') {
-      await db.accounts.relations.types.sync()
+      await db.accountTypes.sync()
       await db.accounts.sync()
 
       if (retries >= 3) {

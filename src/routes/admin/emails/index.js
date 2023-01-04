@@ -19,26 +19,23 @@ const canModify = [...roles, ROLE.POUCHFI_STAFF]
 
 /**
  * Mount endpoints for `/admin/networks`
- *
- * @param {Router} _router - Express Router
+ * @type {Router} _router - Express Router
  */
-module.exports = _router => {
-  const router = Router({
-    strict: true,
-    mergeParams: true,
-    caseSenstitive: true
+const router = Router({
+  strict: true,
+  mergeParams: true,
+  caseSenstitive: true
+})
+
+router.post(
+  '/custom',
+  secureLimiter,
+  authenticated('staff'),
+  rolePermission(canModify),
+  withErrorHandler(async (req, res) => {
+    const result = await handlers.sendUsersMail(req.body)
+    res.json(result)
   })
+)
 
-  router.post(
-    '/custom',
-    secureLimiter,
-    authenticated('staff'),
-    rolePermission(canModify),
-    withErrorHandler(async (req, res) => {
-      const result = await handlers.sendUsersMail(req.body)
-      res.json(result)
-    })
-  )
-
-  _router.use('/emails', router)
-}
+module.exports = router
