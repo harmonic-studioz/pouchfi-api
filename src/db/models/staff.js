@@ -222,6 +222,12 @@ module.exports = (sequelize, DataTypes) => {
         attributes: ['name', 'code', 'type', 'level']
       }]
     })
+
+    Staff.hasMany(models.blogs, {
+      foreignKey: 'staffUid',
+      sourceKey: 'uid',
+      as: 'blogs'
+    })
   }
 
   /**

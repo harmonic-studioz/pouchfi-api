@@ -59,7 +59,7 @@ function App (config) {
      */
     app.use(loggerMiddleware)
 
-    if (config.isDev) {
+    if (config.isDev || config.isStaging) {
       app.use('/uploads', express.static('uploads'))
     }
 

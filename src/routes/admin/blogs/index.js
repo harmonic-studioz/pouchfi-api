@@ -3,14 +3,13 @@
 /**
  * @typedef {import ("express").Request} Request
  * @typedef {import ("express").Response} Response
-*
-*/
+ */
 
 const { Router } = require('express')
 
 const handlers = require('./handlers')
 const { withErrorHandler } = require('@/src/helpers')
-const { secureLimiter, authenticated } = require('@/src/middlewares')
+const { secureLimiter, authenticated: auth } = require('@/src/middlewares')
 
 /**
  * Mount endpoints for /admin/blogs
@@ -20,6 +19,7 @@ const router = Router({
   strict: true,
   caseSensitive: true
 })
+const authenticated = auth('staff')
 
 router.post(
   '/create',
@@ -37,5 +37,16 @@ async function createBlog (req, res) {
   const { blog, tags } = await handlers.createBlog(req.body)
   res.json({ blog, identifiedTags: tags })
 }
+
+router.get(
+  '/tags',
+  secureLimiter,
+  authenticated,
+  withErrorHandler(async (req, res) => {
+    const tags = await handlers.listTags(req.query, res.locals.getProps())
+
+    res.json(tags)
+  })
+)
 
 module.exports = router

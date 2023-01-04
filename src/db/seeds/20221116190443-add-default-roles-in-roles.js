@@ -1,4 +1,5 @@
 'use strict'
+const { ROLE } = require('../../constants')
 
 module.exports = {
   up: async (queryInterface) => {
@@ -14,52 +15,45 @@ function prepare () {
   const roles = [
     {
       name: 'Super Admin',
-      code: 'SUPER_ADMIN',
+      code: ROLE.SUPER_ADMIN,
       type: 'NATIVE',
       inactive: false,
       level: 999
     },
     {
-      name: 'Client Admin',
-      code: 'CLIENT_ADMIN',
+      name: 'App Admin',
+      code: ROLE.APP_ADMIN,
       type: 'NATIVE',
       inactive: false,
       level: 777
     },
     {
-      name: 'Client Staff',
-      code: 'CLIENT_STAFF',
+      name: 'Website Admin',
+      code: ROLE.WEBSITE_ADMIN,
       type: 'NATIVE',
       inactive: false,
       level: 333
     },
     {
       name: 'Pouchfi Admin',
-      code: 'POUCHFI_ADMIN',
+      code: ROLE.POUCHFI_ADMIN,
       type: 'NATIVE',
       inactive: false,
-      level: 777
+      level: 888
     },
     {
       name: 'Pouchfi CS',
-      code: 'POUCHFI_CS',
+      code: ROLE.POUCHFI_CS,
       type: 'NATIVE',
       inactive: false,
       level: 555
     },
     {
       name: 'Pouchfi Accounting',
-      code: 'POUCHFI_ACCOUNTING',
+      code: ROLE.POUCHFI_ACCOUNTING,
       type: 'NATIVE',
       inactive: false,
       level: 444
-    },
-    {
-      name: 'Pouchfi Staff',
-      code: 'POUCHFI_STAFF',
-      type: 'NATIVE',
-      inactive: false,
-      level: 333
     }]
 
   for (const role of roles) {

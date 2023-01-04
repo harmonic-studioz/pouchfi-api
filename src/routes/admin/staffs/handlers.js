@@ -1,7 +1,7 @@
 'use strict'
 
 /**
- * @typedef {import ("@models").dummyModel} Model
+ * @typedef {import ("@models").tokens} Model
  *
  */
 const excel = require('node-excel-export')

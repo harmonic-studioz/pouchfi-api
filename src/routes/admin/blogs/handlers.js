@@ -1,7 +1,7 @@
 'use strict'
 
 /**
- * @typedef {import ("@models").dummyModel} Model
+ * @typedef {import ("@models").tokens} Model
  *
  */
 
@@ -10,43 +10,72 @@
  */
 const db = require('@models')
 const { sq, Sequelize: { QueryTypes } } = require('@models')
+const { transformedLimit, transformedPage, pagiParser } = require('@/src/helpers')
 
 const Tags = db.tags
 const Blogs = db.blogs
+const Translations = db.blogTranslations
 
 /**
  * Create a blog
  * @param {object} body request body
  * @param {string} body.title blog title
  * @param {string} body.content blog content
- * @param {string} body.link blog link
+ * @param {Array} body.tags blog tags
+ * @returns {Promise<object>}
  */
-exports.createBlog = async function createBlog (body) {
+exports.createBlog = async function createBlog (body, user) {
   const {
+    type,
     title,
     content,
-    link
+    tags,
+    language
   } = body
 
-  const [blog, tags] = await Promise.all([
-    Blogs.create({
-      title,
-      content,
-      link
-    }),
-    extractTags(content)
-  ])
+  const blogId = await Blogs.generateId()
 
-  return { blog, tags }
+  const { translation, tags: returnedTags } = await sq.transaction(async t => {
+    const options = { transaction: t }
+
+    const [blog, createdTranslation, createdTags] = await Promise.all([
+      Blogs.create({
+        id: blogId,
+        type,
+        staffUis: user.uid,
+        needsReview: true
+      }, options),
+      Translations.create({
+        blogId,
+        title,
+        content,
+        language
+      }),
+      extractTags(content, tags, options)
+    ])
+
+    const translation = createdTranslation.toJSON()
+    translation.id = blogId
+
+    for (let i = 0; i < createdTags.length; i++) {
+      const tag = createdTags[i]
+      tag.addBlog(blog)
+    }
+
+    return { blog, translation, tags: createdTags }
+  })
+
+  return { blog: translation, tags: returnedTags }
 }
 
 /**
  * Extract hashtags from text
  * @param {string} text text to search for hashtags
+ * @param {Array<string>} hashtags text to search for hashtags
+ * @param {object} options sequelize options
  * @returns {Promise<string[]>} array of created tags
  */
-async function extractTags (text) {
-  const hashtags = []
+async function extractTags (text, hashtags, options) {
   const hashtagRegex = /#([^`~!@$%^&*#()\-+=\\|/.,<>?'":;{}[\]* ]+)/gi
   if (hashtagRegex.test(text)) {
     hashtagRegex.lastIndex = 0
@@ -56,9 +85,11 @@ async function extractTags (text) {
     }
   }
 
-  for (let i = 0; i < hashtags.length; i++) {
-    const tag = await Tags.findOne({
-      where: { tag: hashtags[i] }
+  const finalTags = [...new Set(hashtags)]
+
+  for (let i = 0; i < finalTags.length; i++) {
+    let tag = await Tags.findOne({
+      where: { tag: finalTags[i] }
     })
     if (tag) {
       await sq.query(`
@@ -69,14 +100,54 @@ async function extractTags (text) {
         WHERE
           tag = '${tag.tag}'
       `, {
-        type: QueryTypes.UPDATE
+        type: QueryTypes.UPDATE,
+        plain: true
       })
+      await tag.reload()
     } else {
-      await Tags.create({
-        tag: hashtags[i]
-      })
+      tag = await Tags.create({
+        tag: finalTags[i]
+      }, options)
+    }
+    finalTags[i] = tag
+  }
+
+  return finalTags
+}
+
+/**
+ * List tags
+ * @param {object} query request query object
+ * @param {object} query.limit number of results
+ * @param {object} query.page result page
+ * @param {object} props request props
+ * @param {object} props.meta request meta data
+ * @returns {Promise<object>} tags
+ */
+exports.listTags = async function listTags (query, props) {
+  const limit = transformedLimit(query.limit)
+  const page = transformedPage(query.page)
+
+  const outlets = {
+    tags: [],
+    summary: {
+      showing: [0, 0],
+      total: 0
     }
   }
 
-  return hashtags
+  const tags = await Tags.findAndCountAll({
+    limit,
+    offset: limit * (page - 1)
+  })
+  if (tags && tags.count > 0) {
+    outlets.tags = tags.rows
+    outlets.summary.showing = pagiParser(page, limit, tags.count)
+    outlets.summary.total = tags.count
+  }
+
+  return {
+    meta: props.meta,
+    outlets
+  }
 }

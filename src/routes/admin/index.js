@@ -61,8 +61,7 @@ routeFiles
   .forEach((file) => {
     const routeNameRegex = /(?<=admin\/)(.+)(?=\/index)/
     const routeName = routeNameRegex.exec(file)[1]
-    console.log({ file, routeName })
-    router.use(routeName, require(file))
+    router.use(`/${routeName}`, require(file))
   })
 
 router.use(notFound('pouchfi-admin')).use(okResponse).use(errorHandler)

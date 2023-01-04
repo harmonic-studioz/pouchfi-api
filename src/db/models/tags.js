@@ -47,12 +47,28 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: 1
     }
   }, {
-    tableName: 'tags'
+    tableName: 'tags',
+    defaultScope: {
+      attributes: {
+        exclude: [
+          'tagMoji',
+          'createdAt',
+          'updatedAt',
+          'totalCount',
+          'trendingCount'
+        ]
+      }
+    }
+  })
+
+  Tags.addHook('beforeUpdate', tag => {
+    console.log({ tag })
+    tag.setDataValue('lastUsedAt', Date.now())
   })
 
   Tags.associate = function associate (models) {
     Tags.belongsToMany(models.blogs, {
-      through: 'blogTags',
+      through: models.kinds,
       onDelete: 'CASCADE',
       onUpdate: 'NO ACTION',
       as: 'blogs',

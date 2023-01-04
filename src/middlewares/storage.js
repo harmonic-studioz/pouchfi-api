@@ -1,10 +1,16 @@
 'use strict'
 
-const { promises: fs } = require('fs')
-const path = require('path')
-const { randomUUID } = require('crypto')
+/**
+ * @typedef {import ("express").Request} Request
+ * @typedef {import ("express").Response} Response
+ * @typedef {import ("express").NextFunction} Next
+ */
 
+const path = require('path')
 const multer = require('multer')
+const { DateTime } = require('luxon')
+const { promises: fs } = require('fs')
+const { randomUUID } = require('crypto')
 
 const config = require('@config')
 
@@ -16,31 +22,17 @@ exports.PublicFileMiddleware = multer({
 
 function local () {
   return multer.diskStorage({
-    destination: async (_req, file, cb) => {
-      if (file.fieldname === 'files') {
-        await getFileDestination('files', cb)
-      } else if (file.fieldname === 'image' || /image/.test(file.mimetype)) {
-        await getFileDestination('images', cb)
-      } else {
-        cb(null, 'uploads')
-      }
-    },
+    destination: 'uploads/',
     filename: generateFilename
   })
 }
 
 function generateFilename (_req, file, cb) {
   const uuid = randomUUID()
-  file.uid = uuid
+  const date = DateTime.now().toFormat('yyyy-MM-dd')
+  file.uid = `${date}-${uuid}`
 
-  cb(null, `${uuid}${path.extname(file.originalname)}`)
-}
-
-async function getFileDestination (type, cb) {
-  const date = new Date()
-  const filePath = `uploads/${type}/${date.getFullYear()}/${date.getMonth() + 1}`
-  await fs.mkdir(filePath, { recursive: true })
-  cb(null, filePath)
+  cb(null, `${file.uid}${path.extname(file.originalname)}`)
 }
 
 function fileFilter (req, file, cb) {
@@ -55,5 +47,25 @@ function fileFilter (req, file, cb) {
     }
   } else {
     return cb(null, true)
+  }
+}
+
+/**
+ * Remove file middleware
+ * @param {Request} req request object
+ * @param {Response} _res response object
+ * @param Next next next fn
+ */
+exports.RemoveFileMiddleware = async (req, _res, next) => {
+  try {
+    const isDev = config.isDev || config.isStaging
+    if (isDev) {
+      await fs.unlink(`uploads/${req.params.fileName}`).catch(() => {}).then(() => {
+        req.fileDeleted = true
+      })
+    }
+    next()
+  } catch (err) {
+    next(err)
   }
 }

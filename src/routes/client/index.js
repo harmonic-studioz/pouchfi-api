@@ -2,6 +2,7 @@
 
 const fs = require('fs')
 const path = require('path')
+const cors = require('cors')
 const { Router } = require('express')
 
 const config = require('@config')
@@ -17,6 +18,7 @@ const router = Router({
   strict: true,
   caseSensitive: true
 })
+router.use(cors(config.cors))
 
 // router.use(authorizeForGuest)
 
