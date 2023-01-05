@@ -9,6 +9,7 @@
  * @type {Object.<string, Model>}
  */
 const db = require('@models')
+const { sq, Sequelize: { QueryTypes } } = require('@models')
 const { EMAIL_TYPE } = require('@/src/constants')
 const { ApiError, api } = require('@/src/classes/errors')
 const SendMail = require('@/src/services/email/SendMail')
@@ -24,12 +25,22 @@ const Users = db.users
  */
 exports.enterWaitlist = async function enterWaitlist (data) {
   const { email, username } = data
-  let user = await Users.findOne({
-    where: { email }
+  let user = await sq.query(`
+    SELECT
+      uid
+    FROM
+      users
+    WHERE
+      email = LOWER(:email)
+      ${username ? 'OR username = LOWER(:username)' : ''}
+  `, {
+    replacements: { username, email },
+    type: QueryTypes.SELECT,
+    plain: true
   })
 
   if (user) {
-    throw new ApiError(400, 'invalid_request_error', 'email_exist', 'Invalid param "email", email already taken.')
+    throw new ApiError(400, 'invalid_request_error', 'email_or_username_exist', 'Invalid param "email" or "username", value already taken.')
   }
 
   const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
@@ -56,7 +67,7 @@ exports.enterWaitlist = async function enterWaitlist (data) {
 
   let historyOpts = {}
   if (sent.error || sent.res.isAxiosError) {
-    if (sent.message && sent.message.html)sent.message.html = '...'
+    if (sent.message && sent.message.html) sent.message.html = '...'
     historyOpts = {
       event: {
         status: 'fail',
@@ -66,7 +77,8 @@ exports.enterWaitlist = async function enterWaitlist (data) {
       res: sent.error
     }
     await Users.destroy({
-      where: { email }
+      where: { email },
+      force: true
     })
     throw api.serverError('An error occured, please try again later')
   } else {

@@ -62,7 +62,7 @@ exports.sendUsersMail = async function sendUsersMail (body) {
     const replacements = {
       email: dataType === 'object' ? user.email : user,
       '<%= html %>': html,
-      username: dataType === 'object' ? user.username || user.email : user
+      username: dataType === 'object' ? user.username || '' : ''
     }
     const email = dataType === 'object' ? user.email : user
     const fullName = dataType === 'object' ? user.fullName : user.split('@')[0]

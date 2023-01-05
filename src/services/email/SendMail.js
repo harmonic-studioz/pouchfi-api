@@ -1,3 +1,14 @@
+'use strict'
+
+/**
+ * @typedef {import ("@models").tokens} Model
+ *
+ */
+
+/**
+ * @type {Object.<string, Model>}
+ */
+const db = require('@models')
 const config = require('@config')
 const { LOCALE } = require('@/src/constants')
 const { sendEmail } = require('@/src/helpers/email')
@@ -10,6 +21,8 @@ const AdminInvitation = require('./messages/staff/adminInvitation')
 const ResetPasswordMessage = require('./messages/staff/resetPassword')
 const WaitlistNotification = require('./messages/users/waitlistNotification')
 const EmailErrorToAdminMessage = require('./messages/staff/emailErrorToAdmin')
+
+const Emails = db.mails
 
 module.exports = class SendMail {
   /**
@@ -28,10 +41,24 @@ module.exports = class SendMail {
     const inst = new PartnerWithUs(locale, {}, recipient, {}, attachments, html)
     const message = await inst.buildMessage()
     try {
+      const res = await sendEmail({ message })
+      if (res.isAxiosError) {
+        await Emails.create({
+          from: message.from_email,
+          to: message.to,
+          res
+        })
+      }
       return {
-        res: await sendEmail({ message })
+        res
       }
     } catch (error) {
+      await Emails.create({
+        from: message.from_email,
+        to: message.to,
+        message,
+        error
+      })
       return {
         message,
         error
@@ -55,10 +82,24 @@ module.exports = class SendMail {
     const inst = new ContactUsMessage(locale, {}, recipient, {}, html)
     const message = await inst.buildMessage()
     try {
+      const res = await sendEmail({ message })
+      if (res.isAxiosError) {
+        await Emails.create({
+          from: message.from_email,
+          to: message.to,
+          res
+        })
+      }
       return {
-        res: await sendEmail({ message })
+        res
       }
     } catch (error) {
+      await Emails.create({
+        from: message.from_email,
+        to: message.to,
+        message,
+        error
+      })
       return {
         message,
         error
@@ -199,9 +240,9 @@ module.exports = class SendMail {
    */
   static async sendWaitlistEmail (waitlistUser, locale = LOCALE.EN) {
     const data = {
-      username: waitlistUser.username || waitlistUser.email,
+      username: waitlistUser.username || '',
       siteURL: config.guest.host,
-      email: waitlistUser.email
+      '<%= email %>': waitlistUser.email
     }
 
     const recipient = {

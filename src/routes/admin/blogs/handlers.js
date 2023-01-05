@@ -9,12 +9,35 @@
  * @type {Object.<string, Model>}
  */
 const db = require('@models')
+const { IMAGE_TYPE } = require('@/src/constants')
 const { sq, Sequelize: { QueryTypes } } = require('@models')
 const { transformedLimit, transformedPage, pagiParser } = require('@/src/helpers')
 
 const Tags = db.tags
 const Blogs = db.blogs
+const Images = db.images
 const Translations = db.blogTranslations
+
+/**
+ * Retrieves the next available Blog ID
+ * @param {Object} session - Express session
+ * @param {number} [session.experienceId] - Existing Blog ID
+ * @returns {Promise<number>} Blog ID
+ */
+exports.getNextId = async function getNextId (session) {
+  if (session.blogId) {
+    return session.blogId
+  }
+
+  const blogId = await Blogs.generateId()
+  session.blogId = blogId
+
+  return new Promise((resolve, reject) => {
+    session.save((error) => {
+      error ? reject(error) : resolve(blogId)
+    })
+  })
+}
 
 /**
  * Create a blog
@@ -24,16 +47,17 @@ const Translations = db.blogTranslations
  * @param {Array} body.tags blog tags
  * @returns {Promise<object>}
  */
-exports.createBlog = async function createBlog (body, user) {
+exports.createBlog = async function createBlog (body, user, session) {
   const {
     type,
     title,
     content,
     tags,
-    language
+    language,
+    hero
   } = body
 
-  const blogId = await Blogs.generateId()
+  const blogId = await exports.getNextId(session)
 
   const { translation, tags: returnedTags } = await sq.transaction(async t => {
     const options = { transaction: t }
@@ -51,7 +75,13 @@ exports.createBlog = async function createBlog (body, user) {
         content,
         language
       }),
-      extractTags(content, tags, options)
+      extractTags(content, tags, options),
+      Images.create({
+        blogId,
+        path: hero,
+        type: IMAGE_TYPE.HERO,
+        position: 0
+      }, options)
     ])
 
     const translation = createdTranslation.toJSON()

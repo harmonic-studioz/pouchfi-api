@@ -136,7 +136,7 @@ exports.forgotPassword = async function (body, props) {
   const emailData = {
     '<%= link %>': link.href,
     '<%= emailLink %>': emailLink.href,
-    username: staff.get('username') || staff.get('email')
+    username: staff.get('username') || ''
   }
   const recipientData = {
     email: staff.get('email'),
@@ -228,7 +228,7 @@ exports.resetpassword = async function (newPassword, claims, props) {
   const emailData = {
     '<%= emailLink %>': emailLink.href,
     '<%= link %>': link.href,
-    username: staff.get('username') || staff.get('email')
+    username: staff.get('username') || ''
   }
   const recipientData = {
     email: staff.get('email'),
