@@ -37,7 +37,8 @@ module.exports = {
     UNSUBSCRIBE: 'unsubscribe',
     CONTACT_US: 'contact_us',
     FORGOT_PASSWORD: 'forgot_password',
-    RESET_PASSWORD: 'reset_password'
+    RESET_PASSWORD: 'reset_password',
+    EMAIL_ERROR_TO_ADMIN: 'email_error_to_admin'
   },
 
   REGISTERED_FROM: {

@@ -78,5 +78,11 @@ module.exports = [
     language: 'en-us',
     type: 'email',
     fileTemplate: loadHTMLTemplate(`${constants.EMAIL_TYPE.RESET_PASSWORD}_en-us`)
+  },
+  {
+    name: constants.EMAIL_TYPE.EMAIL_ERROR_TO_ADMIN,
+    language: 'en-us',
+    type: 'email',
+    fileTemplate: loadHTMLTemplate(`${constants.EMAIL_TYPE.EMAIL_ERROR_TO_ADMIN}_en-us`)
   }
 ]

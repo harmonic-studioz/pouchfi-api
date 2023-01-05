@@ -273,7 +273,7 @@ module.exports = class SendMail {
    */
   static async sendEmailErrorToAdmin (data = {}) {
     const recepient = {
-      email: config.emails.guestEnFaq,
+      email: config.emails.error,
       displayName: 'Admin'
     }
 

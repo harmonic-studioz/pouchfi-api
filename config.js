@@ -76,6 +76,7 @@ const {
   MAIL_PAYOUT_MONITOR = NO_REPLY,
   MAIL_PARTNERSHIP,
   MAIL_CONTACT_US,
+  MAIL_ADMIN_ERROR,
 
   // slack channels hooks
   DEVELOPMENT_INFO,
@@ -154,7 +155,8 @@ module.exports = {
     cs: MAIL_BIZ_CS,
     payoutMonitor: MAIL_PAYOUT_MONITOR,
     partnership: MAIL_PARTNERSHIP,
-    contactUs: MAIL_CONTACT_US
+    contactUs: MAIL_CONTACT_US,
+    error: MAIL_ADMIN_ERROR
   },
 
   cors: {
