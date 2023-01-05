@@ -43,7 +43,6 @@ module.exports = (sequelize, DataTypes) => {
     return sequelize.query(`
       SELECT
         tags.id,
-        tags.level,
         tags."lastUsedAt",
         tags.tag,
         COALESCE(kinds."blogId"::boolean, false) AS selected
@@ -51,10 +50,10 @@ module.exports = (sequelize, DataTypes) => {
         kinds
       RIGHT JOIN
         tags
-        ON tag.id = kinds."tagId"
+        ON tags.id = kinds."tagId"
         AND kinds."blogId" = :blogId
       ORDER BY
-        tags.is ASC
+        tags.id ASC
     `, {
       replacements: {
         blogId

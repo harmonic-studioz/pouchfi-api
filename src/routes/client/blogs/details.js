@@ -2,6 +2,7 @@
 
 const handlers = require('./handlers')
 const errors = require('@/src/classes/errors')
+const { LANG, LOCALE } = require('@/src/constants')
 const { withErrorHandler } = require('@/src/helpers/routes')
 
 module.exports = router => {
@@ -26,8 +27,8 @@ module.exports = router => {
    */
   async function details (req, res) {
     const experience = await handlers.details(req.params.id, {
-      language: req.query.language,
-      locale: req.query.locale
+      language: req.query.language || LANG.EN,
+      locale: req.query.locale || LOCALE.EN
     })
 
     res.json({

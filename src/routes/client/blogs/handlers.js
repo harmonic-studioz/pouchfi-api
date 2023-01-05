@@ -81,7 +81,7 @@ exports.search = async function search (filters, options) {
     options.language = LANGUAGE_BY_LOCALE_WITH_FALLBACK[locale]
   }
 
-  const blgs = await Blogs.arguments.search(filters, options)
+  const blgs = await Blogs.guest.search(filters, options)
 
   /**
    * @type {Object}
@@ -118,7 +118,7 @@ exports.search = async function search (filters, options) {
  * @returns {Promise<Object|null>} blog details for blog details page
  */
 exports.details = async function details (blogId, options) {
-  const blog = await Blogs.arguments.detailsById(blogId, options)
+  const blog = await Blogs.guest.detailsById(blogId, options)
   if (!blog) {
     throw new errors.domain.EntityNotFound(blogId, {
       model: 'Blogs',

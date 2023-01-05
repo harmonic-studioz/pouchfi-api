@@ -7,9 +7,11 @@
 
 const { Router } = require('express')
 
+const create = require('./create')
 const handlers = require('./handlers')
+const permissions = require('./permissions')
 const { withErrorHandler } = require('@/src/helpers')
-const { secureLimiter, authenticated: auth } = require('@/src/middlewares')
+const { secureLimiter, authenticated: auth, normalLimiter } = require('@/src/middlewares')
 
 /**
  * Mount endpoints for /admin/blogs
@@ -21,22 +23,26 @@ const router = Router({
 })
 const authenticated = auth('staff')
 
-router.post(
-  '/create',
-  secureLimiter,
-  authenticated,
-  withErrorHandler(createBlog)
-)
+create(createBaseMiddlewares(), router)
+permissions(createBaseMiddlewares(), router)
 
-/**
- * Create a blog database entry
- * @param {Request} req request object
- * @param {Response} res response object
- */
-async function createBlog (req, res) {
-  const { blog, tags } = await handlers.createBlog(req.body)
-  res.json({ blog, identifiedTags: tags })
-}
+router.get(
+  '/id',
+  normalLimiter,
+  authenticated,
+  withErrorHandler(async (req, res) => {
+    const blogId = await handlers.getNextId(req.session)
+
+    res.json({
+      ok: true,
+      outlets: {
+        blog: {
+          id: blogId
+        }
+      }
+    })
+  })
+)
 
 router.get(
   '/tags',
@@ -48,5 +54,12 @@ router.get(
     res.json(tags)
   })
 )
+
+function createBaseMiddlewares () {
+  return [
+    secureLimiter,
+    authenticated
+  ]
+}
 
 module.exports = router

@@ -47,7 +47,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     history: {
       type: DataTypes.JSONB,
-      defaultValue: {}
+      defaultValue: []
     },
     languages: {
       type: DataTypes.ARRAY(DataTypes.ENUM(['en', 'ja', 'zh_hans', 'zh_hant']))
@@ -137,6 +137,7 @@ module.exports = (sequelize, DataTypes) => {
             jsonb_build_object(
               'id', "translations"."id",
               'title', "translations"."title",
+              'language', "translations".language,
               'content', "translations"."content",
               'createdAt', "blogs"."createdAt",
               'updatedAt', GREATEST("blogs"."updatedAt", "translations"."updatedAt")
@@ -186,8 +187,10 @@ module.exports = (sequelize, DataTypes) => {
        */
       const translationsByLanguage = {}
       for (const $blog of blog.translations) {
+        console.log({ $blog })
         translationsByLanguage[$blog.language] = $blog
       }
+      console.log(translationsByLanguage)
 
       let translation
 
@@ -217,7 +220,7 @@ module.exports = (sequelize, DataTypes) => {
         tags
       ] = await Promise.all([
         // Get Destinations
-        sequelize.models.kind.listByBlogId(blogId)
+        sequelize.models.kinds.listByBlogId(blogId)
       ])
 
       const blogDetail = {
@@ -314,7 +317,7 @@ module.exports = (sequelize, DataTypes) => {
     buildSearchSQL (filters, options) {
       const {
         query,
-        tag,
+        tags,
         sortBy
       } = filters
 
@@ -338,13 +341,13 @@ module.exports = (sequelize, DataTypes) => {
         select: `
           blogs.id IN (
             SELECT "blogId"
-            FROM kinds
+            FROM tags
             WHERE "blogId" IS NOT NULL
           )
         `
       }
 
-      if (tag) {
+      if (tags) {
         tagCondition.where = 'WHERE tags.id IN (:tagIds)'
       }
 
@@ -360,7 +363,8 @@ module.exports = (sequelize, DataTypes) => {
           SELECT
             tags.id,
             tags.tag,
-            tags."tagMoji"
+            tags."tagMoji",
+            kinds."blogId"
           FROM tags
           INNER JOIN
             kinds ON tags.id = kinds."tagId"
@@ -371,7 +375,7 @@ module.exports = (sequelize, DataTypes) => {
       const withs = []
       const whereFilters = []
 
-      const hasAllFilters = tag
+      const hasAllFilters = tags
 
       whereFilters.push("array_to_string(blogs.languages, ', ') like :wildCardLocale")
 
@@ -383,7 +387,7 @@ module.exports = (sequelize, DataTypes) => {
           tagCondition.select
         )
       } else {
-        if (tag) {
+        if (tags) {
           withs.push(tagWith)
           whereFilters.push(tagCondition.select)
         }
@@ -406,7 +410,7 @@ module.exports = (sequelize, DataTypes) => {
 
         joinsForQuery += `
           LEFT JOIN kinds ON  kinds."blogId" = blogs.id
-          LEFT JOIn tags ON tags.is = kinds."tagId"
+          LEFT JOIn tags ON tags.id = kinds."tagId"
         `
       }
 
@@ -479,7 +483,8 @@ module.exports = (sequelize, DataTypes) => {
                   images.type = 'hero'
                   AND images."blogId" = blogs.id
               ),
-              'tagCount', "countTags".count
+              'tagCount', "countTags".count,
+              'tags', "countTags".tags
             )
           ) blogs
         FROM
@@ -489,8 +494,10 @@ module.exports = (sequelize, DataTypes) => {
           ${languageTranslationFilter}
         LEFT JOIN LATERAL (
           SELECT
-            COUNT(id) AS count
+            COUNT(kinds."blogId") AS count,
+            jsonb_agg(tags.tag) AS tags
           FROM kinds
+          INNER JOIN tags ON tags.id = kinds."tagId"
           WHERE kinds."blogId" = blogs.id
         ) AS "countTags" ON true
         WHERE
@@ -498,7 +505,7 @@ module.exports = (sequelize, DataTypes) => {
         GROUP BY
           blogs.id
         ORDER BY
-          blogs.published DESC
+          blogs.published DESC,
           ${orderBy}
       `
 

@@ -18,9 +18,11 @@ const PartnerWithUs = require('./messages/PartnerWithUs')
 const ForgotPassword = require('./messages/staff/forgotPassword')
 const CustomEmailMessage = require('./messages/staff/customEmail')
 const AdminInvitation = require('./messages/staff/adminInvitation')
+const PublishedBlog = require('./messages/staff/publishedBlogMessage')
 const ResetPasswordMessage = require('./messages/staff/resetPassword')
 const WaitlistNotification = require('./messages/users/waitlistNotification')
 const EmailErrorToAdminMessage = require('./messages/staff/emailErrorToAdmin')
+const AvailableBlogFirst = require('./messages/staff/availableBlogFirstMessage')
 
 const Emails = db.mails
 
@@ -298,5 +300,58 @@ module.exports = class SendMail {
     }
 
     return Promise.all(promises)
+  }
+
+  /**
+   * Send email when staff has been published registering a blog
+   * @param {String} locale
+   * @param {object} blog
+   * @param {object} request
+   * @returns
+   */
+  static async sendPublishedBlog (locale, blog, request) {
+    const user = request.user
+    const displayName = `${blog.user.firstName} ${blog.user.lastName}`
+
+    const data = {
+      displayName,
+      '<%= link %>': `${config.guest.host}/blog/${blog.id}`
+    }
+
+    const inst = new PublishedBlog(
+      locale, data, { email: blog.user.email, displayName }, { uid: user.uid }
+    )
+
+    const message = await inst.buildMessage()
+
+    return sendEmail({ message })
+  }
+
+  /**
+   * Send email when staff set a blog to available
+   * @param {String} locale
+   * @param {object} blog
+   * @param {object} request
+   * @returns
+   */
+  static async sendAvailableBlog (locale, blog, request) {
+    const user = request.user
+    const displayName = `${blog.user.firstName} ${blog.user.lastName}`
+
+    const data = {
+      displayName
+    }
+
+    const inst = new AvailableBlogFirst(locale, data, {
+      email: blog.user.email,
+      displayName
+    },
+    {
+      uid: user.uid
+    })
+
+    const message = await inst.buildMessage()
+
+    return sendEmail({ message })
   }
 }
