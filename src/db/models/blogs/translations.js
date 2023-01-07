@@ -49,7 +49,16 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     schema: 'blogs',
-    freezeTableName: true
+    freezeTableName: true,
+    defaultScope: {
+      attributes: {
+        exclude: [
+          'id',
+          'createdAt',
+          'updatedAt'
+        ]
+      }
+    }
   })
 
   Translations.associate = function associate (models) {

@@ -6,6 +6,7 @@ const ajvKeywords = require('ajv-keywords').default
 const handlers = require('./handlers')
 const errors = require('@/src/classes/errors')
 const { withErrorHandler } = require('@/src/helpers')
+const { LANG_FE, LOCALE } = require('@/src/constants')
 
 const ajv = new Ajv({
   useDefaults: true
@@ -60,15 +61,15 @@ module.exports = router => {
     }
 
     const options = {
-      language: req.query.language,
-      locale: req.query.locale
+      language: req.query.language || LANG_FE.EN,
+      locale: req.query.locale || LOCALE.EN
     }
 
-    const blogs = await handlers.search(filters, options)
+    const outlets = await handlers.search(filters, options)
 
     res.send({
       ok: true,
-      outlets: { blogs }
+      outlets
     })
   }
 }

@@ -85,7 +85,7 @@ module.exports = (sequelize, DataTypes) => {
   /**
    * List all blogs's images that is ordered by `position` in ascending order
    *
-   * @param {number} blogId - Experience ID
+   * @param {number} blogId - Blog ID
    * @returns {Promise<Object[]>} List of blog's images
    */
   Images.listByBlogId = async function listByBlogId (blogId, options) {

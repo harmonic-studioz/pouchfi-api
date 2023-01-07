@@ -10,7 +10,7 @@ const _ = require('lodash')
 const { QueryTypes } = require('sequelize')
 
 const { IMAGE_TYPE } = require('@/src/constants')
-const { convertLocaleToLanguage } = require('@/src/helpers')
+const { convertLocaleToLanguage, escapeBackslash } = require('@/src/helpers')
 
 const SEARCH_BLOGS_LIMIT = 18
 const EXCLUDE_LANGUAGE_BY_LOCALE = {
@@ -47,7 +47,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     history: {
       type: DataTypes.JSONB,
-      defaultValue: {}
+      defaultValue: []
     },
     languages: {
       type: DataTypes.ARRAY(DataTypes.ENUM(['en', 'ja', 'zh_hans', 'zh_hant']))
@@ -113,69 +113,461 @@ module.exports = (sequelize, DataTypes) => {
     return row.id
   }
 
+  /**
+   * Determine if staff has acces to the blog id.
+   * @param {Number} blogId
+   * @param {String} uid
+   * @returns {Promise<Boolean>}
+   */
+  Blogs.belongsToStaff = async function belongsToStaff (blogId, uid) {
+    const replacements = { uid, blogId }
+
+    const row = await sequelize.query(`
+      SELECT 1 AS exists
+      FROM blogs
+      WHERE
+        blogs."staffUid" = :uid
+        AND blogs.id = :blogId
+      LIMIT 1
+    `, {
+      replacements,
+      type: QueryTypes.SELECT,
+      plain: true
+    })
+
+    if (row.length === 0) {
+      return false
+    }
+
+    return row && row.exists === 1
+  }
+
+  /**
+   * Get blog by language
+   * @param {number} blogId blog ID
+   * @param {string} language blog language
+   */
+  Blogs.findByLanguage = async function findByLanguage (blogId, language) {
+    return sequelize.query(`
+      SELECT
+        blogs.id,
+        blogs.published,
+        blogs.type,
+        translations.id AS "translationId",
+        translations.language,
+        translations.title,
+        translations.content,
+        to_json(array_remove(array_agg(DISTINCT images), NULL)) AS images,
+        to_json(array_remove(array_agg(DISTINCT tags), NULL)) AS tags
+      FROM
+        blogs
+      LEFT JOIN
+        blogs.translations AS translations
+        ON translations."blogId" = blogs.id
+        AND translations.language = :language
+      LEFT JOIN
+        blogs.images
+        ON images."blogId" = blogs.id
+      LEFT JOIN
+        kinds
+        ON kinds."blogId" = :blogId
+      LEFT JOIN
+        tags
+        ON tags.id = kinds."tagId"
+      WHERE
+        blogs.id = :blogId
+      GROUP BY
+        blogs.id,
+        translations.id,
+        translations.language,
+        translations.content
+    `, {
+      replacements: { blogId, language },
+      type: QueryTypes.SELECT,
+      plain: true
+    })
+  }
+
+  /**
+   * List Blogs based on the provided filters
+   *
+   * @param {Object} filters - Query contains neccessary properties to filter the list
+   * @param {number} filters.limit - Limit the number of blogs to return per page
+   * @param {number} filters.page - Offset to be used
+   * @param {string} filters.search - Search term to filter
+   * @param {string} filters.provider - Provider to filter
+   * @param {boolean} filters.providerStatus - Provider status to filter (inactive as true or false)
+   * @param {string} filters.desc - Description to filter
+   * @param {number[]} filters.tags - tags to filter
+   * @param {string} filters.type - Type to filter
+   * @param {boolean} filters.published - Available status to filter
+   * @param {boolean} filters.needsReview - needsReview status to filter
+   * @param {string} filters.languageFilter - language to filter by
+   * @param {string[]} filters.date - Sort the paginated list by date
+   * @param {string} filters.dateFilter - date field the date uses
+   * @param {string} filters.memo - blog memo
+   * @param {string} filters.field - field to sort by
+   * @param {string} filters.order - Sort order
+   * @param {Object} options - Options
+   * @param {number} options.limit - Number of blogs to show per page
+   * @param {number} options.offset -  offset
+   * @param {string} options.userUid - logged in user uid
+   * @param {string} options.role - logged in user role
+   * @returns {Promise<Object>} Paginated list of Blogs
+   */
+  Blogs.paginate = async function paginate (filters, options) {
+    const wheres = []
+
+    const {
+      sort = {
+        field: filters.field || 'id',
+        order: filters.order || 'asc'
+      }
+    } = filters
+
+    const replacements = {
+      limit: options.limit,
+      offset: options.offset
+    }
+
+    if (filters.search) {
+      wheres.push('LOWER(translations.title) LIKE LOWER(:search) OR blogs.id::varchar LIKE LOWER(:search)')
+      replacements.search = '%' + escapeBackslash(filters.search) + '%'
+    }
+
+    if (filters.desc) {
+      // search tags
+      const tagSQL = await searchTags(filters.desc)
+
+      wheres.push(`
+        (LOWER(translations.title) LIKE LOWER(:desc)
+        OR translations.content LIKE :desc
+        ${tagSQL}
+        )
+      `)
+      replacements.desc = '%' + filters.desc + '%'
+    }
+
+    if (filters.tags) {
+      const tagSQL = await searchTagIds(filters.tags)
+      if (tagSQL.length > 0) wheres.push(tagSQL)
+      else {
+        return {
+          blogs: [],
+          count: 0
+        }
+      }
+    }
+
+    if (filters.type) {
+      wheres.push('blogs.type = :type')
+      replacements.type = filters.type
+    }
+
+    if (filters.needsReview) {
+      wheres.push('"blogs"."needsReview" = :needsReview')
+      replacements.needsReview = filters.needsReview
+    }
+
+    if (filters.published) {
+      wheres.push('blogs.published = :published')
+      replacements.published = filters.published
+    }
+
+    if (filters.languageFilter) {
+      wheres.push(`array_to_string(languages.codes, ',') like '%${filters.languageFilter}%'`)
+    }
+
+    if (filters.dateFilter && filters.date) {
+      wheres.push(`blogs."${filters.dateFilter}" BETWEEN :startDate AND :endDate`)
+      replacements.startDate = `${filters.date[0]} 00:00:00`
+      replacements.endDate = `${filters.date[1]} 23:59:59`
+    }
+
+    if (filters.memo) {
+      wheres.push('blogs.memo LIKE :memo')
+      replacements.memo = '%' + escapeBackslash(filters.memo) + '%'
+    }
+
+    if (filters.provider) {
+      // search owners
+      const ownerSQL = await searchOwner(filters.provider)
+      if (ownerSQL.length > 0) wheres.push(ownerSQL)
+      else {
+        return {
+          blogs: [],
+          count: 0
+        }
+      }
+    }
+
+    if (filters.providerStatus) {
+      wheres.push(`blogs."staffUid" IN (
+        SELECT staffs.uid FROM staffs
+        WHERE staffs.inactive != :providerStatus
+        AND staffs."deletedAt" IS NULL
+      )`)
+      replacements.providerStatus = filters.providerStatus
+    }
+
+    const joins = `
+      -- languages
+      LEFT JOIN LATERAL (
+        SELECT
+          array_agg(DISTINCT language) AS codes
+        FROM
+          blogs.translations
+        WHERE
+          translations."blogId" = blogs.id
+      ) AS languages ON true
+      LEFT JOIN blogs.translations
+        ON translations."blogId" = blogs.id
+        AND translations.language = COALESCE(languages.codes[1], 'en')
+      LEFT JOIN staffs
+        ON staffs.uid = blogs."staffUid"
+    `
+
+    let listSQL = `
+      SELECT
+        blogs.id,
+        blogs.type,
+        staffs.username as provider,
+        blogs.published,
+        languages.codes AS languages,
+        translations.title,
+        blogs."createdAt",
+        GREATEST(blogs."updatedAt", translations."updatedAt") AS "updatedAt"
+      FROM
+        blogs
+      ${joins}
+    `
+
+    let countSQL = `
+      SELECT
+        COUNT(DISTINCT blogs.id)::integer AS count
+      FROM
+        blogs
+      ${joins}
+    `
+
+    if (wheres.length) {
+      const where = wheres.join(' AND ')
+      const whereClause = 'WHERE ' + where
+
+      listSQL += whereClause
+      countSQL += whereClause
+    }
+
+    listSQL += `
+      GROUP BY
+        blogs.id,
+        languages.codes,
+        translations.title,
+        translations."updatedAt",
+        staffs.username
+      ORDER BY
+        "${sort.field}" ${sort.order}
+      LIMIT :limit OFFSET :offset
+    `
+
+    const queryOptions = {
+      replacements,
+      type: QueryTypes.SELECT
+    }
+
+    const [rowsForBlogs, rowForCount] = await Promise.all([
+      sequelize.query(listSQL, queryOptions),
+      sequelize.query(countSQL, Object.assign({ plain: true }, queryOptions))
+    ])
+
+    return {
+      blogs: rowsForBlogs,
+      count: rowForCount.count
+    }
+  }
+
+  /**
+   * Search tags
+   * @param {string} desc string to search for
+   * @returns {Promise<string>} sql for search
+   */
+  async function searchTags (desc) {
+    const tagQuery = `
+      SELECT
+        kinds."blogId"
+      FROM
+        tags
+      INNER JOIN
+        kinds ON kinds."tagId" = tags.id
+      WHERE
+        LOWER(tags.tag) LIKE LOWER('%${desc}%')
+    `
+
+    const tagResults = await sequelize.query(tagQuery, { type: QueryTypes.SELECT })
+    if (tagResults.length === 0) return ''
+
+    let tagIdsQuery = '('
+    for (let i = 0; i < tagResults.length; i++) {
+      tagIdsQuery += `${tagResults[i].blogId}`
+      if (i !== tagResults.length - 1) {
+        tagIdsQuery += ','
+      }
+    }
+    tagIdsQuery += ')'
+
+    return `OR blogs.id IN ${tagIdsQuery}`
+  }
+
+  /**
+   * Search tags Ids
+   * @param {number[]} tags array of ids
+   * @returns {Promise<string>} sql for search
+   */
+  async function searchTagIds (tags) {
+    const tagQuery = `
+      SELECT
+        kinds."blogId"
+      FROM
+        tags
+      INNER JOIN
+        kinds ON kinds."tagId" = tags.id
+      WHERE
+        tags.id IN (:tags)
+    `
+
+    const tagResults = await sequelize.query(tagQuery, {
+      type: QueryTypes.SELECT,
+      replacements: { tags }
+    })
+    if (tagResults.length === 0) return ''
+
+    let tagIdsQuery = '('
+    for (let i = 0; i < tagResults.length; i++) {
+      tagIdsQuery += `${tagResults[i].blogId}`
+      if (i !== tagResults.length - 1) {
+        tagIdsQuery += ','
+      }
+    }
+    tagIdsQuery += ')'
+
+    return `blogs.id IN ${tagIdsQuery}`
+  }
+
+  /**
+   * Search blog owner
+   * @param {string} desc string to search for
+   * @returns {Promise<string>} sql for search
+   */
+  async function searchOwner (desc) {
+    let ownerQuery = `
+      SELECT
+        blogs.id
+      FROM
+        blogs
+      INNER JOIN
+        staffs ON staffs.uid = blogs."staffUid"
+      WHERE
+    `
+    if (isNaN(desc)) {
+      ownerQuery += 'LOWER(staffs.username) LIKE LOWER(:stringProvider)'
+    } else {
+      ownerQuery += 'staffs.id::varchar = :provider'
+    }
+
+    const ownerResults = await sequelize.query(ownerQuery, {
+      replacements: {
+        provider: desc,
+        stringProvider: '%' + desc + '%'
+      },
+      type: QueryTypes.SELECT
+    })
+
+    if (ownerResults.length === 0) return ''
+
+    let ownerIdsQuery = '('
+    for (let i = 0; i < ownerResults.length; i++) {
+      ownerIdsQuery += `${ownerResults[i].id}`
+      if (i !== ownerResults.length - 1) {
+        ownerIdsQuery += ','
+      }
+    }
+    ownerIdsQuery += ')'
+
+    return `blogs.id IN ${ownerIdsQuery}`
+  }
+
   Blogs.guest = {
     /**
      * Retrieves a blog from the provided `blogId`
-     * @param {number} blogId - Experience ID
+     * @param {number} blogId - Blog ID
      * @param {Object} options - Options
-     * @param {string} options.language - Language of the Experience translation
-     * @returns {Promise<Object|null>} Experience
+     * @param {string} options.language - Language of the Blog translation
+     * @returns {Promise<Object|null>} Blog
      */
     async detailsById (blogId, options) {
       const {
         language
       } = options
       const locale = `%${convertLocaleToLanguage(options.locale)}%`
-      const blog = await sequelize.query(`
-        SELECT
-          "blogs"."id",
-          "blogs"."type",
-          "blogs"."published",
-          "blogs"."languages",
-          "blogs"."memo",
-          jsonb_agg(
-            jsonb_build_object(
-              'id', "translations"."id",
-              'title', "translations"."title",
-              'content', "translations"."content",
-              'createdAt', "blogs"."createdAt",
-              'updatedAt', GREATEST("blogs"."updatedAt", "translations"."updatedAt")
-            )
-          ) translations,
-
-          (
-            SELECT
-              jsonb_agg(
-                json_build_object(
-                  'id', "images"."id",
-                  'path', "images"."path",
-                  'type', "images"."type",
-                  'caption', "images"."caption",
-                  'position', "images"."position"
-                )
+      const [blog] = await Promise.all([
+        sequelize.query(`
+          SELECT
+            "blogs"."id",
+            "blogs"."type",
+            "blogs"."published",
+            "blogs"."languages",
+            "blogs"."memo",
+            jsonb_agg(
+              jsonb_build_object(
+                'id', "translations"."id",
+                'title', "translations"."title",
+                'language', "translations".language,
+                'content', "translations"."content",
+                'createdAt', "blogs"."createdAt",
+                'updatedAt', GREATEST("blogs"."updatedAt", "translations"."updatedAt")
               )
-            FROM
-              "blogs"."images" AS "images"
-            WHERE
-              "images"."blogId" = "blogs"."id"
-          ) images
-        FROM "blogs"
-        LEFT JOIN "blogs"."translations" AS "translations"
-          ON "translations"."blogId" = "blogs"."id"
-        WHERE
-          array_to_string(blogs.languages, ', ') like :locale AND
-          "blogs"."id" = :blogId AND
-          "blogs"."published" = true
-        GROUP BY
-          "blogs"."id"
-      `, {
-        replacements: {
-          blogId,
-          locale
-        },
-        type: QueryTypes.SELECT,
-        plain: true
-      })
+            ) translations,
+
+            (
+              SELECT
+                jsonb_agg(
+                  json_build_object(
+                    'id', "images"."id",
+                    'path', "images"."path",
+                    'type', "images"."type",
+                    'caption', "images"."caption",
+                    'position', "images"."position"
+                  )
+                )
+              FROM
+                "blogs"."images" AS "images"
+              WHERE
+                "images"."blogId" = "blogs"."id"
+            ) images
+          FROM "blogs"
+          LEFT JOIN "blogs"."translations" AS "translations"
+            ON "translations"."blogId" = "blogs"."id"
+          WHERE
+            array_to_string(blogs.languages, ', ') like :locale AND
+            "blogs"."id" = :blogId AND
+            "blogs"."published" = true
+          GROUP BY
+            "blogs"."id"
+        `, {
+          replacements: {
+            blogId,
+            locale
+          },
+          type: QueryTypes.SELECT,
+          plain: true
+        }),
+        sequelize.query(`
+          UPDATE blogs SET "lastReadAt" = CURRENT_TIMESTAMP WHERE id = :blogId
+        `, {
+          type: QueryTypes.UPDATE,
+          replacements: { blogId }
+        })
+      ])
 
       if (!blog) {
         return null
@@ -199,7 +591,7 @@ module.exports = (sequelize, DataTypes) => {
           delete translationsByLanguage[exclude[i]]
         }
 
-        // If page language is not present as experience
+        // If page language is not present as blog
         //  language. Select translations by language priority
         //  English -> Japanese -> Chinese
         if (translationsByLanguage.en) {
@@ -217,7 +609,7 @@ module.exports = (sequelize, DataTypes) => {
         tags
       ] = await Promise.all([
         // Get Destinations
-        sequelize.models.kind.listByBlogId(blogId)
+        sequelize.models.kinds.listByBlogId(blogId)
       ])
 
       const blogDetail = {
@@ -258,12 +650,12 @@ module.exports = (sequelize, DataTypes) => {
     },
 
     /**
-     * Retrieves an array of experiences from the provided `filters`
+     * Retrieves an array of blogs from the provided `filters`
      * @param {object} filters - String of search keys
      * @param {Object} options - Options
-     * @param {string} options.language - Language of the Experience translation
+     * @param {string} options.language - Language of the Blog translation
      * @param {string} options.locale -   locale is used for the language of results, language is used for filtering
-     * @returns {Promise<Object>} Object with an Array of Experiences
+     * @returns {Promise<Object>} Object with an Array of Blogs
      */
     async search (filters, options = {}) {
       const { idsSQL, listSQL, countSQL } = this.buildSearchSQL(filters, options)
@@ -314,7 +706,7 @@ module.exports = (sequelize, DataTypes) => {
     buildSearchSQL (filters, options) {
       const {
         query,
-        tag,
+        tags,
         sortBy
       } = filters
 
@@ -338,13 +730,13 @@ module.exports = (sequelize, DataTypes) => {
         select: `
           blogs.id IN (
             SELECT "blogId"
-            FROM kinds
+            FROM tags
             WHERE "blogId" IS NOT NULL
           )
         `
       }
 
-      if (tag) {
+      if (tags) {
         tagCondition.where = 'WHERE tags.id IN (:tagIds)'
       }
 
@@ -360,7 +752,8 @@ module.exports = (sequelize, DataTypes) => {
           SELECT
             tags.id,
             tags.tag,
-            tags."tagMoji"
+            tags."tagMoji",
+            kinds."blogId"
           FROM tags
           INNER JOIN
             kinds ON tags.id = kinds."tagId"
@@ -371,7 +764,7 @@ module.exports = (sequelize, DataTypes) => {
       const withs = []
       const whereFilters = []
 
-      const hasAllFilters = tag
+      const hasAllFilters = tags
 
       whereFilters.push("array_to_string(blogs.languages, ', ') like :wildCardLocale")
 
@@ -383,7 +776,7 @@ module.exports = (sequelize, DataTypes) => {
           tagCondition.select
         )
       } else {
-        if (tag) {
+        if (tags) {
           withs.push(tagWith)
           whereFilters.push(tagCondition.select)
         }
@@ -406,7 +799,7 @@ module.exports = (sequelize, DataTypes) => {
 
         joinsForQuery += `
           LEFT JOIN kinds ON  kinds."blogId" = blogs.id
-          LEFT JOIn tags ON tags.is = kinds."tagId"
+          LEFT JOIn tags ON tags.id = kinds."tagId"
         `
       }
 
@@ -479,7 +872,8 @@ module.exports = (sequelize, DataTypes) => {
                   images.type = 'hero'
                   AND images."blogId" = blogs.id
               ),
-              'tagCount', "countTags".count
+              'tagCount', "countTags".count,
+              'tags', "countTags".tags
             )
           ) blogs
         FROM
@@ -489,8 +883,10 @@ module.exports = (sequelize, DataTypes) => {
           ${languageTranslationFilter}
         LEFT JOIN LATERAL (
           SELECT
-            COUNT(id) AS count
+            COUNT(kinds."blogId") AS count,
+            jsonb_agg(tags.tag) AS tags
           FROM kinds
+          INNER JOIN tags ON tags.id = kinds."tagId"
           WHERE kinds."blogId" = blogs.id
         ) AS "countTags" ON true
         WHERE
@@ -498,7 +894,7 @@ module.exports = (sequelize, DataTypes) => {
         GROUP BY
           blogs.id
         ORDER BY
-          blogs.published DESC
+          blogs.published DESC,
           ${orderBy}
       `
 

@@ -62,7 +62,6 @@ module.exports = (sequelize, DataTypes) => {
   })
 
   Tags.addHook('beforeUpdate', tag => {
-    console.log({ tag })
     tag.setDataValue('lastUsedAt', Date.now())
   })
 
@@ -74,6 +73,26 @@ module.exports = (sequelize, DataTypes) => {
       as: 'blogs',
       foreignKey: 'tagId'
     })
+  }
+
+  /**
+   * Clean up the tag object
+   * @param {object} props extra keys you might want to add
+   * @return {object}
+   */
+  Tags.prototype.toClean = function (props) {
+    const {
+      tagMoji,
+      createdAt,
+      updatedAt,
+      totalCount,
+      ...rest
+    } = this.toJSON()
+
+    return {
+      ...rest,
+      ...props
+    }
   }
 
   return Tags

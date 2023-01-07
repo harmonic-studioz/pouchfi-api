@@ -17,6 +17,12 @@ module.exports = {
     ZH: 'zh',
     ZT: 'zt'
   },
+  LANG_FE: {
+    EN: 'en',
+    JA: 'ja',
+    ZH: 'zh_hans',
+    ZT: 'zh_hant'
+  },
 
   ROLE: {
     SUPER_ADMIN: 'SUPER_ADMIN',
@@ -38,7 +44,11 @@ module.exports = {
     CONTACT_US: 'contact_us',
     FORGOT_PASSWORD: 'forgot_password',
     RESET_PASSWORD: 'reset_password',
-    EMAIL_ERROR_TO_ADMIN: 'email_error_to_admin'
+    EMAIL_ERROR_TO_ADMIN: 'email_error_to_admin',
+    PUBLISHED_BLOG_TO_STAFF: 'published_blog_to_staff',
+    AVAILABLE_BLOG_TO_STAFF_FIRST: 'available_blog_to_staff_first',
+    COMPLETED_BLOG_TO_STAFF: 'completed_blog_to_staff',
+    UNAVAILABLE_BLOG_TO_STAFF: 'unavailable_blog_to_staff'
   },
 
   REGISTERED_FROM: {

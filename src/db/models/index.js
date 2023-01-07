@@ -7,7 +7,7 @@ const Sequelize = require('sequelize')
 const { postgres } = require('@config')
 const Tokens = require('./networks/tokens')
 const Accounts = require('./users/accounts')
-const ExperienceImages = require('./blogs/images')
+const BlogImages = require('./blogs/images')
 const AccountTypes = require('./users/accountTypes')
 const BlogTranslations = require('./blogs/translations')
 /**
@@ -46,7 +46,7 @@ for (const file of files) {
 db.tokens = Tokens(sequelize, Sequelize.DataTypes)
 db.accountTypes = AccountTypes(sequelize, Sequelize.DataTypes)
 db.accounts = Accounts(sequelize, Sequelize.DataTypes)
-db.images = ExperienceImages(sequelize, Sequelize.DataTypes)
+db.images = BlogImages(sequelize, Sequelize.DataTypes)
 db.blogTranslations = BlogTranslations(sequelize, Sequelize.DataTypes)
 
 Object.keys(db).forEach(modelName => {
