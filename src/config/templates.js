@@ -96,5 +96,17 @@ module.exports = [
     language: 'en-us',
     type: 'email',
     fileTemplate: loadHTMLTemplate(`${constants.EMAIL_TYPE.PUBLISHED_BLOG_TO_STAFF}_en-us`)
+  },
+  {
+    name: constants.EMAIL_TYPE.COMPLETED_BLOG_TO_STAFF,
+    language: 'en-us',
+    type: 'email',
+    fileTemplate: loadHTMLTemplate(`${constants.EMAIL_TYPE.COMPLETED_BLOG_TO_STAFF}_en-us`)
+  },
+  {
+    name: constants.EMAIL_TYPE.UNAVAILABLE_BLOG_TO_STAFF,
+    language: 'en-us',
+    type: 'email',
+    fileTemplate: loadHTMLTemplate(`${constants.EMAIL_TYPE.UNAVAILABLE_BLOG_TO_STAFF}_en-us`)
   }
 ]

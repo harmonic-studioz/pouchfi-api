@@ -1,21 +1,21 @@
-const Message = require('..')
+const Message = require('../index')
 const config = require('@/config')
 const constants = require('@/src/constants')
 const { getTemplate } = require('@/src/helpers/email')
 
-class AvailableBlogFirstMessage extends Message {
+class CompletedBlogMessage extends Message {
   /**
    * @inheritdoc
    */
   getSubject () {
-    return 'Your Blog Has Become Available!'
+    return 'Thanks for Registering Your Blog'
   }
 
   /**
    * @inheritdoc
    */
   getTag () {
-    return [constants.EMAIL_TYPE.AVAILABLE_BLOG_TO_STAFF_FIRST]
+    return [constants.EMAIL_TYPE.COMPLETED_BLOG_TO_STAFF]
   }
 
   /**
@@ -26,8 +26,8 @@ class AvailableBlogFirstMessage extends Message {
       type: 'to',
       ...this.recipient
     }, {
-      type: 'bcc',
-      email: config.emails.biz
+      email: config.emails.biz,
+      type: 'bcc'
     }]
 
     return recipient
@@ -38,7 +38,7 @@ class AvailableBlogFirstMessage extends Message {
    */
   async getTemplate () {
     const template = await getTemplate(
-      constants.EMAIL_TYPE.AVAILABLE_BLOG_TO_STAFF_FIRST,
+      constants.EMAIL_TYPE.COMPLETED_BLOG_TO_STAFF,
       this.language,
       this.data
     )
@@ -47,4 +47,4 @@ class AvailableBlogFirstMessage extends Message {
   }
 }
 
-module.exports = AvailableBlogFirstMessage
+module.exports = CompletedBlogMessage

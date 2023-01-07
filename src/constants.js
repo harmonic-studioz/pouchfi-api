@@ -46,7 +46,9 @@ module.exports = {
     RESET_PASSWORD: 'reset_password',
     EMAIL_ERROR_TO_ADMIN: 'email_error_to_admin',
     PUBLISHED_BLOG_TO_STAFF: 'published_blog_to_staff',
-    AVAILABLE_BLOG_TO_STAFF_FIRST: 'available_blog_to_staff_first'
+    AVAILABLE_BLOG_TO_STAFF_FIRST: 'available_blog_to_staff_first',
+    COMPLETED_BLOG_TO_STAFF: 'completed_blog_to_staff',
+    UNAVAILABLE_BLOG_TO_STAFF: 'unavailable_blog_to_staff'
   },
 
   REGISTERED_FROM: {

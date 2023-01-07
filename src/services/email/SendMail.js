@@ -15,11 +15,13 @@ const { sendEmail } = require('@/src/helpers/email')
 
 const ContactUsMessage = require('./messages/contactUs')
 const PartnerWithUs = require('./messages/PartnerWithUs')
+const CompletedBlog = require('./messages/staff/completedBlog')
 const ForgotPassword = require('./messages/staff/forgotPassword')
 const CustomEmailMessage = require('./messages/staff/customEmail')
 const AdminInvitation = require('./messages/staff/adminInvitation')
 const PublishedBlog = require('./messages/staff/publishedBlogMessage')
 const ResetPasswordMessage = require('./messages/staff/resetPassword')
+const UnavailableBlog = require('./messages/staff/unavailableBlogMessage')
 const WaitlistNotification = require('./messages/users/waitlistNotification')
 const EmailErrorToAdminMessage = require('./messages/staff/emailErrorToAdmin')
 const AvailableBlogFirst = require('./messages/staff/availableBlogFirstMessage')
@@ -343,6 +345,62 @@ module.exports = class SendMail {
     }
 
     const inst = new AvailableBlogFirst(locale, data, {
+      email: blog.user.email,
+      displayName
+    },
+    {
+      uid: user.uid
+    })
+
+    const message = await inst.buildMessage()
+
+    return sendEmail({ message })
+  }
+
+  /**
+   * Send email when staff has completed registering a blog
+   * @param {*} locale
+   * @param {*} request
+   * @returns
+   */
+  static async sendCompletedBlog (locale, request) {
+    const user = request.user
+    const displayName = `${user.firstName} ${user.lastName}`
+
+    const data = {
+      displayName
+    }
+
+    const inst = new CompletedBlog(locale, data, {
+      email: user.email,
+      displayName
+    },
+    {
+      uid: user.uid
+    })
+
+    const message = await inst.buildMessage()
+
+    return sendEmail({ message })
+  }
+
+  /**
+   * Send email when staff set a blog
+   * to Unavailable or changing price
+   * @param {*} locale
+   * @param {*} blog
+   * @param {*} request
+   * @returns
+   */
+  static async sendUnavailableBlog (locale, blog, request) {
+    const user = request.user
+    const displayName = `${blog.user.firstName} ${blog.user.lastName}`
+
+    const data = {
+      displayName
+    }
+
+    const inst = new UnavailableBlog(locale, data, {
       email: blog.user.email,
       displayName
     },

@@ -7,8 +7,12 @@
 
 const { Router } = require('express')
 
+const get = require('./get')
+const list = require('./list')
+const update = require('./update')
 const create = require('./create')
 const handlers = require('./handlers')
+const deleteBlog = require('./delete')
 const permissions = require('./permissions')
 const { withErrorHandler } = require('@/src/helpers')
 const { secureLimiter, authenticated: auth, normalLimiter } = require('@/src/middlewares')
@@ -24,7 +28,11 @@ const router = Router({
 const authenticated = auth('staff')
 
 create(createBaseMiddlewares(), router)
+update(createBaseMiddlewares(), router)
+deleteBlog(createBaseMiddlewares(), router)
+get([normalLimiter, authenticated], router)
 permissions(createBaseMiddlewares(), router)
+list([normalLimiter, authenticated], router)
 
 router.get(
   '/id',
@@ -45,13 +53,44 @@ router.get(
 )
 
 router.get(
-  '/tags',
+  '/tags/list',
   secureLimiter,
   authenticated,
   withErrorHandler(async (req, res) => {
-    const tags = await handlers.listTags(req.query, res.locals.getProps())
+    const tags = await handlers.listTags(req.query.blogId)
 
-    res.json(tags)
+    res.json({
+      ok: true,
+      meta: res.locals.getMeta(),
+      tags
+    })
+  })
+)
+
+router.post(
+  '/tags/create',
+  secureLimiter,
+  authenticated,
+  withErrorHandler(async (req, res) => {
+    const tag = await handlers.createTag(req.body.tag)
+
+    res.json({
+      ok: true,
+      outlets: {
+        tag
+      }
+    })
+  })
+)
+
+router.delete(
+  '/tags/:id',
+  secureLimiter,
+  authenticated,
+  withErrorHandler(async (req, res) => {
+    await handlers.deleteTag(req.params.id)
+
+    res.json({ ok: true })
   })
 )
 

@@ -9,7 +9,7 @@ const { QueryTypes, Op } = require('sequelize')
  */
 
 /**
- * Junction table of `experiences` and `categories`
+ * Junction table of `blogs` and `tags`
  * @param {Sequelize} sequelize
  * @param {DataTypes} DataTypes
  * @returns

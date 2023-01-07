@@ -23,10 +23,10 @@ module.exports = router => {
   }
 
   /**
-   * Sends the experience details as the response
+   * Sends the blog details as the response
    */
   async function details (req, res) {
-    const experience = await handlers.details(req.params.id, {
+    const blog = await handlers.details(req.params.id, {
       language: req.query.language || LANG.EN,
       locale: req.query.locale || LOCALE.EN
     })
@@ -34,7 +34,7 @@ module.exports = router => {
     res.json({
       ok: true,
       outlets: {
-        experience
+        blog
       }
     })
   }

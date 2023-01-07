@@ -34,7 +34,7 @@ const LANGUAGE_BY_LOCALE_WITH_FALLBACK = {
  * @param {object} props.meta request meta data
  * @returns {Promise<object>} tags
  */
-exports.listTags = async function listTags (query, props) {
+exports.listTags = async function listTags (query) {
   const limit = transformedLimit(query.limit)
   const page = transformedPage(query.page)
 
@@ -56,14 +56,11 @@ exports.listTags = async function listTags (query, props) {
     outlets.summary.total = tags.count
   }
 
-  return {
-    meta: props.meta,
-    outlets
-  }
+  return outlets
 }
 
 /**
- * Searches for experiences that matches the given `query`
+ * Searches for blogs that matches the given `query`
  * @param {Object} filters - Filters to be applied to search
  * @param {string} filters.q - The value to be searched
  * @param {Object} options - Options
@@ -135,7 +132,7 @@ exports.getTrendingTags = async function getTrendingTags () {
   let tags = await Tags.findAll({
     where: {
       lastUsedAt: {
-        [Op.between]: [twoWeeksAgo.toFormat('X'), now.toFormat('X')]
+        [Op.between]: [twoWeeksAgo.toFormat('yyyy-MM-dd HH:mm:ss.uZ'), now.toFormat('yyyy-MM-dd HH:mm:ss.uZ')]
       },
       trendingCount: { [Op.gt]: 0 }
     },

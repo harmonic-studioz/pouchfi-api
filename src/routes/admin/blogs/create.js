@@ -50,6 +50,17 @@ const validate = ajv.compile({
       type: 'string',
       minLength: 1,
       transform: ['trim']
+    },
+    hero: {
+      type: 'string',
+      minLength: 1,
+      transform: ['trim']
+    },
+    gallery: {
+      type: 'array',
+      minItems: 1,
+      uniqueItems: true,
+      items: { type: 'string' }
     }
   }
 })

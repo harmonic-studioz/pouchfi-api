@@ -1,21 +1,21 @@
-const Message = require('..')
+const Message = require('../index')
 const config = require('@/config')
 const constants = require('@/src/constants')
 const { getTemplate } = require('@/src/helpers/email')
 
-class AvailableBlogFirstMessage extends Message {
+class UnavailableBlogMessage extends Message {
   /**
    * @inheritdoc
    */
   getSubject () {
-    return 'Your Blog Has Become Available!'
+    return 'Your Blog Has Been Made Unavailable'
   }
 
   /**
    * @inheritdoc
    */
   getTag () {
-    return [constants.EMAIL_TYPE.AVAILABLE_BLOG_TO_STAFF_FIRST]
+    return [constants.EMAIL_TYPE.UNAVAILABLE_BLOG_TO_STAFF]
   }
 
   /**
@@ -25,10 +25,12 @@ class AvailableBlogFirstMessage extends Message {
     const recipient = [{
       type: 'to',
       ...this.recipient
-    }, {
-      type: 'bcc',
-      email: config.emails.biz
     }]
+
+    recipient.push({
+      email: config.emails.biz,
+      type: 'bcc'
+    })
 
     return recipient
   }
@@ -38,7 +40,7 @@ class AvailableBlogFirstMessage extends Message {
    */
   async getTemplate () {
     const template = await getTemplate(
-      constants.EMAIL_TYPE.AVAILABLE_BLOG_TO_STAFF_FIRST,
+      constants.EMAIL_TYPE.UNAVAILABLE_BLOG_TO_STAFF,
       this.language,
       this.data
     )
@@ -47,4 +49,4 @@ class AvailableBlogFirstMessage extends Message {
   }
 }
 
-module.exports = AvailableBlogFirstMessage
+module.exports = UnavailableBlogMessage
